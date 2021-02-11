@@ -12,7 +12,7 @@ To pack the code to a .jar file
 `mvn package`
 
 
-##### Building JAR
+##### Documentation
 Documentation can be found at
 
 https://insiders.convisoappsec.com/doc/burp-extension-h2LvyiUxR0
