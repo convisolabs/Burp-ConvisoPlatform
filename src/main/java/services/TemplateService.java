@@ -65,9 +65,12 @@ public class TemplateService {
             templatesArray = new Gson().fromJson(jsonResponse, Template[].class);
             this.sanitizeTemplatesTitles(templatesArray);
             util.sendStdout("[Re]Loaded templates from API.");
+        }catch (com.google.gson.JsonSyntaxException e) {
+            util.sendStderr(jsonResponse);
+            return new Template[0];
         }catch (Exception e){
             util.sendStderr("Error loading templates.");
-            e.printStackTrace();
+            return new Template[0];
         }
         this.allTemplates = templatesArray;
         this.saveTemplatesLocally();

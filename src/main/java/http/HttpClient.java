@@ -9,6 +9,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jdk.jfr.ContentType;
 import models.vulnerability.Vulnerability;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.StatusLine;
@@ -18,6 +19,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import utilities.Util;
 
 
@@ -33,8 +35,8 @@ public class HttpClient {
 
     //https://api.convisoappsec.com/
 
-    private static String CONVISO_API_HOST = "app.conviso.com.br";
-//    private static String CONVISO_API_HOST = "homologa.conviso.com.br";
+//    private static final String CONVISO_API_HOST = "app.conviso.com.br";
+    private static final String CONVISO_API_HOST = "homologa.conviso.com.br";
     private static String CONVISO_API_PATH = "/api/";
     private Component fatherComponent;
     private static final String FLOW_API_KEY = "FLOW.API.KEY";
@@ -144,9 +146,9 @@ public class HttpClient {
     public IResponseInfo postMultiForm(String suffixPath, HttpEntity httpMultipartEntity){
 
         try {
+
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpPost httpPost = new HttpPost("https://"+CONVISO_API_HOST+CONVISO_API_PATH+suffixPath);
-
 
             /*HttpHost proxy = new HttpHost("127.0.0.1", 8080, "http");
             RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
@@ -157,11 +159,19 @@ public class HttpClient {
             httpPost.setHeader("x-api-key", flowApiKey);
             httpPost.setEntity(httpMultipartEntity);
             CloseableHttpResponse response = httpClient.execute(httpPost);
+            String content = EntityUtils.toString(response.getEntity());
+            System.out.println(content);
 
             return new IResponseInfo() {
                 @Override
                 public List<String> getHeaders() {
-                    return null;
+                    List<String> headersToReturn = new ArrayList<>();
+                    for (Header h :
+                            response.getAllHeaders()) {
+                        headersToReturn.add(h.toString());
+                    }
+                    return headersToReturn;
+
                 }
 
                 @Override
