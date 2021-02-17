@@ -3,7 +3,6 @@
 
 
 ##### Setting up project locally
-To pack the code to a .jar file
 
 `git clone https://github.com/convisoappsec/Burp-AppSecFlow.git`
 
@@ -11,3 +10,9 @@ To pack the code to a .jar file
 To pack the code to a .jar file
 
 `mvn package`
+
+
+##### Documentation
+Documentation can be found at
+
+https://insiders.convisoappsec.com/doc/burp-extension-h2LvyiUxR0
