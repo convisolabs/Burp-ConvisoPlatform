@@ -18,9 +18,6 @@ public class BurpExtender implements IBurpExtender, ITab {
 
     private ConfigurationTab configurationTab;
     private NewVulnerabilityTab newVulnerabilityTab;
-    private JTabbedPane teste;
-    //private VulnersService vulnersService;
-    //private Map<String, Domain> domains = new HashMap<>();
     private Map<String, Map<String, String>> matchRules = new HashMap<>();
 
     private IBurpExtenderCallbacks callbacks;
@@ -49,7 +46,13 @@ public class BurpExtender implements IBurpExtender, ITab {
             this.configurationTab.initializeComponent();
             tabsHandler.addTab("Configuration", configurationTab.$$$getRootComponent$$$());
             callbacks.addSuiteTab(BurpExtender.this);
+
+            final String FLOW_API_KEY = "FLOW.API.KEY";
+            if(callbacks.loadExtensionSetting(FLOW_API_KEY) == null || callbacks.loadExtensionSetting(FLOW_API_KEY).isEmpty()){
+                this.tabsHandler.setSelectedIndex(1);
+            }
         });
+
 
 
 

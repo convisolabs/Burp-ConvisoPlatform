@@ -27,6 +27,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,11 +38,11 @@ public class HttpClient {
 
 //    private static final String CONVISO_API_HOST = "app.conviso.com.br";
     private static final String CONVISO_API_HOST = "homologa.conviso.com.br";
-    private static String CONVISO_API_PATH = "/api/";
+    private static final String CONVISO_API_PATH = "/api/";
     private Component fatherComponent;
     private static final String FLOW_API_KEY = "FLOW.API.KEY";
     private static String flowApiKey;
-    private static String userAgent = "AppSecFlow-BurpExtender/1.0";
+    private static final String userAgent = "AppSecFlow-BurpExtender/1.0";
 
     private final IBurpExtenderCallbacks callbacks;
     private final IExtensionHelpers helpers;
@@ -133,12 +134,15 @@ public class HttpClient {
     }
 
     public Boolean testApiKey(){
-        String response = this.get("v3/company/11/vulnerability_templates");
-        if(this.helpers.analyzeResponse(response.getBytes()).getStatusCode() == 200){
+        String response = this.get("v3/company/11/vulnerability_templates", Map.of("per_page", "1"));
+        IResponseInfo responseInfo = this.helpers.analyzeResponse(response.getBytes());
+        if( responseInfo.getStatusCode() == 200){
             this.util.sendStdout("API Key OK!");
             return true;
         }else{
             this.util.sendStderr("API Key NOT OK!");
+            this.util.sendStderr("Status code: "+responseInfo.getStatusCode());
+            this.util.sendStderr(response.substring(responseInfo.getBodyOffset()));
             return false;
         }
     }
