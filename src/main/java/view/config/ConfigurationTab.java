@@ -8,7 +8,6 @@ import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import http.HttpClient;
-import org.jdesktop.swingx.JXComboBox;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -25,14 +24,9 @@ import java.util.concurrent.TimeUnit;
 public class ConfigurationTab {
     private JTextField txtFlowApiKey;
     private JPanel rootPanel;
-    private JButton btnRefreshAnalysis;
-    private JButton btnSelectAnalysis;
     private JButton btnApiKey;
     private JTextField txtProjectId;
     private JButton defineButton;
-    private JXComboBox lblb;
-    private JLabel lblTestApiKey;
-    private JButton btnSaveApiKey;
     private static final String FLOW_API_KEY = "FLOW.API.KEY";
     private static final String FLOW_PROJECT_ID = "FLOW.PROJECT.ID";
     private IBurpExtenderCallbacks callbacks;

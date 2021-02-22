@@ -52,22 +52,10 @@
             <artifactId>commonmark</artifactId>
             <version>0.17.1</version>
         </dependency>
-<!--        <dependency>-->
-<!--                <groupId>org.jetbrains</groupId>-->
-<!--                <artifactId>annotations</artifactId>-->
-<!--                <version>RELEASE</version>-->
-<!--                <scope>compile</scope>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>forms_rt</artifactId>
             <version>7.0.3</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.swinglabs.swingx</groupId>
-            <artifactId>swingx-all</artifactId>
-            <version>1.6.5-1</version>
             <scope>compile</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
