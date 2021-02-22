@@ -40,7 +40,7 @@ public class Util {
         return new String(ptext, UTF_8);
     }
 
-    public static String removeCaracteresEspeciais(String str) {
+    public static String removeSpecialCharacters(String str) {
         return str.replace('Á', 'A').replace('À', 'A').replace('Â', 'A').replace('Ä', 'A').replace('Ã', 'A').replace('É', 'E')
                 .replace('È', 'E').replace('Ê', 'E').replace('Ë', 'A').replace('Í', 'I').replace('Ì', 'I').replace('Î', 'I')
                 .replace('Ï', 'I').replace('Ó', 'O').replace('Ò', 'O').replace('Ô', 'O').replace('Ö', 'O').replace('Õ', 'O')

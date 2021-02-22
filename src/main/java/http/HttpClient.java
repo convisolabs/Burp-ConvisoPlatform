@@ -154,9 +154,9 @@ public class HttpClient {
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpPost httpPost = new HttpPost("https://"+CONVISO_API_HOST+CONVISO_API_PATH+suffixPath);
 
-            /*HttpHost proxy = new HttpHost("127.0.0.1", 8080, "http");
+            HttpHost proxy = new HttpHost("127.0.0.1", 8080, "http");
             RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
-            httpPost.setConfig(config);*/
+            httpPost.setConfig(config);
 
 
             httpPost.setHeader("User-Agent", userAgent);
