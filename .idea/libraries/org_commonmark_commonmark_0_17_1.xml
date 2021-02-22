@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="org.commonmark:commonmark:0.17.1" type="repository">
+    <properties maven-id="org.commonmark:commonmark:0.17.1" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/commonmark-0.17.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
