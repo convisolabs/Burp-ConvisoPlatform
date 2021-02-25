@@ -22,6 +22,10 @@ public class Util {
         this.helpers = helpers;
     }
 
+    public Util(final IBurpExtenderCallbacks callbacks) {
+        this.callbacks = callbacks;
+    }
+
     public Util() {
     }
 

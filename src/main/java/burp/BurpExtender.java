@@ -1,12 +1,14 @@
 package burp;
 
 import services.TemplateService;
+import utilities.Util;
 import view.config.ConfigurationTab;
 import view.context_menu.ContextMenuOption;
 import view.new_vulnerability.NewVulnerabilityTab;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,6 +66,7 @@ public class BurpExtender implements IBurpExtender, ITab {
         this.callbacks.registerContextMenuFactory(this.contextMenuOption);
 
 
+        new Util(this.callbacks).sendStdout("Extension loaded");
     }
 
     /* IMPLEMENTAÇÃO DO ITAB */

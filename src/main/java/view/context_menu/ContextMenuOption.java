@@ -30,10 +30,21 @@ public class ContextMenuOption implements IContextMenuFactory {
 
     @Override
     public List<JMenuItem> createMenuItems(IContextMenuInvocation invocation) {
-        List<JMenuItem> items = new ArrayList<JMenuItem>();
-        JMenuItem itemDefault = new JMenuItem("Send to AppSecFlow");
+        List<JMenuItem> items = new ArrayList<>();
+        JMenu itemDefault = new JMenu("Send to AppSecFlow");
+        JMenuItem asVulnerability = new JMenuItem("as new vulnerability/notification");
+        JMenuItem asVulnerabilityWithEvidence = new JMenuItem("as new vulnerability w. evidence");
+        JMenuItem asEvidence = new JMenuItem("as evidence");
 
-        itemDefault.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.templateService, this.newVulnerabilityTab, invocation));
+        asVulnerability.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.templateService, this.newVulnerabilityTab, invocation));
+        asVulnerabilityWithEvidence.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.templateService, this.newVulnerabilityTab, invocation));
+        asEvidence.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.templateService, this.newVulnerabilityTab, invocation));
+
+        itemDefault.add(asVulnerability);
+        if(invocation.getSelectedMessages().length >= 2) asVulnerability.setEnabled(false);
+        if(invocation.getSelectedMessages().length < 2) asVulnerabilityWithEvidence.setEnabled(false);
+        itemDefault.add(asVulnerabilityWithEvidence);
+        itemDefault.add(asEvidence);
         items.add(itemDefault);
 
         return items;
