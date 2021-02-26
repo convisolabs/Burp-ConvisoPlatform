@@ -164,7 +164,7 @@ public class HttpClient {
             httpPost.setEntity(httpMultipartEntity);
             CloseableHttpResponse response = httpClient.execute(httpPost);
             String content = EntityUtils.toString(response.getEntity());
-            System.out.println(content);
+//            System.out.println(content);
 
             return new IResponseInfo() {
                 @Override
@@ -204,6 +204,7 @@ public class HttpClient {
                 }
             };
         } catch (IOException e) {
+            util.sendStderr("Connection not established");
             return null;
         }
 
