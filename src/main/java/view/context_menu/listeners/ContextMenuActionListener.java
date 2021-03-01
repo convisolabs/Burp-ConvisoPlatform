@@ -21,6 +21,7 @@ public class ContextMenuActionListener implements ActionListener {
     private IExtensionHelpers helpers;
     private TemplateService templateService;
     private IContextMenuInvocation invocation;
+    private Util util;
     private final NewVulnerabilityTab newVulnerabilityTab;
     String requestHeader = "/* \n * REQUEST \n */\n\n";
     String responseHeader = "/* \n * RESPONSE \n */\n\n";
@@ -29,6 +30,7 @@ public class ContextMenuActionListener implements ActionListener {
     public ContextMenuActionListener(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, final TemplateService templateService, NewVulnerabilityTab newVulnerabilityTab, IContextMenuInvocation invocation ) {
         this.callbacks = callbacks;
         this.helpers = helpers;
+        this.util = new Util(this.callbacks);
         this.templateService = templateService;
         this.invocation = invocation;
         this.newVulnerabilityTab = newVulnerabilityTab;
@@ -97,18 +99,6 @@ public class ContextMenuActionListener implements ActionListener {
         }
     }
 
-    private File createTempFile(String archiveName, String content){
-        try {
-            File tempFile = File.createTempFile(archiveName, ".txt");
-            Files.writeString(Path.of(tempFile.getAbsolutePath()), content);
-            tempFile.deleteOnExit();
-            return tempFile;
-        } catch (IOException exception) {
-            new Util(this.callbacks).sendStderr(exception.toString());
-            return null;
-        }
-    }
-
     private void createEvidencesInTempFiles(int maxLenghtFromInvoiceMessages){
         for (int i = 0; i < maxLenghtFromInvoiceMessages; i++) {
             String archiveName = "evidence-part-" + (i + 1) + "-uid-";
@@ -119,9 +109,9 @@ public class ContextMenuActionListener implements ActionListener {
                     "\n\n" +
                     responseHeader +
                     helpers.bytesToString(iHttpRequestResponse.getResponse());
-            File tempFile = createTempFile(archiveName, content);
+            File tempFile = util.createTempFile(archiveName, content);
             if(tempFile != null){
-                this.newVulnerabilityTab.addEvidence(new Evidence(tempFile.getAbsolutePath(), archiveName+".txt"));
+                this.newVulnerabilityTab.addEvidence(new Evidence(tempFile.getAbsolutePath(), tempFile.getName()));
             }
         }
     }

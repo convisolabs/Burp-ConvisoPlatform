@@ -1,9 +1,6 @@
 package http;
 
-import burp.IBurpExtenderCallbacks;
-import burp.ICookie;
-import burp.IExtensionHelpers;
-import burp.IResponseInfo;
+import burp.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -46,7 +43,7 @@ public class HttpClient {
 
     private final IBurpExtenderCallbacks callbacks;
     private final IExtensionHelpers helpers;
-    private Util util;
+    private final Util util;
 
     public HttpClient(IBurpExtenderCallbacks callbacks, IExtensionHelpers helpers) {
         this.callbacks = callbacks;
@@ -154,9 +151,9 @@ public class HttpClient {
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpPost httpPost = new HttpPost("https://"+CONVISO_API_HOST+CONVISO_API_PATH+suffixPath);
 
-            /*HttpHost proxy = new HttpHost("127.0.0.1", 8080, "http");
+            HttpHost proxy = new HttpHost("127.0.0.1", 8080, "http");
             RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
-            httpPost.setConfig(config);*/
+            httpPost.setConfig(config);
 
 
             httpPost.setHeader("User-Agent", userAgent);

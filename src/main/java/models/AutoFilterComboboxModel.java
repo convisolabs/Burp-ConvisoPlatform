@@ -20,6 +20,10 @@ public class AutoFilterComboboxModel extends DefaultComboBoxModel {
     public void filterList(String pattern, boolean setSoloElement){
         List<Template> filteredList = new ArrayList<>();
 
+        if(this.templatesList == null){
+            this.templatesList = new ArrayList<>();
+        }
+
         if(!pattern.isEmpty()){
             for (Template t :
                     templatesList) {

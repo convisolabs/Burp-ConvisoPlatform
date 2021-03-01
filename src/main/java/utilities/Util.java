@@ -5,7 +5,11 @@ import burp.IExtensionHelpers;
 import burp.IHttpRequestResponse;
 import burp.IRequestInfo;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +66,19 @@ public class Util {
             return str1.substring(str2.length());
         }
         return str1;
+    }
+
+
+    public File createTempFile(String archiveName, String content){
+        try {
+            File tempFile = File.createTempFile(archiveName, ".txt");
+            Files.writeString(Path.of(tempFile.getAbsolutePath()), content);
+            tempFile.deleteOnExit();
+            return tempFile;
+        } catch (IOException exception) {
+            new Util(this.callbacks).sendStderr(exception.toString());
+            return null;
+        }
     }
 
 }
