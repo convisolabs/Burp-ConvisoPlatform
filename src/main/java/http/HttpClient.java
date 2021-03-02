@@ -39,7 +39,7 @@ public class HttpClient {
     private Component fatherComponent;
     private static final String FLOW_API_KEY = "FLOW.API.KEY";
     private static String flowApiKey;
-    private static final String userAgent = "AppSecFlow-BurpExtender/1.0.1";
+    private static final String userAgent = "AppSecFlow-BurpExtender/1.1";
 
     private final IBurpExtenderCallbacks callbacks;
     private final IExtensionHelpers helpers;
