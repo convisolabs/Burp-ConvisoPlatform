@@ -56,7 +56,7 @@ public class ConfigurationTab {
         txtFlowApiKey.addKeyListener(new KeyAdapter() { // Evento para receber a API Key do txtField
             @Override
             public void keyReleased(KeyEvent e) {
-                if (!txtFlowApiKey.getText().trim().equals("") && txtFlowApiKey.getText().length() == 43) {
+                if (!txtFlowApiKey.getText().trim().equals("") && (txtFlowApiKey.getText().length() >= 40) && (txtFlowApiKey.getText().length() <= 50)) {
                     callbacks.saveExtensionSetting(FLOW_API_KEY, txtFlowApiKey.getText().trim());
                     txtFlowApiKey.setBackground(Color.WHITE);
                 } else {

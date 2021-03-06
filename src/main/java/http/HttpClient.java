@@ -36,7 +36,6 @@ public class HttpClient {
     private static final String CONVISO_API_HOST = "app.conviso.com.br";
 //    private static final String CONVISO_API_HOST = "homologa.conviso.com.br";
     private static final String CONVISO_API_PATH = "/api/";
-    private Component fatherComponent;
     private static final String FLOW_API_KEY = "FLOW.API.KEY";
     private static String flowApiKey;
     private static final String userAgent = "AppSecFlow-BurpExtender/1.1";
