@@ -63,7 +63,7 @@ public class TemplateService {
         String jsonResponse = httpResult.substring(responseCleaned.getBodyOffset());
         try{
             templatesArray = new Gson().fromJson(jsonResponse, Template[].class);
-            this.sanitizeTemplatesTitles(templatesArray);
+            this.sanitizeTemplates(templatesArray);
             util.sendStdout("[Re]Loaded templates from API.");
         }catch (com.google.gson.JsonSyntaxException e) {
             util.sendStderr(jsonResponse);
@@ -98,9 +98,9 @@ public class TemplateService {
 
     }
     
-    private void sanitizeTemplatesTitles(Template[] templatesToSanitize){
+    private void sanitizeTemplates(Template[] templatesToSanitize){
         for (Template t : templatesToSanitize) {
-            t.sanitizeTemplateTitle();
+            t.sanitizeTemplate();
         }
     }
 
