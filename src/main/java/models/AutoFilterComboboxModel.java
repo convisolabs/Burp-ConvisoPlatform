@@ -10,6 +10,10 @@ public class AutoFilterComboboxModel extends DefaultComboBoxModel {
 
     private List<Template> templatesList;
 
+    public AutoFilterComboboxModel() {
+        this.templatesList = new ArrayList<>();
+    }
+
     public void setTemplatesList(List<Template> templatesList) {
         if(!templatesList.isEmpty()){
             this.templatesList = templatesList;
@@ -17,14 +21,10 @@ public class AutoFilterComboboxModel extends DefaultComboBoxModel {
         }
     }
 
-    public void filterList(String pattern, boolean setSoloElement){
+    public synchronized void filterList(String pattern, boolean setSoloElement){
         List<Template> filteredList = new ArrayList<>();
 
-        if(this.templatesList == null){
-            this.templatesList = new ArrayList<>();
-        }
-
-        if(!pattern.isEmpty()){
+        if(pattern != null && !pattern.isEmpty()){
             for (Template t :
                     templatesList) {
                 if (t.getTitle().toLowerCase().contains(pattern.toLowerCase())){
