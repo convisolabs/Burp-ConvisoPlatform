@@ -61,14 +61,6 @@ public class ContextMenuActionListener implements ActionListener {
 
     }
 
-    private String[] getParametersList(IRequestInfo request){
-        String[] params = new String[request.getParameters().size()];
-        for (int i = 0; i < request.getParameters().size(); i++) {
-            params[i] = request.getParameters().get(i).getName()+"="+request.getParameters().get(i).getValue();
-        }
-        return params;
-    }
-
     private void defineCampsNewVulnerabilityTab(IHttpRequestResponse requestResponse){
         IRequestInfo request = helpers.analyzeRequest(requestResponse.getHttpService(), requestResponse.getRequest());
         IResponseInfo response = helpers.analyzeResponse(requestResponse.getResponse());
@@ -79,7 +71,7 @@ public class ContextMenuActionListener implements ActionListener {
             this.newVulnerabilityTab.setTxtFieldProtocol(requestResponse.getHttpService().getProtocol().toUpperCase());
             this.newVulnerabilityTab.setTxtFieldUrl(request.getUrl()+"");
             this.newVulnerabilityTab.setTxtFieldMethod(request.getMethod());
-            this.newVulnerabilityTab.setListParameters(this.getParametersList(request));
+            this.newVulnerabilityTab.setListParameters(request.getParameters());
             this.newVulnerabilityTab.setFromContextMenu(true);
 
         }
