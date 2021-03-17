@@ -1,5 +1,7 @@
 ### Getting started
 
+### Last releases
+https://github.com/convisoappsec/Burp-AppSecFlow/releases
 
 
 ##### Setting up project locally
