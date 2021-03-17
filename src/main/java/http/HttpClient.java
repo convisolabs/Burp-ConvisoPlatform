@@ -51,7 +51,7 @@ public class HttpClient {
         flowApiKey = callbacks.loadExtensionSetting(FLOW_API_KEY);
     }
 
-    public String get(String sufixPath) { // Verificar a necessidade de receber params ou não.
+    public String get(String sufixPath) {
         List<String> headers = new ArrayList<>();
         headers.add("GET " + CONVISO_API_PATH + sufixPath +"/ HTTP/1.1");
         headers.add("Host: " + CONVISO_API_HOST);
@@ -159,7 +159,7 @@ public class HttpClient {
             httpPost.setHeader("x-api-key", flowApiKey);
             httpPost.setEntity(httpMultipartEntity);
             CloseableHttpResponse response = httpClient.execute(httpPost);
-            String content = EntityUtils.toString(response.getEntity());
+//            String content = EntityUtils.toString(response.getEntity());
 //            System.out.println(content);
 
             return new IResponseInfo() {
