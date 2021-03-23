@@ -20,7 +20,6 @@ public class BurpExtender implements IBurpExtender, ITab {
 
     private ConfigurationTab configurationTab;
     private NewVulnerabilityTab newVulnerabilityTab;
-    private Map<String, Map<String, String>> matchRules = new HashMap<>();
 
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
