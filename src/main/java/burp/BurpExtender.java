@@ -8,9 +8,6 @@ import view.new_vulnerability.NewVulnerabilityTab;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 public class BurpExtender implements IBurpExtender, ITab {
 
