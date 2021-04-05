@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://assets.website-files.com/5bd866533d93ea7ace7395bd/5bd866533d93ea53a77396c2_Logo%20aplica%C3%A7%C3%A3o%20em%20fundo%20azul%20sem%20tagline.png">
+  <!-- <img src=""> -->
   <p align="center">BurpSuite AppSecFlow Extension</p>
   <p align="center">
     <a href="/LICENSE.md">
@@ -15,12 +15,13 @@
 
 ### Summary
 
+[AppSec Flow](https://www.convisoappsec.com/) is a Software as a Service (SaaS) platform created by Conviso that supports the entire security cycle in the software development life cycle. It was created based on the Software Assurance Maturity Model (SAMM) - a project in the portfolio of the Open Web Application Security Project (OWASP) that defines a series of practices with the objective of improving software security. The extension of Burp Suite for AppSec Flow aims to serve as an integration between them, making the life of an analyst easier, because he can now send vulnerabilities directly from Burp to AppSec Flow.
 
 ---
 
 ### Getting started
 
-#### Lastest releases
+#### Last releases
 https://github.com/convisoappsec/Burp-AppSecFlow/releases
 
 
@@ -33,10 +34,13 @@ To pack the code to a .jar file
 
 `mvn package`
 
+---
 
 #### Documentation
 
-Documentation can be found at: [wiki page](/wiki)
+You can find the full documentation at: [wiki page](/wiki)
+
+---
 
 ### Contribution
 
