@@ -1,5 +1,5 @@
 <p align="center">
-  <!-- <img src=""> -->
+  <img src="https://raw.githubusercontent.com/convisoappsec/Burp-AppSecFlow/master/assets/readme/logo-conviso.png">
   <p align="center">BurpSuite AppSecFlow Extension</p>
   <p align="center">
     <a href="/LICENSE.md">
@@ -19,26 +19,33 @@
 
 ---
 
-### Getting started
+### Download and install
 
-#### Last releases
-https://github.com/convisoappsec/Burp-AppSecFlow/releases
+The last release: [https://github.com/convisoappsec/Burp-AppSecFlow/releases](https://github.com/convisoappsec/Burp-AppSecFlow/releases)
+
+Building JAR local:
+
+```bash
+ $ git clone https://github.com/convisoappsec/Burp-AppSecFlow.git 
+ $ cd Burp-AppSecFlow && mvn package
+```
 
 
-### Setting up project locally
+Here you can learn here: [How to add extesion to Burp](https://github.com/convisoappsec/Burp-AppSecFlow/wiki/Add-extension-to-Burp)
 
-`git clone https://github.com/convisoappsec/Burp-AppSecFlow.git`
+---
 
-#### Building JAR
-To pack the code to a .jar file
+### Demo
 
-`mvn package`
+![Image](https://raw.githubusercontent.com/convisoappsec/Burp-AppSecFlow/master/assets/readme/new-vuln-or-not.gif)
+
+![Image](https://raw.githubusercontent.com/convisoappsec/Burp-AppSecFlow/master/assets/readme/multi-vuln-or-not.gif)
 
 ---
 
 #### Documentation
 
-You can find the full documentation at: [wiki page](/wiki)
+You can find the full documentation at: [wiki page.](/wiki)
 
 ---
 
