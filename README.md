@@ -1,5 +1,5 @@
 <p align="center">
-  <!-- <img src=""> -->
+  <img src="https://raw.githubusercontent.com/convisoappsec/Burp-AppSecFlow/master/assets/readme/logo-conviso.png">
   <p align="center">BurpSuite AppSecFlow Extension</p>
   <p align="center">
     <a href="/LICENSE.md">
@@ -33,6 +33,15 @@ https://github.com/convisoappsec/Burp-AppSecFlow/releases
 To pack the code to a .jar file
 
 `mvn package`
+
+---
+
+
+### Demo
+
+![Image](https://raw.githubusercontent.com/convisoappsec/Burp-AppSecFlow/master/assets/readme/new-vuln-or-not.gif)
+
+![Image](https://raw.githubusercontent.com/convisoappsec/Burp-AppSecFlow/master/assets/readme/multi-vuln-or-not.gif)
 
 ---
 
