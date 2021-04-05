@@ -20,7 +20,7 @@
 
 ### Getting started
 
-#### Last releases
+#### Lastest releases
 https://github.com/convisoappsec/Burp-AppSecFlow/releases
 
 
