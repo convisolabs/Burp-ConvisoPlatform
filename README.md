@@ -26,7 +26,7 @@ If you want to read more about this extension, we have a blog post: [https://blo
 
 The last release: [https://github.com/convisoappsec/Burp-AppSecFlow/releases](https://github.com/convisoappsec/Burp-AppSecFlow/releases)
 
-Building JAR local:
+Building JAR locally:
 
 ```bash
  $ git clone https://github.com/convisoappsec/Burp-AppSecFlow.git 
