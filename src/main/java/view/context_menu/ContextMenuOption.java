@@ -14,16 +14,14 @@ public class ContextMenuOption implements IContextMenuFactory {
 
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
-    private TemplateService templateService;
     private final NewVulnerabilityTab newVulnerabilityTab;
     private Util util;
 
-    public ContextMenuOption(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, final NewVulnerabilityTab newVulnerabilityTab, final TemplateService templateService) {
+    public ContextMenuOption(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, final NewVulnerabilityTab newVulnerabilityTab) {
         this.callbacks = callbacks;
         this.helpers = helpers;
         this.newVulnerabilityTab = newVulnerabilityTab;
         this.util = new Util(this.callbacks, this.helpers);
-        this.templateService = templateService;
     }
 
 
@@ -36,9 +34,9 @@ public class ContextMenuOption implements IContextMenuFactory {
         JMenuItem asVulnerabilityWithEvidence = new JMenuItem("as new vulnerability w. evidence");
         JMenuItem asEvidence = new JMenuItem("as evidence");
 
-        asVulnerability.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.templateService, this.newVulnerabilityTab, invocation));
-        asVulnerabilityWithEvidence.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.templateService, this.newVulnerabilityTab, invocation));
-        asEvidence.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.templateService, this.newVulnerabilityTab, invocation));
+        asVulnerability.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.newVulnerabilityTab, invocation));
+        asVulnerabilityWithEvidence.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.newVulnerabilityTab, invocation));
+        asEvidence.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.newVulnerabilityTab, invocation));
 
         itemDefault.add(asVulnerability);
         if(invocation.getSelectedMessages().length >= 2) asVulnerability.setEnabled(false);

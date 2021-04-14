@@ -19,7 +19,6 @@ public class ContextMenuActionListener implements ActionListener {
 
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
-    private TemplateService templateService;
     private IContextMenuInvocation invocation;
     private Util util;
     private final NewVulnerabilityTab newVulnerabilityTab;
@@ -27,11 +26,10 @@ public class ContextMenuActionListener implements ActionListener {
     String responseHeader = "/* \n * RESPONSE \n */\n\n";
 
 
-    public ContextMenuActionListener(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, final TemplateService templateService, NewVulnerabilityTab newVulnerabilityTab, IContextMenuInvocation invocation ) {
+    public ContextMenuActionListener(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, NewVulnerabilityTab newVulnerabilityTab, IContextMenuInvocation invocation ) {
         this.callbacks = callbacks;
         this.helpers = helpers;
         this.util = new Util(this.callbacks);
-        this.templateService = templateService;
         this.invocation = invocation;
         this.newVulnerabilityTab = newVulnerabilityTab;
     }

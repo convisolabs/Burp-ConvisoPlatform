@@ -130,7 +130,7 @@ public class HttpClient {
     }
 
     public Boolean testApiKey(){
-        String response = this.get("v3/company/11/vulnerability_templates", Map.of("per_page", "1"));
+        String response = this.get("v2/running_analyses_by_api_key");
         IResponseInfo responseInfo = this.helpers.analyzeResponse(response.getBytes());
         if( responseInfo.getStatusCode() == 200){
             this.util.sendStdout("API Key OK!");

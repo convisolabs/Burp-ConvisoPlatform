@@ -1,5 +1,8 @@
 package models.project;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class Project {
 
     private int id;
@@ -11,6 +14,7 @@ public class Project {
     private String end_date;
     private int contracted_hours;
     private String scope;
+    private int scope_id;
     private boolean is_public;
     private boolean is_open;
     private String language;
@@ -363,4 +367,74 @@ public class Project {
     public void setCreated_at(String created_at) {
         this.created_at = created_at;
     }
+
+    public int getScope_id() {
+        return scope_id;
+    }
+
+    public void setScope_id(int scope_id) {
+        this.scope_id = scope_id;
+    }
+
+    @Override
+    public String toString() {
+        return "Project{" +
+                "id=" + id +
+                ", pid='" + pid + '\'' +
+                ", label='" + label + '\'' +
+                ", description='" + description + '\'' +
+                ", project_type='" + project_type + '\'' +
+                ", start_date='" + start_date + '\'' +
+                ", end_date='" + end_date + '\'' +
+                ", contracted_hours=" + contracted_hours +
+                ", scope='" + scope + '\'' +
+                ", scope_id=" + scope_id +
+                ", is_public=" + is_public +
+                ", is_open=" + is_open +
+                ", language='" + language + '\'' +
+                ", project_status='" + project_status + '\'' +
+                ", auditing='" + auditing + '\'' +
+                ", continuous_delivery=" + continuous_delivery +
+                ", planned_started_at='" + planned_started_at + '\'' +
+                ", estimated_hours='" + estimated_hours + '\'' +
+                ", retested_at='" + retested_at + '\'' +
+                ", free_retest=" + free_retest +
+                ", last_project_status='" + last_project_status + '\'' +
+                ", environment_invaded=" + environment_invaded +
+                ", hours_or_days='" + hours_or_days + '\'' +
+                ", estimated_days='" + estimated_days + '\'' +
+                ", api_code='" + api_code + '\'' +
+                ", repository_url='" + repository_url + '\'' +
+                ", executive_summary='" + executive_summary + '\'' +
+                ", main_recommendations='" + main_recommendations + '\'' +
+                ", vulnerabilities_count=" + vulnerabilities_count +
+                ", teams=" + Arrays.toString(teams) +
+                ", microservice_folder='" + microservice_folder + '\'' +
+                ", students=" + students +
+                ", integration_deploy=" + integration_deploy +
+                ", receive_deploys=" + receive_deploys +
+                ", close_comments=" + close_comments +
+                ", deploy_send_frequency=" + deploy_send_frequency +
+                ", plan='" + plan + '\'' +
+                ", connectivity='" + connectivity + '\'' +
+                ", tag_list=" + Arrays.toString(tag_list) +
+                ", tecnology_list=" + Arrays.toString(tecnology_list) +
+                ", created_at='" + created_at + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Project project = (Project) o;
+        return id == project.id && scope_id == project.scope_id && pid.equals(project.pid) && label.equals(project.label);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, pid, label, scope_id);
+    }
 }
+
+

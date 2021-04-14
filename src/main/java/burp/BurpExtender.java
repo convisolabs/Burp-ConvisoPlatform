@@ -1,5 +1,6 @@
 package burp;
 
+import services.ProjectService;
 import services.TemplateService;
 import utilities.Util;
 import view.config.ConfigurationTab;
@@ -21,17 +22,14 @@ public class BurpExtender implements IBurpExtender, ITab {
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
     private ContextMenuOption contextMenuOption;
-    private TemplateService templateService;
 
 
     @Override
     public void registerExtenderCallbacks(final IBurpExtenderCallbacks callbacks) {
         this.callbacks = callbacks;
         this.helpers = callbacks.getHelpers();
-
-        this.templateService = new TemplateService(this.callbacks, this.helpers);
         this.configurationTab = new ConfigurationTab(this.callbacks, this.helpers);
-        this.newVulnerabilityTab = new NewVulnerabilityTab(this.callbacks, this.helpers, this.templateService);
+        this.newVulnerabilityTab = new NewVulnerabilityTab(this.callbacks, this.helpers);
 
         /*
         * Cria a aba no BURP
@@ -52,13 +50,11 @@ public class BurpExtender implements IBurpExtender, ITab {
         });
 
 
-
-
         /*
          * Cria a opção no menu do botão direito, tambem conhecido como contextmenu
          */
 
-        this.contextMenuOption = new ContextMenuOption(this.callbacks, this.helpers, this.newVulnerabilityTab, this.templateService);
+        this.contextMenuOption = new ContextMenuOption(this.callbacks, this.helpers, this.newVulnerabilityTab);
         this.callbacks.registerContextMenuFactory(this.contextMenuOption);
 
 
