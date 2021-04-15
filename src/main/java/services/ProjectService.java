@@ -14,7 +14,7 @@ public class ProjectService {
 
     private final IBurpExtenderCallbacks callbacks;
     private final IExtensionHelpers helpers;
-    private Set<Project> allocatedProjects;
+    private Set<Project> allocatedProjects = new HashSet<>();
     private final Util util;
     final String FLOW_ALLOCATED_PROJECTS = "FLOW.ALLOCATED.PROJECTS";
 
