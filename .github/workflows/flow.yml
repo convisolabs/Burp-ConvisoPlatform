@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: convisoappsec/flowcli
-    env:
-      FLOW_API_KEY: ${{ secrets.FLOW_API_KEY }}
-      FLOW_PROJECT_CODE: ${{ secrets.FLOW_ANALYSIS_KEY }}
+      env:
+        FLOW_API_KEY: ${{ secrets.FLOW_API_KEY }}
+        FLOW_PROJECT_CODE: ${{ secrets.FLOW_ANALYSIS_KEY }}
     steps:
       - uses: actions/checkout@v2
       - name: test
