@@ -10,15 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: convisoappsec/flowcli
-      env:
-        FLOW_API_KEY: ${{ secrets.FLOW_API_KEY }}
-        FLOW_PROJECT_CODE: ${{ secrets.FLOW_ANALYSIS_KEY }}
     steps:
       - uses: actions/checkout@v2
-      - name: test
-        run: echo $FLOW_PROJECT_CODE | base64
       - name: Run sast
-        run: flow sast run
+        run: flow -k=${{ secrets.FLOW_API_KEY }} sast run --project-code=${{ secrets.FLOW_ANALYSIS_KEY }}
 
 #      - name: Run SCA
 #        run: flow sca run
