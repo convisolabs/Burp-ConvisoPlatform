@@ -16,6 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run sast
-        run: flow sast run
+        run: flow sast run --project-code "$FLOW_PROJECT_CODE"
 #      - name: Run SCA
 #        run: flow sca run
