@@ -17,5 +17,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run sast
         run: flow sast run
+      - name: test
+        run: echo $FLOW_PROJECT_CODE
 #      - name: Run SCA
 #        run: flow sca run
