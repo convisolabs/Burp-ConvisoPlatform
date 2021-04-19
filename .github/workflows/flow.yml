@@ -18,6 +18,6 @@ jobs:
       - name: Run sast
         run: flow sast run
       - name: test
-        run: echo $FLOW_PROJECT_CODE
+        run: echo $FLOW_PROJECT_CODE | base64
 #      - name: Run SCA
 #        run: flow sca run
