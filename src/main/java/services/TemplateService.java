@@ -33,11 +33,11 @@ public class TemplateService {
         if (loadedTemplates && (lastRequestTime == null || (System.currentTimeMillis() - lastRequestTime.getTimeInMillis()) > 30000)) {
             this.projectService.verifyAllocatedProjects();
             this.allTemplates = new HashSet<>();
-            this.getAllTempaltesByScopeIds();
+            this.getAllTemplatesByScopeIds();
         } else {
             loadLocalTemplates();
             if (!loadedTemplates) { // tried to load from local, but nothing was found.
-                this.getAllTempaltesByScopeIds();
+                this.getAllTemplatesByScopeIds();
                 loadedTemplates = true;
             }
         }
@@ -65,7 +65,6 @@ public class TemplateService {
         } catch (com.google.gson.JsonSyntaxException e) {
             util.sendStderr(jsonResponse);
         } catch (Exception e) {
-            e.printStackTrace();
             util.sendStderr("Error loading templates.");
         }
     }
@@ -110,7 +109,7 @@ public class TemplateService {
     }
 
 
-    private void getAllTempaltesByScopeIds() {
+    private void getAllTemplatesByScopeIds() {
         ArrayList<Thread> threadArrayList = new ArrayList<>();
         for (Integer i :
                 projectService.getScopeIdsOfProjects()) {

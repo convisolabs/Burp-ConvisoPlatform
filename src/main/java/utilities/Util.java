@@ -36,11 +36,13 @@ public class Util {
     public void sendStdout(String toSend){
         PrintWriter stdout = new PrintWriter(callbacks.getStdout(), true);
         stdout.println("[+] "+toSend);
+        stdout.close();
     }
 
     public void sendStderr(String toSend){
         PrintWriter stderr = new PrintWriter(callbacks.getStderr(), true);
         stderr.println("[-] "+toSend);
+        stderr.close();
     }
 
     public String stringToOtherCharset(String toChange){
