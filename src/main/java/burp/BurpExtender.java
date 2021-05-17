@@ -5,6 +5,7 @@ import services.TemplateService;
 import utilities.Util;
 import view.config.ConfigurationTab;
 import view.context_menu.ContextMenuOption;
+import view.management.allocated_projects.AllocatedProjectsTab;
 import view.new_vulnerability.NewVulnerabilityTab;
 
 import javax.swing.*;
@@ -30,6 +31,9 @@ public class BurpExtender implements IBurpExtender, ITab {
         this.helpers = callbacks.getHelpers();
         this.configurationTab = new ConfigurationTab(this.callbacks, this.helpers);
         this.newVulnerabilityTab = new NewVulnerabilityTab(this.callbacks, this.helpers);
+        AllocatedProjectsTab allocatedProjectsTab = new AllocatedProjectsTab(this.callbacks, this.helpers);
+
+        allocatedProjectsTab.initializeComponent();
 
         /*
         * Cria a aba no BURP
@@ -37,10 +41,13 @@ public class BurpExtender implements IBurpExtender, ITab {
         callbacks.setExtensionName("AppSec Flow");
         tabsHandler = new JTabbedPane();
         SwingUtilities.invokeLater(() -> {
+
+
             this.newVulnerabilityTab.initializeComponent();
             tabsHandler.addTab("New Vulnerability", newVulnerabilityTab.$$$getRootComponent$$$());
             this.configurationTab.initializeComponent();
             tabsHandler.addTab("Configuration", configurationTab.$$$getRootComponent$$$());
+//            tabsHandler.addTab("Allocated Projects", allocatedProjectsTab.$$$getRootComponent$$$());
             callbacks.addSuiteTab(BurpExtender.this);
 
             final String FLOW_API_KEY = "FLOW.API.KEY";
