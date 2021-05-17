@@ -8,6 +8,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import http.HttpClient;
+import utilities.Util;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -33,11 +34,14 @@ public class ConfigurationTab {
     private IExtensionHelpers helpers;
     private Color defaultBackgroundBtn;
     private Color defaultForegroundBtn;
+    boolean isDarkBackground = false;
+    private Util util;
 
 
     public ConfigurationTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers) {
         this.callbacks = callbacks;
         this.helpers = helpers;
+        this.util = new Util(callbacks, helpers);
 
     }
 
@@ -49,16 +53,25 @@ public class ConfigurationTab {
 
         this.setTxtFlowApiKey(callbacks);
         this.setTxtProjectId(callbacks);
-        defaultBackgroundBtn = btnApiKey.getBackground();
-        defaultForegroundBtn = btnApiKey.getForeground();
 
+        this.isDarkBackground = this.util.isColorDark(this.rootPanel.getBackground());
+        this.defaultBackgroundBtn = btnApiKey.getBackground();
+        this.defaultForegroundBtn = btnApiKey.getForeground();
+
+        rootPanel.addPropertyChangeListener(evt -> {
+            if (evt.getPropertyName().equals("foreground")) {
+                this.defaultBackgroundBtn = rootPanel.getBackground();
+                this.defaultForegroundBtn = rootPanel.getForeground();
+                this.isDarkBackground = this.util.isColorDark(this.rootPanel.getBackground());
+            }
+        });
 
         txtFlowApiKey.addKeyListener(new KeyAdapter() { // Evento para receber a API Key do txtField
             @Override
             public void keyReleased(KeyEvent e) {
                 if (!txtFlowApiKey.getText().trim().equals("") && (txtFlowApiKey.getText().length() >= 40) && (txtFlowApiKey.getText().length() <= 50)) {
                     callbacks.saveExtensionSetting(FLOW_API_KEY, txtFlowApiKey.getText().trim());
-                    txtFlowApiKey.setBackground(Color.WHITE);
+                    txtFlowApiKey.setBackground(defaultBackgroundBtn);
                 } else {
                     txtFlowApiKey.setBackground(Color.RED);
                 }
@@ -78,11 +91,11 @@ public class ConfigurationTab {
                     if (httpClient.testApiKey()) {
                         btnApiKey.setForeground(Color.GREEN);
                         btnApiKey.setText("OK!");
-                        btnApiKey.setBackground(Color.LIGHT_GRAY);
+                        btnApiKey.setBackground(Color.darkGray);
                     } else {
                         btnApiKey.setForeground(Color.RED);
                         btnApiKey.setText("Failed!");
-                        btnApiKey.setBackground(Color.LIGHT_GRAY);
+                        btnApiKey.setBackground(Color.darkGray);
                     }
                     btnApiKey.setEnabled(true);
 
