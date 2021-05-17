@@ -5,6 +5,7 @@ import burp.IExtensionHelpers;
 import burp.IHttpRequestResponse;
 import burp.IRequestInfo;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -69,6 +70,12 @@ public class Util {
         }
         return str1;
     }
+
+    public boolean isColorDark(Color color){
+        double darkness = 1-((0.299* color.getRed()) + (0.587*color.getGreen())+ (0.114*color.getBlue()))/255;
+        return !(darkness < 0.5); // It's a light color
+    }
+
 
 
     public File createTempFile(String archiveName, String content){
