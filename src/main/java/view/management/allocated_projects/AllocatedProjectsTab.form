@@ -37,6 +37,7 @@
               <forms defaultalign-horz="false"/>
             </constraints>
             <properties>
+              <font style="1"/>
               <text value="Allocated projects"/>
             </properties>
           </component>
@@ -48,7 +49,7 @@
             <properties/>
             <border type="none" title=""/>
             <children>
-              <component id="c6d0f" class="javax.swing.JTable" binding="tblAllocatedProjects">
+              <component id="c6d0f" class="javax.swing.JTable" binding="tblInProgressPlaybook">
                 <constraints/>
                 <properties/>
               </component>

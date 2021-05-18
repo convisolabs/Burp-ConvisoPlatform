@@ -4,42 +4,32 @@ import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import models.vulnerability.Evidence;
-import services.ProjectService;
-import services.TemplateService;
-import services.VulnerabilityService;
-import utilities.Util;
+import view.FathersComponentTab;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.plaf.FontUIResource;
 import javax.swing.table.TableColumn;
-import java.util.HashMap;
+import javax.swing.text.StyleContext;
+import java.awt.*;
+import java.util.Locale;
 
-public class AllocatedProjectsTab {
+public class AllocatedProjectsTab extends FathersComponentTab {
     private JPanel rootPanel;
-    private JTable tblAllocatedProjects;
+    private JTable tblInProgressPlaybook;
     private JButton defineButton;
     private JButton button2;
-
-    private IBurpExtenderCallbacks callbacks;
-    private IExtensionHelpers helpers;
-    private Util util;
-    private TemplateService templateService;
-    private VulnerabilityService vulnerabilityService;
-    private ProjectService projectService;
+    private JTable tblDonePlaybook;
+    private JTable tblNotStartedPlaybook;
 
 
     public AllocatedProjectsTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers) {
-        this.callbacks = callbacks;
-        this.helpers = helpers;
-        this.util = new Util(callbacks, helpers);
+        super.newTab(callbacks, helpers);
     }
 
     public void initializeComponent() {
         $$$setupUI$$$();
-
         this.initiateAllocatedTableColumns();
-
 
     }
 
@@ -47,15 +37,15 @@ public class AllocatedProjectsTab {
     private void initiateAllocatedTableColumns() {
         TableColumn tAux = new TableColumn();
         tAux.setHeaderValue("ID");
-        this.tblAllocatedProjects.getColumnModel().addColumn(tAux);
+        this.tblInProgressPlaybook.getColumnModel().addColumn(tAux);
 
         tAux = new TableColumn();
         tAux.setHeaderValue("Title");
-        this.tblAllocatedProjects.getColumnModel().addColumn(tAux);
+        this.tblInProgressPlaybook.getColumnModel().addColumn(tAux);
 
         tAux = new TableColumn();
         tAux.setHeaderValue("End date");
-        this.tblAllocatedProjects.getColumnModel().addColumn(tAux);
+        this.tblInProgressPlaybook.getColumnModel().addColumn(tAux);
     }
 
     {
@@ -80,13 +70,15 @@ public class AllocatedProjectsTab {
         CellConstraints cc = new CellConstraints();
         rootPanel.add(panel1, cc.xywh(1, 1, 1, 3));
         final JLabel label1 = new JLabel();
+        Font label1Font = this.$$$getFont$$$(null, Font.BOLD, -1, label1.getFont());
+        if (label1Font != null) label1.setFont(label1Font);
         label1.setText("Allocated projects");
         panel1.add(label1, cc.xy(3, 3, CellConstraints.CENTER, CellConstraints.DEFAULT));
         final JScrollPane scrollPane1 = new JScrollPane();
         panel1.add(scrollPane1, cc.xy(3, 5, CellConstraints.FILL, CellConstraints.FILL));
         scrollPane1.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-        tblAllocatedProjects = new JTable();
-        scrollPane1.setViewportView(tblAllocatedProjects);
+        tblInProgressPlaybook = new JTable();
+        scrollPane1.setViewportView(tblInProgressPlaybook);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:noGrow", "center:d:grow,top:4dlu:noGrow,center:max(d;4px):grow"));
         panel1.add(panel2, cc.xy(4, 5));
@@ -96,6 +88,28 @@ public class AllocatedProjectsTab {
         button2 = new JButton();
         button2.setText("Button");
         panel2.add(button2, cc.xy(3, 3, CellConstraints.DEFAULT, CellConstraints.TOP));
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
+        if (currentFont == null) return null;
+        String resultName;
+        if (fontName == null) {
+            resultName = currentFont.getName();
+        } else {
+            Font testFont = new Font(fontName, Font.PLAIN, 10);
+            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
+                resultName = fontName;
+            } else {
+                resultName = currentFont.getName();
+            }
+        }
+        Font font = new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+        boolean isMac = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
+        Font fontWithFallback = isMac ? new Font(font.getFamily(), font.getStyle(), font.getSize()) : new StyleContext().getFont(font.getFamily(), font.getStyle(), font.getSize());
+        return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
     }
 
     /**

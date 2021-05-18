@@ -8,7 +8,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import http.HttpClient;
-import utilities.Util;
+import view.FathersComponentTab;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -22,7 +22,7 @@ import java.util.Locale;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class ConfigurationTab {
+public class ConfigurationTab extends FathersComponentTab {
     private JTextField txtFlowApiKey;
     private JPanel rootPanel;
     private JButton btnApiKey;
@@ -30,19 +30,12 @@ public class ConfigurationTab {
     private JButton defineButton;
     private static final String FLOW_API_KEY = "FLOW.API.KEY";
     private static final String FLOW_PROJECT_ID = "FLOW.PROJECT.ID";
-    private IBurpExtenderCallbacks callbacks;
-    private IExtensionHelpers helpers;
-    private Color defaultBackgroundBtn;
-    private Color defaultForegroundBtn;
-    boolean isDarkBackground = false;
-    private Util util;
 
+
+    boolean isDarkBackground = false;
 
     public ConfigurationTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers) {
-        this.callbacks = callbacks;
-        this.helpers = helpers;
-        this.util = new Util(callbacks, helpers);
-
+        this.newTab(callbacks, helpers);
     }
 
     public void initializeComponent() {
@@ -54,17 +47,8 @@ public class ConfigurationTab {
         this.setTxtFlowApiKey(callbacks);
         this.setTxtProjectId(callbacks);
 
-        this.isDarkBackground = this.util.isColorDark(this.rootPanel.getBackground());
-        this.defaultBackgroundBtn = btnApiKey.getBackground();
-        this.defaultForegroundBtn = btnApiKey.getForeground();
-
-        rootPanel.addPropertyChangeListener(evt -> {
-            if (evt.getPropertyName().equals("foreground")) {
-                this.defaultBackgroundBtn = rootPanel.getBackground();
-                this.defaultForegroundBtn = rootPanel.getForeground();
-                this.isDarkBackground = this.util.isColorDark(this.rootPanel.getBackground());
-            }
-        });
+        this.setRootPanel(rootPanel);
+        this.setDefaultColors(btnApiKey);
 
         txtFlowApiKey.addKeyListener(new KeyAdapter() { // Evento para receber a API Key do txtField
             @Override

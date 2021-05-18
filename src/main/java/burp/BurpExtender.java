@@ -1,11 +1,10 @@
 package burp;
 
-import services.ProjectService;
-import services.TemplateService;
 import utilities.Util;
 import view.config.ConfigurationTab;
 import view.context_menu.ContextMenuOption;
 import view.management.allocated_projects.AllocatedProjectsTab;
+import view.management.playbooks.PlaybookTab;
 import view.new_vulnerability.NewVulnerabilityTab;
 
 import javax.swing.*;
@@ -35,6 +34,10 @@ public class BurpExtender implements IBurpExtender, ITab {
 
         allocatedProjectsTab.initializeComponent();
 
+        PlaybookTab playbookTab = new PlaybookTab(this.callbacks, this.helpers);
+
+        playbookTab.initializeComponent();
+
         /*
         * Cria a aba no BURP
         */
@@ -47,7 +50,8 @@ public class BurpExtender implements IBurpExtender, ITab {
             tabsHandler.addTab("New Vulnerability", newVulnerabilityTab.$$$getRootComponent$$$());
             this.configurationTab.initializeComponent();
             tabsHandler.addTab("Configuration", configurationTab.$$$getRootComponent$$$());
-//            tabsHandler.addTab("Allocated Projects", allocatedProjectsTab.$$$getRootComponent$$$());
+            tabsHandler.addTab("Allocated Projects", allocatedProjectsTab.$$$getRootComponent$$$());
+            tabsHandler.addTab("Playbooks", playbookTab.$$$getRootComponent$$$());
             callbacks.addSuiteTab(BurpExtender.this);
 
             final String FLOW_API_KEY = "FLOW.API.KEY";
