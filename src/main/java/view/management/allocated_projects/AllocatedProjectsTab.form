@@ -49,9 +49,12 @@
             <properties/>
             <border type="none" title=""/>
             <children>
-              <component id="c6d0f" class="javax.swing.JTable" binding="tblInProgressPlaybook">
+              <component id="c6d0f" class="javax.swing.JTable" binding="tblAllocatedProjects">
                 <constraints/>
-                <properties/>
+                <properties>
+                  <autoCreateRowSorter value="true"/>
+                  <autoResizeMode value="4"/>
+                </properties>
               </component>
             </children>
           </scrollpane>
@@ -78,13 +81,13 @@
                   <text value="Define"/>
                 </properties>
               </component>
-              <component id="ab3d4" class="javax.swing.JButton" binding="button2" default-binding="true">
+              <component id="ab3d4" class="javax.swing.JButton" binding="btnLoadProjects">
                 <constraints>
                   <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-vert="false"/>
                 </constraints>
                 <properties>
-                  <text value="Button"/>
+                  <text value="Load"/>
                 </properties>
               </component>
             </children>

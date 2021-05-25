@@ -2,43 +2,28 @@ package services;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
-import burp.IResponseInfo;
 import com.google.gson.Gson;
-import http.HttpClient;
 import models.project.Project;
-import utilities.Util;
+import models.services_manager.ServicesManager;
 
 import java.util.*;
 
-public class ProjectService {
+public class ProjectService extends FathersService{
 
-    private final IBurpExtenderCallbacks callbacks;
-    private final IExtensionHelpers helpers;
     private Set<Project> allocatedProjects = new HashSet<>();
-    private final Util util;
     final String FLOW_ALLOCATED_PROJECTS = "FLOW.ALLOCATED.PROJECTS";
 
-    public ProjectService(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers) {
-        this.callbacks = callbacks;
-        this.helpers = helpers;
-        this.util = new Util(this.callbacks, this.helpers);
+    public ProjectService(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
+        super(callbacks, helpers, servicesManager);
     }
 
     public Project[] getAllocatedProjectsFromApi(){
-        Project[] projectsArray;
-        HttpClient httpClient = new HttpClient(callbacks, helpers);
-        String httpResult = httpClient.get("/v2/running_analyses_by_api_key");
-        IResponseInfo responseCleaned = helpers.analyzeResponse(helpers.stringToBytes(httpResult));
-        String jsonResponse = httpResult.substring(responseCleaned.getBodyOffset());
-        try{
-            projectsArray = new Gson().fromJson(jsonResponse, Project[].class);
+        try {
+            GraphQLService graphQLService = this.servicesManager.getGraphQLService();
             util.sendStdout("[Re]Loaded projects from API.");
-            return projectsArray;
-        }catch (com.google.gson.JsonSyntaxException e) {
-            util.sendStderr(jsonResponse);
-            return new Project[0];
+            return graphQLService.getAllocatedAnalysis();
         }catch (Exception e){
-            util.sendStderr("Error loading templates.");
+            util.sendStderr("Error loading projects.");
             return new Project[0];
         }
     }
@@ -74,7 +59,6 @@ public class ProjectService {
 
     public Set<Integer> getScopeIdsOfProjects(){
         Set<Integer> scopeIds = new HashSet<>();
-        scopeIds.add(11);
         for (Project p :
                 allocatedProjects) {
             scopeIds.add(p.getScope_id());
@@ -82,4 +66,19 @@ public class ProjectService {
         return scopeIds;
     }
 
+//    public Set<Project> getAllocatedProjects() {
+//        if (this.alreadyLoaded && (this.lastRequestTime == null || (System.currentTimeMillis() - this.lastRequestTime.getTimeInMillis()) > 1000)) {
+//            this.projectService.verifyAllocatedProjects();
+//            this.allTemplates = new HashSet<>();
+//            this.getAllTemplatesByScopeIds();
+//        } else {
+//            loadLocalTemplates();
+//            if (!this.alreadyLoaded) { // tried to load from local, but nothing was found.
+//                this.getAllTemplatesByScopeIds();
+//                this.alreadyLoaded = true;
+//            }
+//        }
+//        this.removeDeletedTemplates();
+//        return this.allTemplates;
+//    }
 }

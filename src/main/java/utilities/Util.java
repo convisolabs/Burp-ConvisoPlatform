@@ -62,6 +62,12 @@ public class Util {
                 .replace('ù', 'u').replace('û', 'u').replace('ü', 'u').replace('ç', 'c');
     }
 
+    public void clearTerminal(){
+        for (int i = 0; i < 10; i++) {
+            System.out.println("################################################");
+        }
+    }
+
 
     public String difference(String str1, String str2) {
         int index = str1.lastIndexOf(str2);

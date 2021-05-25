@@ -4,48 +4,76 @@ import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import models.services_manager.ServicesManager;
+import services.ProjectService;
 import view.FathersComponentTab;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.plaf.FontUIResource;
-import javax.swing.table.TableColumn;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Locale;
 
 public class AllocatedProjectsTab extends FathersComponentTab {
     private JPanel rootPanel;
-    private JTable tblInProgressPlaybook;
+    private JTable tblAllocatedProjects;
     private JButton defineButton;
-    private JButton button2;
-    private JTable tblDonePlaybook;
-    private JTable tblNotStartedPlaybook;
+    private JButton btnLoadProjects;
+    private ProjectService projectService;
+    private DefaultTableModel tblAllocatedProjectsModel;
 
 
-    public AllocatedProjectsTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers) {
-        super.newTab(callbacks, helpers);
+    public AllocatedProjectsTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
+        super(callbacks, helpers, servicesManager);
+        this.projectService = super.servicesManager.getProjectService();
     }
 
     public void initializeComponent() {
         $$$setupUI$$$();
         this.initiateAllocatedTableColumns();
 
+        btnLoadProjects.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (!btnLoadProjects.isEnabled()) {
+                    return;
+                }
+
+//                new Thread(() -> {
+//                    btnLoadProjects.setEnabled(false);
+//                    projectService.verifyAllocatedProjects();
+//                    tblAllocatedProjectsModel.setRowCount(0);
+//                    for (Project p :
+////                            projectService.getAllocatedProjects()) {
+//                        tblAllocatedProjectsModel.addRow(new Object[]{p.getId(), p.getLabel(), p.getEnd_date()});
+//                    }
+//                    btnLoadProjects.setText("Reload");
+//                    btnLoadProjects.setEnabled(true);
+//                }).start();
+
+            }
+        });
     }
 
 
     private void initiateAllocatedTableColumns() {
-        TableColumn tAux = new TableColumn();
-        tAux.setHeaderValue("ID");
-        this.tblInProgressPlaybook.getColumnModel().addColumn(tAux);
+        Object[] columnsHeaders = {"ID", "Title", "End date"};
+        this.tblAllocatedProjectsModel = new DefaultTableModel();
+        this.tblAllocatedProjectsModel.setColumnIdentifiers(columnsHeaders);
+        this.tblAllocatedProjects.setModel(this.tblAllocatedProjectsModel);
 
-        tAux = new TableColumn();
-        tAux.setHeaderValue("Title");
-        this.tblInProgressPlaybook.getColumnModel().addColumn(tAux);
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for (int i = 0; i < tblAllocatedProjects.getColumnModel().getColumnCount(); i++) {
+            tblAllocatedProjects.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
 
-        tAux = new TableColumn();
-        tAux.setHeaderValue("End date");
-        this.tblInProgressPlaybook.getColumnModel().addColumn(tAux);
+
     }
 
     {
@@ -77,17 +105,19 @@ public class AllocatedProjectsTab extends FathersComponentTab {
         final JScrollPane scrollPane1 = new JScrollPane();
         panel1.add(scrollPane1, cc.xy(3, 5, CellConstraints.FILL, CellConstraints.FILL));
         scrollPane1.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-        tblInProgressPlaybook = new JTable();
-        scrollPane1.setViewportView(tblInProgressPlaybook);
+        tblAllocatedProjects = new JTable();
+        tblAllocatedProjects.setAutoCreateRowSorter(true);
+        tblAllocatedProjects.setAutoResizeMode(4);
+        scrollPane1.setViewportView(tblAllocatedProjects);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:noGrow", "center:d:grow,top:4dlu:noGrow,center:max(d;4px):grow"));
         panel1.add(panel2, cc.xy(4, 5));
         defineButton = new JButton();
         defineButton.setText("Define");
         panel2.add(defineButton, cc.xy(3, 1, CellConstraints.DEFAULT, CellConstraints.BOTTOM));
-        button2 = new JButton();
-        button2.setText("Button");
-        panel2.add(button2, cc.xy(3, 3, CellConstraints.DEFAULT, CellConstraints.TOP));
+        btnLoadProjects = new JButton();
+        btnLoadProjects.setText("Load");
+        panel2.add(btnLoadProjects, cc.xy(3, 3, CellConstraints.DEFAULT, CellConstraints.TOP));
     }
 
     /**

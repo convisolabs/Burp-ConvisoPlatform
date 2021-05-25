@@ -4,6 +4,7 @@ import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import models.services_manager.ServicesManager;
 import view.FathersComponentTab;
 
 import javax.swing.*;
@@ -22,8 +23,8 @@ public class PlaybookTab extends FathersComponentTab {
     private JTable tbDonePlaybooks;
     private JPanel rootPanel;
 
-    public PlaybookTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers) {
-        super.newTab(callbacks, helpers);
+    public PlaybookTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
+        super(callbacks, helpers, servicesManager);
     }
 
     public void initializeComponent() {

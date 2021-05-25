@@ -1,23 +1,19 @@
 package burp;
 
+import models.services_manager.ServicesManager;
+import models.tabs_manager.TabsManager;
 import utilities.Util;
-import view.config.ConfigurationTab;
 import view.context_menu.ContextMenuOption;
-import view.management.allocated_projects.AllocatedProjectsTab;
-import view.management.playbooks.PlaybookTab;
-import view.new_vulnerability.NewVulnerabilityTab;
 
 import javax.swing.*;
-import java.awt.*;
 
-public class BurpExtender implements IBurpExtender, ITab {
-
+public class BurpExtender implements IBurpExtender {
 
 
-    private JTabbedPane tabsHandler;
 
-    private ConfigurationTab configurationTab;
-    private NewVulnerabilityTab newVulnerabilityTab;
+    private TabsManager tabsManager;
+
+    private ServicesManager servicesManager;
 
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
@@ -28,36 +24,26 @@ public class BurpExtender implements IBurpExtender, ITab {
     public void registerExtenderCallbacks(final IBurpExtenderCallbacks callbacks) {
         this.callbacks = callbacks;
         this.helpers = callbacks.getHelpers();
-        this.configurationTab = new ConfigurationTab(this.callbacks, this.helpers);
-        this.newVulnerabilityTab = new NewVulnerabilityTab(this.callbacks, this.helpers);
-        AllocatedProjectsTab allocatedProjectsTab = new AllocatedProjectsTab(this.callbacks, this.helpers);
+        this.servicesManager = new ServicesManager(this.callbacks, this.helpers);
 
-        allocatedProjectsTab.initializeComponent();
-
-        PlaybookTab playbookTab = new PlaybookTab(this.callbacks, this.helpers);
-
-        playbookTab.initializeComponent();
-
-        /*
-        * Cria a aba no BURP
-        */
         callbacks.setExtensionName("AppSec Flow");
-        tabsHandler = new JTabbedPane();
+
+
+        tabsManager = new TabsManager(this.callbacks, this.helpers, this.servicesManager);
+
         SwingUtilities.invokeLater(() -> {
 
+            tabsManager.initializeComponents();
 
-            this.newVulnerabilityTab.initializeComponent();
-            tabsHandler.addTab("New Vulnerability", newVulnerabilityTab.$$$getRootComponent$$$());
-            this.configurationTab.initializeComponent();
-            tabsHandler.addTab("Configuration", configurationTab.$$$getRootComponent$$$());
-            tabsHandler.addTab("Allocated Projects", allocatedProjectsTab.$$$getRootComponent$$$());
-            tabsHandler.addTab("Playbooks", playbookTab.$$$getRootComponent$$$());
-            callbacks.addSuiteTab(BurpExtender.this);
+//            this.newVulnerabilityTab.initializeComponent();
+//            tabsManager.addTab("New Vulnerability", newVulnerabilityTab.$$$getRootComponent$$$());
+//            this.configurationTab.initializeComponent();
+//            tabsManager.addTab("Configuration", configurationTab.$$$getRootComponent$$$());
+//            tabsManager.addTab("Allocated Projects", allocatedProjectsTab.$$$getRootComponent$$$());
+//            tabsManager.addTab("Playbooks", playbookTab.$$$getRootComponent$$$());
+            callbacks.addSuiteTab(tabsManager);
 
-            final String FLOW_API_KEY = "FLOW.API.KEY";
-            if(callbacks.loadExtensionSetting(FLOW_API_KEY) == null || callbacks.loadExtensionSetting(FLOW_API_KEY).isEmpty()){
-                this.tabsHandler.setSelectedIndex(1);
-            }
+            tabsManager.verifyApiKey();
         });
 
 
@@ -65,23 +51,14 @@ public class BurpExtender implements IBurpExtender, ITab {
          * Cria a opção no menu do botão direito, tambem conhecido como contextmenu
          */
 
-        this.contextMenuOption = new ContextMenuOption(this.callbacks, this.helpers, this.newVulnerabilityTab);
+        this.contextMenuOption = new ContextMenuOption(this.callbacks, this.helpers, tabsManager.getNewVulnerabilityTab());
         this.callbacks.registerContextMenuFactory(this.contextMenuOption);
 
 
         new Util(this.callbacks).sendStdout("Extension loaded");
     }
 
-    /* IMPLEMENTAÇÃO DO ITAB */
-    @Override
-    public String getTabCaption() {
-        return "AppSec Flow";
-    }
 
-    @Override
-    public Component getUiComponent() {
-        return tabsHandler;
-    }
 
 
 }

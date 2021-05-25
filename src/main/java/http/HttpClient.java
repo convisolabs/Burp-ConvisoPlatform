@@ -33,9 +33,9 @@ public class HttpClient {
 
     //https://api.convisoappsec.com/
 
-    private static final String CONVISO_API_HOST = "app.conviso.com.br";
-//    private static final String CONVISO_API_HOST = "homologa.conviso.com.br";
-    private static final String CONVISO_API_PATH = "/api/";
+//    private static final String CONVISO_API_HOST = "app.conviso.com.br";
+    private static final String CONVISO_API_HOST = "homologa.conviso.com.br";
+    private static final String CONVISO_API_PATH = "/graphql";
     private static final String FLOW_API_KEY = "FLOW.API.KEY";
     private static String flowApiKey;
     private static final String userAgent = "AppSecFlow-BurpExtender/1.4-develop";
@@ -109,9 +109,9 @@ public class HttpClient {
 
     }
 
-    public String post(String sufixPath, String jsonBody) {
+    public String post(String jsonBody) {
         List<String> headers = new ArrayList<>();
-        headers.add("POST " + CONVISO_API_PATH + sufixPath +"/ HTTP/1.1");
+        headers.add("POST " + CONVISO_API_PATH  +"/ HTTP/1.1");
         headers.add("Host: " + CONVISO_API_HOST);
         headers.add("User-Agent: "+userAgent);
         headers.add("Content-type: application/json");

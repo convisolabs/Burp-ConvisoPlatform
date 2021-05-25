@@ -1,5 +1,9 @@
 package models.project;
 
+import models.vulnerability.Category;
+import models.vulnerability.Pattern;
+
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -434,6 +438,14 @@ public class Project {
     @Override
     public int hashCode() {
         return Objects.hash(id, pid, label, scope_id);
+    }
+
+    public void sanitize() {
+        try {
+            this.setLabel(new String(this.label.getBytes("ISO-8859-1"), "UTF-8").trim());
+        } catch (UnsupportedEncodingException ignored) {
+
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 package services;
 
 import burp.*;
+import models.services_manager.ServicesManager;
 import utilities.Util;
 import com.google.gson.*;
 import http.HttpClient;
@@ -9,36 +10,28 @@ import models.vulnerability.Template;
 import java.util.*;
 
 
-public class TemplateService {
-
-    private final IBurpExtenderCallbacks callbacks;
-    private final IExtensionHelpers helpers;
+public class TemplateService extends FathersService {
     private final ProjectService projectService;
     private Set<Template> allTemplates = new HashSet<>();
-    private final Util util;
+
     private static final String FLOW_ALL_TEMPLATES = "FLOW.ALL.TEMPLATES";
-    private Calendar lastRequestTime;
-    private static boolean loadedTemplates;
 
-
-    public TemplateService(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, final ProjectService projectService) {
-        this.callbacks = callbacks;
-        this.helpers = helpers;
-        this.util = new Util(this.callbacks, this.helpers);
-        loadedTemplates = false;
-        this.projectService = projectService;
+    public TemplateService(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
+        super(callbacks, helpers, servicesManager);
+        alreadyLoaded = false;
+        this.projectService = this.servicesManager.getProjectService();
     }
 
     public Set<Template> getAllTemplates() {
-        if (loadedTemplates && (lastRequestTime == null || (System.currentTimeMillis() - lastRequestTime.getTimeInMillis()) > 30000)) {
+        if (this.alreadyLoaded && (this.lastRequestTime == null || (System.currentTimeMillis() - this.lastRequestTime.getTimeInMillis()) > 30000)) {
             this.projectService.verifyAllocatedProjects();
             this.allTemplates = new HashSet<>();
             this.getAllTemplatesByScopeIds();
         } else {
             loadLocalTemplates();
-            if (!loadedTemplates) { // tried to load from local, but nothing was found.
+            if (!this.alreadyLoaded) { // tried to load from local, but nothing was found.
                 this.getAllTemplatesByScopeIds();
-                loadedTemplates = true;
+                this.alreadyLoaded = true;
             }
         }
         this.removeDeletedTemplates();
@@ -102,7 +95,7 @@ public class TemplateService {
         if (templatesPayload != null && !templatesPayload.equals(new Gson().toJson(allTemplates))) {
             allTemplates = new HashSet<>(Arrays.asList(new Gson().fromJson(templatesPayload, Template[].class)));
             util.sendStdout("Loaded templates from local.");
-            loadedTemplates = true;
+            this.alreadyLoaded = true;
         } else {
             util.sendStdout("Local templates are equal to memory templates.");
         }

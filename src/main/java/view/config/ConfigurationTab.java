@@ -8,6 +8,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import http.HttpClient;
+import models.services_manager.ServicesManager;
 import view.FathersComponentTab;
 
 import javax.swing.*;
@@ -34,8 +35,8 @@ public class ConfigurationTab extends FathersComponentTab {
 
     boolean isDarkBackground = false;
 
-    public ConfigurationTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers) {
-        this.newTab(callbacks, helpers);
+    public ConfigurationTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
+        super(callbacks, helpers, servicesManager);
     }
 
     public void initializeComponent() {

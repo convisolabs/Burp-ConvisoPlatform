@@ -1,4 +1,4 @@
-package models;
+package models.auto_filter_combobox;
 
 import models.vulnerability.Template;
 

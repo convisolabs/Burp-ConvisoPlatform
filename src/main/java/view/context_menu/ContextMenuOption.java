@@ -1,10 +1,9 @@
 package view.context_menu;
 
 import burp.*;
-import services.TemplateService;
 import utilities.Util;
 import view.context_menu.listeners.ContextMenuActionListener;
-import view.new_vulnerability.NewVulnerabilityTab;
+import view.new_vulnerability.NewIssueTab;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -14,13 +13,13 @@ public class ContextMenuOption implements IContextMenuFactory {
 
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
-    private final NewVulnerabilityTab newVulnerabilityTab;
+    private final NewIssueTab newIssueTab;
     private Util util;
 
-    public ContextMenuOption(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, final NewVulnerabilityTab newVulnerabilityTab) {
+    public ContextMenuOption(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, final NewIssueTab newIssueTab) {
         this.callbacks = callbacks;
         this.helpers = helpers;
-        this.newVulnerabilityTab = newVulnerabilityTab;
+        this.newIssueTab = newIssueTab;
         this.util = new Util(this.callbacks, this.helpers);
     }
 
@@ -34,9 +33,9 @@ public class ContextMenuOption implements IContextMenuFactory {
         JMenuItem asVulnerabilityWithEvidence = new JMenuItem("as new vulnerability w. evidence");
         JMenuItem asEvidence = new JMenuItem("as evidence");
 
-        asVulnerability.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.newVulnerabilityTab, invocation));
-        asVulnerabilityWithEvidence.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.newVulnerabilityTab, invocation));
-        asEvidence.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.newVulnerabilityTab, invocation));
+        asVulnerability.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.newIssueTab, invocation));
+        asVulnerabilityWithEvidence.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.newIssueTab, invocation));
+        asEvidence.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.newIssueTab, invocation));
 
         itemDefault.add(asVulnerability);
         if(invocation.getSelectedMessages().length >= 2) asVulnerability.setEnabled(false);

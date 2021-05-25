@@ -2,9 +2,8 @@ package view.context_menu.listeners;
 
 import burp.*;
 import models.vulnerability.Evidence;
-import services.TemplateService;
 import utilities.Util;
-import view.new_vulnerability.NewVulnerabilityTab;
+import view.new_vulnerability.NewIssueTab;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,17 +17,17 @@ public class ContextMenuActionListener implements ActionListener {
     private IExtensionHelpers helpers;
     private IContextMenuInvocation invocation;
     private Util util;
-    private final NewVulnerabilityTab newVulnerabilityTab;
+    private final NewIssueTab newIssueTab;
     String requestHeader = "/* \n * REQUEST \n */\n\n";
     String responseHeader = "/* \n * RESPONSE \n */\n\n";
 
 
-    public ContextMenuActionListener(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, NewVulnerabilityTab newVulnerabilityTab, IContextMenuInvocation invocation ) {
+    public ContextMenuActionListener(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, NewIssueTab newIssueTab, IContextMenuInvocation invocation ) {
         this.callbacks = callbacks;
         this.helpers = helpers;
         this.util = new Util(this.callbacks);
         this.invocation = invocation;
-        this.newVulnerabilityTab = newVulnerabilityTab;
+        this.newIssueTab = newIssueTab;
     }
 
     @Override
@@ -61,19 +60,19 @@ public class ContextMenuActionListener implements ActionListener {
         IResponseInfo response = helpers.analyzeResponse(requestResponse.getResponse());
 
         if(!request.toString().isEmpty() && !response.toString().isEmpty()){
-            this.newVulnerabilityTab.setRequest(helpers.bytesToString(requestResponse.getRequest()));
-            this.newVulnerabilityTab.setResponse(helpers.bytesToString(requestResponse.getResponse()));
-            this.newVulnerabilityTab.setTxtFieldProtocol(requestResponse.getHttpService().getProtocol().toUpperCase());
-            this.newVulnerabilityTab.setTxtFieldUrl(request.getUrl()+"");
-            this.newVulnerabilityTab.setTxtFieldMethod(request.getMethod());
-            this.newVulnerabilityTab.setListParameters(request.getParameters());
-            this.newVulnerabilityTab.setFromContextMenu(true);
+            this.newIssueTab.setRequest(helpers.bytesToString(requestResponse.getRequest()));
+            this.newIssueTab.setResponse(helpers.bytesToString(requestResponse.getResponse()));
+            this.newIssueTab.setTxtFieldProtocol(requestResponse.getHttpService().getProtocol().toUpperCase());
+            this.newIssueTab.setTxtFieldUrl(request.getUrl()+"");
+            this.newIssueTab.setTxtFieldMethod(request.getMethod());
+            this.newIssueTab.setListParameters(request.getParameters());
+            this.newIssueTab.setFromContextMenu(true);
 
         }
     }
 
     private void selectAppSecFlowTab(){
-        Component current = this.newVulnerabilityTab.$$$getRootComponent$$$().getParent();
+        Component current = this.newIssueTab.$$$getRootComponent$$$().getParent();
         do {
             current = current.getParent();
         } while (!(current instanceof JTabbedPane));
@@ -98,7 +97,7 @@ public class ContextMenuActionListener implements ActionListener {
                     helpers.bytesToString(iHttpRequestResponse.getResponse());
             File tempFile = util.createTempFile(archiveName, content);
             if(tempFile != null){
-                this.newVulnerabilityTab.addEvidence(new Evidence(tempFile.getAbsolutePath(), tempFile.getName()));
+                this.newIssueTab.addEvidence(new Evidence(tempFile.getAbsolutePath(), tempFile.getName()));
             }
         }
     }
