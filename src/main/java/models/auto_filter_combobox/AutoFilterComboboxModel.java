@@ -1,6 +1,6 @@
 package models.auto_filter_combobox;
 
-import models.vulnerability.Template;
+import models.vulnerability.template.Template;
 
 import javax.swing.*;
 import java.util.ArrayList;

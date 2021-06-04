@@ -9,6 +9,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import http.HttpClient;
 import models.services_manager.ServicesManager;
+import services.GraphQLService;
 import view.FathersComponentTab;
 
 import javax.swing.*;
@@ -19,6 +20,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -27,10 +30,11 @@ public class ConfigurationTab extends FathersComponentTab {
     private JTextField txtFlowApiKey;
     private JPanel rootPanel;
     private JButton btnApiKey;
-    private JTextField txtProjectId;
+    private JTextField txtEndpoint;
     private JButton defineButton;
     private static final String FLOW_API_KEY = "FLOW.API.KEY";
-    private static final String FLOW_PROJECT_ID = "FLOW.PROJECT.ID";
+    //    private static final String FLOW_PROJECT_ID = "FLOW.PROJECT.ID";
+    private static final String FLOW_ENDPOINT_URL = "FLOW.ENDPOINT.URL";
 
 
     boolean isDarkBackground = false;
@@ -72,8 +76,8 @@ public class ConfigurationTab extends FathersComponentTab {
                         return;
                     }
                     btnApiKey.setEnabled(false);
-                    HttpClient httpClient = new HttpClient(callbacks, helpers);
-                    if (httpClient.testApiKey()) {
+                    GraphQLService graphQLService = servicesManager.getGraphQLService();
+                    if (graphQLService.testApiKey()) {
                         btnApiKey.setForeground(Color.GREEN);
                         btnApiKey.setText("OK!");
                         btnApiKey.setBackground(Color.darkGray);
@@ -98,13 +102,20 @@ public class ConfigurationTab extends FathersComponentTab {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    if (Integer.parseInt(txtProjectId.getText()) != 0) {
-                        callbacks.saveExtensionSetting(FLOW_PROJECT_ID, txtProjectId.getText().trim());
-                        JOptionPane.showMessageDialog(rootPanel, "Defined!");
+                    String settedUrl = txtEndpoint.getText().trim();
+                    if (settedUrl.contains("https://")) {
+                        callbacks.saveExtensionSetting(FLOW_ENDPOINT_URL, util.getDomainName(settedUrl));
+                    } else {
+                        callbacks.saveExtensionSetting(FLOW_ENDPOINT_URL, settedUrl);
                     }
-                } catch (NumberFormatException err) {
-                    JOptionPane.showMessageDialog(rootPanel, "Please define Project ID!");
+
+                    JOptionPane.showMessageDialog(rootPanel, "Defined!");
+                } catch (URISyntaxException uriSyntaxException) {
+                    JOptionPane.showMessageDialog(rootPanel, "Something is wrong with the URL!");
+                    util.sendStderr(Arrays.toString(uriSyntaxException.getStackTrace()));
                 }
+
+
             }
         });
     }
@@ -117,9 +128,11 @@ public class ConfigurationTab extends FathersComponentTab {
     }
 
     private void setTxtProjectId(IBurpExtenderCallbacks callbacks) { // Definir a key no txtField
-        String PROJECT_ID = callbacks.loadExtensionSetting(FLOW_PROJECT_ID);
-        if (PROJECT_ID != null) {
-            txtProjectId.setText(PROJECT_ID);
+        String flowEndpointUrl = callbacks.loadExtensionSetting(FLOW_ENDPOINT_URL);
+        if (flowEndpointUrl != null) {
+            txtEndpoint.setText(flowEndpointUrl);
+        } else {
+            txtEndpoint.setText("app.conviso.com.br");
         }
     }
 
@@ -174,11 +187,11 @@ public class ConfigurationTab extends FathersComponentTab {
         final JLabel label2 = new JLabel();
         Font label2Font = this.$$$getFont$$$(null, -1, 17, label2.getFont());
         if (label2Font != null) label2.setFont(label2Font);
-        label2.setText("Project ID");
+        label2.setText("Endpoint");
         CellConstraints cc = new CellConstraints();
         panel2.add(label2, cc.xy(1, 1, CellConstraints.CENTER, CellConstraints.DEFAULT));
-        txtProjectId = new JTextField();
-        panel2.add(txtProjectId, cc.xy(1, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
+        txtEndpoint = new JTextField();
+        panel2.add(txtEndpoint, cc.xy(1, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
         defineButton = new JButton();
         defineButton.setText("Define");
         panel2.add(defineButton, cc.xy(3, 3));

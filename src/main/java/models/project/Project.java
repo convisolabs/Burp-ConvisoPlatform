@@ -1,8 +1,5 @@
 package models.project;
 
-import models.vulnerability.Category;
-import models.vulnerability.Pattern;
-
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Objects;
@@ -18,7 +15,7 @@ public class Project {
     private String end_date;
     private int contracted_hours;
     private String scope;
-    private int scope_id;
+    private int scopeId;
     private boolean is_public;
     private boolean is_open;
     private String language;
@@ -372,12 +369,12 @@ public class Project {
         this.created_at = created_at;
     }
 
-    public int getScope_id() {
-        return scope_id;
+    public int getScopeId() {
+        return scopeId;
     }
 
-    public void setScope_id(int scope_id) {
-        this.scope_id = scope_id;
+    public void setScopeId(int scopeId) {
+        this.scopeId = scopeId;
     }
 
     @Override
@@ -392,7 +389,7 @@ public class Project {
                 ", end_date='" + end_date + '\'' +
                 ", contracted_hours=" + contracted_hours +
                 ", scope='" + scope + '\'' +
-                ", scope_id=" + scope_id +
+                ", scope_id=" + scopeId +
                 ", is_public=" + is_public +
                 ", is_open=" + is_open +
                 ", language='" + language + '\'' +
@@ -432,12 +429,12 @@ public class Project {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Project project = (Project) o;
-        return id == project.id && scope_id == project.scope_id && pid.equals(project.pid) && label.equals(project.label);
+        return id == project.id && scopeId == project.scopeId && pid.equals(project.pid) && label.equals(project.label);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, pid, label, scope_id);
+        return Objects.hash(id, pid, label, scopeId);
     }
 
     public void sanitize() {

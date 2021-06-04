@@ -1,11 +1,11 @@
-package models.project;
+package models.project.graphql;
 
 import models.graphql.GraphQLResponse;
 import models.project.Project;
 
 import java.util.Arrays;
 
-public class AllocatedProjectsQL extends GraphQLResponse {
+public class AllocatedAnalysisQL extends GraphQLResponse {
 
     private Project[] collection;
 

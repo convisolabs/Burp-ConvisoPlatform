@@ -2,15 +2,15 @@ package services;
 
 import burp.*;
 import models.services_manager.ServicesManager;
-import utilities.Util;
 import com.google.gson.*;
-import http.HttpClient;
-import models.vulnerability.Template;
+import models.vulnerability.template.Template;
+import models.vulnerability.template.TemplateByCompanyIdQL;
+import org.apache.http.auth.AuthenticationException;
 
 import java.util.*;
 
 
-public class TemplateService extends FathersService {
+public class TemplateService extends Service {
     private final ProjectService projectService;
     private Set<Template> allTemplates = new HashSet<>();
 
@@ -24,7 +24,7 @@ public class TemplateService extends FathersService {
 
     public Set<Template> getAllTemplates() {
         if (this.alreadyLoaded && (this.lastRequestTime == null || (System.currentTimeMillis() - this.lastRequestTime.getTimeInMillis()) > 30000)) {
-            this.projectService.verifyAllocatedProjects();
+            this.projectService.getAllocatedProjects();
             this.allTemplates = new HashSet<>();
             this.getAllTemplatesByScopeIds();
         } else {
@@ -40,34 +40,51 @@ public class TemplateService extends FathersService {
 
     /* Buscar os templates da API */
     private void getAllVulnerabilitiesModelsFromApi(Integer scopeId) {
-        Template[] templatesArray;
-        HttpClient httpClient = new HttpClient(this.callbacks, this.helpers);
-
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("per_page", "1000");
-        String httpResult = httpClient.get("v3/company/" + scopeId + "/vulnerability_templates", parameters);
-        IResponseInfo responseCleaned = helpers.analyzeResponse(helpers.stringToBytes(httpResult));
-        String jsonResponse = httpResult.substring(responseCleaned.getBodyOffset());
+        int actualPage = 1;
+        int limit = 1000;
+        String query = "query{ vulnerabilitiesTemplatesByCompanyId(id: " + scopeId + ", page: " + actualPage + ", limit: " + limit + "){ collection{  id title     description reference solution impact probability notification impactResume deletedAt}}}";
+        String content = null;
         try {
-            templatesArray = new Gson().fromJson(jsonResponse, Template[].class);
-            this.sanitizeTemplates(templatesArray);
-            util.sendStdout("[Re]Loaded templates from API. Scope Id: " + scopeId);
-            this.allTemplates.addAll(Arrays.asList(templatesArray));
+            GraphQLService graphQLService = this.servicesManager.getGraphQLService();
+            content = graphQLService.executeQuery(query);
+            Gson gson = new Gson();
+            TemplateByCompanyIdQL templateByCompanyIdQL =
+                    gson.fromJson(((JsonObject) (gson.fromJson(content, JsonObject.class)).get("data")).get("vulnerabilitiesTemplatesByCompanyId"), TemplateByCompanyIdQL.class);
+            templateByCompanyIdQL.sanitizeTemplates();
+            System.out.println(Arrays.toString(templateByCompanyIdQL.getCollection()));
+            this.allTemplates.addAll(Arrays.asList(templateByCompanyIdQL.getCollection()));
             this.saveTemplatesLocally();
-            this.lastRequestTime = Calendar.getInstance();
-        } catch (com.google.gson.JsonSyntaxException e) {
-            util.sendStderr(jsonResponse);
+            util.sendStdout("[Re]Loaded templates from API. Scope Id: " + scopeId);
+            System.out.println();
+        } catch (AuthenticationException e) {
+            util.sendStderr("Invalid API KEY.");
         } catch (Exception e) {
-            util.sendStderr("Error loading templates.");
+            e.printStackTrace();
+            util.sendStderr(content);
+            util.sendStderr("Error loading projects.");
         }
+//   Template[] templatesArray;
+////   HttpClient httpClient = new HttpClient(this.callbacks, this.helpers);
+////
+////   Map<String, String> parameters = new HashMap<>();
+////   parameters.put("per_page", "1000");
+////   String httpResult = httpClient.get("v3/company/" + scopeId + "/vulnerability_templates", parameters);
+////   IResponseInfo responseCleaned = helpers.analyzeResponse(helpers.stringToBytes(httpResult));
+////   String jsonResponse = httpResult.substring(responseCleaned.getBodyOffset());
+////   try {
+////  templatesArray = new Gson().fromJson(jsonResponse, Template[].class);
+////  this.sanitizeTemplates(templatesArray);
+////  util.sendStdout("[Re]Loaded templates from API. Scope Id: " + scopeId);
+////  this.allTemplates.addAll(Arrays.asList(templatesArray));
+////  this.saveTemplatesLocally();
+////  this.lastRequestTime = Calendar.getInstance();
+////   } catch (com.google.gson.JsonSyntaxException e) {
+////  util.sendStderr(jsonResponse);
+////   } catch (Exception e) {
+////  util.sendStderr("Error loading templates.");
+////   }
     }
 
-
-    private synchronized void sanitizeTemplates(Template[] templatesToSanitize) {
-        for (Template t : templatesToSanitize) {
-            t.sanitizeTemplate();
-        }
-    }
 
     private synchronized void removeDeletedTemplates() {
         allTemplates.removeIf(t -> t.getDeleted_at() != null);
@@ -104,6 +121,7 @@ public class TemplateService extends FathersService {
 
     private void getAllTemplatesByScopeIds() {
         ArrayList<Thread> threadArrayList = new ArrayList<>();
+        this.allTemplates = new HashSet<>();
         for (Integer i :
                 projectService.getScopeIdsOfProjects()) {
             Thread t = new Thread(() -> getAllVulnerabilitiesModelsFromApi(i));

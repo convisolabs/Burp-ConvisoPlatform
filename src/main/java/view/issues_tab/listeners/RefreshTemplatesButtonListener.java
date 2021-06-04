@@ -1,11 +1,11 @@
-package view.new_vulnerability.listeners;
+package view.issues_tab.listeners;
 
 
 
 import models.auto_filter_combobox.AutoFilterComboboxModel;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
-import models.vulnerability.Template;
+import models.vulnerability.template.Template;
 import services.TemplateService;
 
 import javax.swing.*;

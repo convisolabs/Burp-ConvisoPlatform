@@ -7,7 +7,7 @@ import utilities.Util;
 
 import java.util.Calendar;
 
-public class FathersService {
+public class Service {
 
     protected IBurpExtenderCallbacks callbacks;
     protected IExtensionHelpers helpers;
@@ -16,10 +16,14 @@ public class FathersService {
     protected Calendar lastRequestTime;
     protected ServicesManager servicesManager;
 
-    public FathersService(IBurpExtenderCallbacks callbacks, IExtensionHelpers helpers, ServicesManager servicesManager) {
+    public Service(IBurpExtenderCallbacks callbacks, IExtensionHelpers helpers, ServicesManager servicesManager) {
         this.callbacks = callbacks;
         this.helpers = helpers;
         this.util = new Util(this.callbacks, this.helpers);
         this.servicesManager = servicesManager;
+    }
+
+    public void setLastRequest() {
+        this.lastRequestTime = Calendar.getInstance();
     }
 }

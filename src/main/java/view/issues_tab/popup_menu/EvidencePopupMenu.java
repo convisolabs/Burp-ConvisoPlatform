@@ -1,8 +1,8 @@
-package view.new_vulnerability.custom.popup_menu;
+package view.issues_tab.popup_menu;
 
 import models.vulnerability.Evidence;
 import utilities.Util;
-import view.new_vulnerability.NewIssueTab;
+import view.issues_tab.NewIssueTab;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;

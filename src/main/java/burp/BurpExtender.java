@@ -51,8 +51,8 @@ public class BurpExtender implements IBurpExtender {
          * Cria a opção no menu do botão direito, tambem conhecido como contextmenu
          */
 
-        this.contextMenuOption = new ContextMenuOption(this.callbacks, this.helpers, tabsManager.getNewVulnerabilityTab());
-        this.callbacks.registerContextMenuFactory(this.contextMenuOption);
+//        this.contextMenuOption = new ContextMenuOption(this.callbacks, this.helpers, tabsManager.getNewVulnerabilityTab());
+//        this.callbacks.registerContextMenuFactory(this.contextMenuOption);
 
 
         new Util(this.callbacks).sendStdout("Extension loaded");

@@ -6,10 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jdk.jfr.ContentType;
 import models.vulnerability.Vulnerability;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.StatusLine;
+import org.apache.http.*;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -34,9 +31,10 @@ public class HttpClient {
     //https://api.convisoappsec.com/
 
 //    private static final String CONVISO_API_HOST = "app.conviso.com.br";
-    private static final String CONVISO_API_HOST = "homologa.conviso.com.br";
+    private static String CONVISO_API_HOST = "homologa.conviso.com.br";
     private static final String CONVISO_API_PATH = "/graphql";
     private static final String FLOW_API_KEY = "FLOW.API.KEY";
+    private static final String FLOW_ENDPOINT_URL = "FLOW.ENDPOINT.URL";
     private static String flowApiKey;
     private static final String userAgent = "AppSecFlow-BurpExtender/1.4-develop";
 
@@ -49,6 +47,7 @@ public class HttpClient {
         this.helpers = helpers;
         this.util = new Util(callbacks, helpers);
         flowApiKey = callbacks.loadExtensionSetting(FLOW_API_KEY);
+        CONVISO_API_HOST = (callbacks.loadExtensionSetting(FLOW_ENDPOINT_URL) == null || callbacks.loadExtensionSetting(FLOW_ENDPOINT_URL).equals("")) ? "app.conviso.com.br" : callbacks.loadExtensionSetting(FLOW_ENDPOINT_URL);
     }
 
     public String get(String sufixPath) {
@@ -129,36 +128,27 @@ public class HttpClient {
 
     }
 
-    public Boolean testApiKey(){
-        String response = this.get("v2/running_analyses_by_api_key");
-        IResponseInfo responseInfo = this.helpers.analyzeResponse(response.getBytes());
-        if( responseInfo.getStatusCode() == 200){
-            this.util.sendStdout("API Key OK!");
-            return true;
-        }else{
-            this.util.sendStderr("API Key NOT OK!");
-            this.util.sendStderr("Status code: "+responseInfo.getStatusCode());
-            this.util.sendStderr(response.substring(responseInfo.getBodyOffset()));
-            return false;
-        }
-    }
 
-    public IResponseInfo postMultiForm(String suffixPath, HttpEntity httpMultipartEntity){
-
+    public IResponseInfo postMultiForm(HttpEntity httpMultipartEntity){
         try {
 
             CloseableHttpClient httpClient = HttpClients.createDefault();
-            HttpPost httpPost = new HttpPost("https://"+CONVISO_API_HOST+CONVISO_API_PATH+suffixPath);
+            HttpPost httpPost = new HttpPost("https://"+CONVISO_API_HOST+CONVISO_API_PATH);
 
-            /*HttpHost proxy = new HttpHost("127.0.0.1", 8080, "http");
+            HttpHost proxy = new HttpHost("127.0.0.1", 8080, "http");
             RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
-            httpPost.setConfig(config);*/
+            httpPost.setConfig(config);
 
 
             httpPost.setHeader("User-Agent", userAgent);
             httpPost.setHeader("x-api-key", flowApiKey);
             httpPost.setEntity(httpMultipartEntity);
-            CloseableHttpResponse response = httpClient.execute(httpPost);
+            HttpResponse response = httpClient.execute(httpPost);
+            String responseXml = EntityUtils.toString(response.getEntity());
+            System.out.println("####");
+            System.out.println(responseXml);
+            System.out.println("####");
+            EntityUtils.consume(response.getEntity());
 //            String content = EntityUtils.toString(response.getEntity());
 //            System.out.println(content);
 

@@ -4,6 +4,7 @@ import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import models.project.Project;
 import models.services_manager.ServicesManager;
 import services.ProjectService;
 import view.FathersComponentTab;
@@ -31,6 +32,7 @@ public class AllocatedProjectsTab extends FathersComponentTab {
     public AllocatedProjectsTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
         super(callbacks, helpers, servicesManager);
         this.projectService = super.servicesManager.getProjectService();
+
     }
 
     public void initializeComponent() {
@@ -44,18 +46,25 @@ public class AllocatedProjectsTab extends FathersComponentTab {
                     return;
                 }
 
-//                new Thread(() -> {
-//                    btnLoadProjects.setEnabled(false);
-//                    projectService.verifyAllocatedProjects();
-//                    tblAllocatedProjectsModel.setRowCount(0);
-//                    for (Project p :
-////                            projectService.getAllocatedProjects()) {
-//                        tblAllocatedProjectsModel.addRow(new Object[]{p.getId(), p.getLabel(), p.getEnd_date()});
-//                    }
-//                    btnLoadProjects.setText("Reload");
-//                    btnLoadProjects.setEnabled(true);
-//                }).start();
+                new Thread(() -> {
+                    btnLoadProjects.setEnabled(false);
+                    tblAllocatedProjectsModel.setRowCount(0);
+                    for (Project p :
+                            projectService.getAllocatedProjects()) {
+                        System.out.println(p.getLabel());
+                        tblAllocatedProjectsModel.addRow(new Object[]{p.getId(), p.getLabel(), p.getEnd_date()});
+                    }
+                    btnLoadProjects.setText("Reload");
+                    btnLoadProjects.setEnabled(true);
+                }).start();
 
+            }
+        });
+
+        defineButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                projectService.setWorkingProject((Integer) tblAllocatedProjects.getValueAt(tblAllocatedProjects.getSelectedRow(), 0));
             }
         });
     }

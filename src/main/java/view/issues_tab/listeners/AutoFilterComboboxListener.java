@@ -1,4 +1,4 @@
-package view.new_vulnerability.listeners;
+package view.issues_tab.listeners;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;

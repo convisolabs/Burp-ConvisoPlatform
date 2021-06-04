@@ -3,6 +3,7 @@ package view;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import models.services_manager.ServicesManager;
+import models.tabs_manager.TabsManager;
 import utilities.Util;
 
 import javax.swing.*;
@@ -21,8 +22,9 @@ public abstract class FathersComponentTab {
     protected IBurpExtenderCallbacks callbacks;
     protected IExtensionHelpers helpers;
     protected Util util;
-    protected Component ro;
+    protected Component rootObject;
     protected final ServicesManager servicesManager;
+    protected TabsManager tabsManager = null;
 
     public FathersComponentTab(IBurpExtenderCallbacks callbacks, IExtensionHelpers helpers, ServicesManager servicesManager) {
         this.callbacks = callbacks;
@@ -31,6 +33,13 @@ public abstract class FathersComponentTab {
         this.servicesManager = servicesManager;
     }
 
+    public FathersComponentTab(IBurpExtenderCallbacks callbacks, IExtensionHelpers helpers, ServicesManager servicesManager, TabsManager tabsManager) {
+        this.callbacks = callbacks;
+        this.helpers = helpers;
+        this.util = new Util(this.callbacks, this.helpers);
+        this.servicesManager = servicesManager;
+        this.tabsManager = tabsManager;
+    }
 
     protected void setDefaultColors(JLabel jLabel) {
         this.defaultLblColor = jLabel.getForeground();
@@ -57,9 +66,9 @@ public abstract class FathersComponentTab {
     }
 
     public void setRootPanel(Component rootPanel) {
-        this.ro = rootPanel;
-        this.setDarkBackgroundChecker(this.ro);
-        this.addChangeColorEventListener(this.ro);
+        this.rootObject = rootPanel;
+        this.setDarkBackgroundChecker(this.rootObject);
+        this.addChangeColorEventListener(this.rootObject);
     }
 
     protected void addLblBoldListener(Component component){

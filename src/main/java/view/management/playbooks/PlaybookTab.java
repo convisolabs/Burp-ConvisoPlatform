@@ -5,6 +5,7 @@ import burp.IExtensionHelpers;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import models.services_manager.ServicesManager;
+import models.tabs_manager.TabsManager;
 import view.FathersComponentTab;
 
 import javax.swing.*;

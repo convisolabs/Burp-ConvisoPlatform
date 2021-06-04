@@ -3,7 +3,7 @@ package view.context_menu;
 import burp.*;
 import utilities.Util;
 import view.context_menu.listeners.ContextMenuActionListener;
-import view.new_vulnerability.NewIssueTab;
+import view.issues_tab.NewIssueTab;
 
 import javax.swing.*;
 import java.util.ArrayList;

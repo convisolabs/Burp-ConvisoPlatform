@@ -2,17 +2,15 @@ package utilities;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
-import burp.IHttpRequestResponse;
-import burp.IRequestInfo;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
@@ -66,6 +64,12 @@ public class Util {
         for (int i = 0; i < 10; i++) {
             System.out.println("################################################");
         }
+    }
+
+    public String getDomainName(String url) throws URISyntaxException {
+        URI uri = new URI(url);
+        String domain = uri.getHost();
+        return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
 
 
