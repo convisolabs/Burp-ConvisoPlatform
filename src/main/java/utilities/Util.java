@@ -2,6 +2,8 @@ package utilities;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.awt.*;
 import java.io.File;
@@ -44,11 +46,6 @@ public class Util {
         stderr.close();
     }
 
-    public String stringToOtherCharset(String toChange){
-        byte[] ptext = toChange.getBytes(ISO_8859_1);
-        return new String(ptext, UTF_8);
-    }
-
     public static String removeSpecialCharacters(String str) {
         return str.replace('Á', 'A').replace('À', 'A').replace('Â', 'A').replace('Ä', 'A').replace('Ã', 'A').replace('É', 'E')
                 .replace('È', 'E').replace('Ê', 'E').replace('Ë', 'A').replace('Í', 'I').replace('Ì', 'I').replace('Î', 'I')
@@ -72,20 +69,14 @@ public class Util {
         return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
 
-
-    public String difference(String str1, String str2) {
-        int index = str1.lastIndexOf(str2);
-        if (index > -1) {
-            return str1.substring(str2.length());
-        }
-        return str1;
-    }
-
-    public boolean isColorDark(Color color){
+    public static boolean isColorDark(Color color){
         double darkness = 1-((0.299* color.getRed()) + (0.587*color.getGreen())+ (0.114*color.getBlue()))/255;
         return !(darkness < 0.5); // It's a light color
     }
 
+    public static String jsonSafeString(String payload){
+        return payload.replace("\n", "\\\\\n").replace("\"", "\\\\\\\"");
+    }
 
 
     public File createTempFile(String archiveName, String content){

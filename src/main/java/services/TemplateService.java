@@ -1,6 +1,7 @@
 package services;
 
 import burp.*;
+import models.graphql.GraphQLResponse;
 import models.services_manager.ServicesManager;
 import com.google.gson.*;
 import models.vulnerability.template.Template;
@@ -48,14 +49,13 @@ public class TemplateService extends Service {
             GraphQLService graphQLService = this.servicesManager.getGraphQLService();
             content = graphQLService.executeQuery(query);
             Gson gson = new Gson();
-            TemplateByCompanyIdQL templateByCompanyIdQL =
-                    gson.fromJson(((JsonObject) (gson.fromJson(content, JsonObject.class)).get("data")).get("vulnerabilitiesTemplatesByCompanyId"), TemplateByCompanyIdQL.class);
+            GraphQLResponse graphQLResponse = new GraphQLResponse(content);
+            TemplateByCompanyIdQL templateByCompanyIdQL = new Gson().fromJson(graphQLResponse.getContentOfData("vulnerabilitiesTemplatesByCompanyId"), TemplateByCompanyIdQL.class);
+//                    gson.fromJson(((JsonObject) (gson.fromJson(content, JsonObject.class)).get("data")).get("vulnerabilitiesTemplatesByCompanyId"), TemplateByCompanyIdQL.class);
             templateByCompanyIdQL.sanitizeTemplates();
-            System.out.println(Arrays.toString(templateByCompanyIdQL.getCollection()));
             this.allTemplates.addAll(Arrays.asList(templateByCompanyIdQL.getCollection()));
             this.saveTemplatesLocally();
             util.sendStdout("[Re]Loaded templates from API. Scope Id: " + scopeId);
-            System.out.println();
         } catch (AuthenticationException e) {
             util.sendStderr("Invalid API KEY.");
         } catch (Exception e) {

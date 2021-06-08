@@ -129,7 +129,7 @@ public class HttpClient {
     }
 
 
-    public IResponseInfo postMultiForm(HttpEntity httpMultipartEntity){
+    public HttpResponse postMultiForm(HttpEntity httpMultipartEntity){
         try {
 
             CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -144,51 +144,7 @@ public class HttpClient {
             httpPost.setHeader("x-api-key", flowApiKey);
             httpPost.setEntity(httpMultipartEntity);
             HttpResponse response = httpClient.execute(httpPost);
-            String responseXml = EntityUtils.toString(response.getEntity());
-            System.out.println("####");
-            System.out.println(responseXml);
-            System.out.println("####");
-            EntityUtils.consume(response.getEntity());
-//            String content = EntityUtils.toString(response.getEntity());
-//            System.out.println(content);
-
-            return new IResponseInfo() {
-                @Override
-                public List<String> getHeaders() {
-                    List<String> headersToReturn = new ArrayList<>();
-                    for (Header h :
-                            response.getAllHeaders()) {
-                        headersToReturn.add(h.toString());
-                    }
-                    return headersToReturn;
-
-                }
-
-                @Override
-                public int getBodyOffset() {
-                    return 0;
-                }
-
-                @Override
-                public short getStatusCode() {
-                    return (short) response.getStatusLine().getStatusCode();
-                }
-
-                @Override
-                public List<ICookie> getCookies() {
-                    return null;
-                }
-
-                @Override
-                public String getStatedMimeType() {
-                    return null;
-                }
-
-                @Override
-                public String getInferredMimeType() {
-                    return null;
-                }
-            };
+            return response;
         } catch (IOException e) {
             util.sendStderr("Connection not established");
             return null;

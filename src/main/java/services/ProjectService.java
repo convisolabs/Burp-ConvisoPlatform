@@ -4,6 +4,7 @@ import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import models.graphql.GraphQLResponse;
 import models.project.graphql.AllocatedAnalysisQL;
 import models.project.Project;
 import models.services_manager.ServicesManager;
@@ -31,9 +32,8 @@ public class ProjectService extends Service {
         try {
             GraphQLService graphQLService = this.servicesManager.getGraphQLService();
             String content = graphQLService.executeQuery(query);
-            Gson gson = new Gson();
-            AllocatedAnalysisQL allocatedProjectsQL =
-                    gson.fromJson(((JsonObject) (gson.fromJson(content, JsonObject.class)).get("data")).get("allocatedAnalyses"), AllocatedAnalysisQL.class);
+            GraphQLResponse graphQLResponse = new GraphQLResponse(content);
+            AllocatedAnalysisQL allocatedProjectsQL = new Gson().fromJson(graphQLResponse.getContentOfData("allocatedAnalyses"), AllocatedAnalysisQL.class);
             allocatedProjectsQL.sanitizeProjects();
             this.allocatedProjects = new HashSet<>(Arrays.asList(allocatedProjectsQL.getCollection()));
             this.saveLocalProjects();
@@ -53,13 +53,10 @@ public class ProjectService extends Service {
             this.getAllocatedProjects();
         }
         Set<Integer> scopeIds = new HashSet<>();
-        System.out.println("#######");
         for (Project p :
                 allocatedProjects) {
-            System.out.println(p.getScopeId());
             scopeIds.add(p.getScopeId());
         }
-        System.out.println("#######");
         return scopeIds;
     }
 

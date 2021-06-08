@@ -11,9 +11,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-public class GraphQLMutation extends GraphQLQuery{
+public class GraphQLMutation {
 
-//    public HttpEntity notificationToMultipart() throws FileNotFoundException {
+    protected String query;
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    //    public HttpEntity notificationToMultipart() throws FileNotFoundException {
 //        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 //        builder.addTextBody("vulnerability[project_id]", this.analysisId +"");
 //        builder.addTextBody("vulnerability[vulnerability_model_id]", this.vulnerabilityTemplateId +"");

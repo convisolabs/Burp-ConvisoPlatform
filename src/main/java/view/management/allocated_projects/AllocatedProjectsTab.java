@@ -8,6 +8,7 @@ import models.project.Project;
 import models.services_manager.ServicesManager;
 import services.ProjectService;
 import view.FathersComponentTab;
+import view.management.allocated_projects.cell_renderer.WorkingProjectCellRenderer;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -32,12 +33,24 @@ public class AllocatedProjectsTab extends FathersComponentTab {
     public AllocatedProjectsTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
         super(callbacks, helpers, servicesManager);
         this.projectService = super.servicesManager.getProjectService();
-
     }
 
     public void initializeComponent() {
         $$$setupUI$$$();
         this.initiateAllocatedTableColumns();
+        WorkingProjectCellRenderer workingProjectCellRenderer = new WorkingProjectCellRenderer(this.projectService);
+        this.tblAllocatedProjects.getColumnModel().getColumn(0).setCellRenderer(workingProjectCellRenderer);
+
+        workingProjectCellRenderer.setDefaultForegroundColor(rootPanel.getForeground());
+        workingProjectCellRenderer.setDefaultBackgroundColor(rootPanel.getBackground());
+
+        workingProjectCellRenderer.addPropertyChangeListener(evt -> {
+            if (evt.getPropertyName().equals("foreground")) {
+                workingProjectCellRenderer.setDefaultForegroundColor(rootPanel.getForeground());
+                workingProjectCellRenderer.setDefaultBackgroundColor(rootPanel.getBackground());
+            }
+        });
+
 
         btnLoadProjects.addMouseListener(new MouseAdapter() {
             @Override
@@ -51,7 +64,6 @@ public class AllocatedProjectsTab extends FathersComponentTab {
                     tblAllocatedProjectsModel.setRowCount(0);
                     for (Project p :
                             projectService.getAllocatedProjects()) {
-                        System.out.println(p.getLabel());
                         tblAllocatedProjectsModel.addRow(new Object[]{p.getId(), p.getLabel(), p.getEnd_date()});
                     }
                     btnLoadProjects.setText("Reload");

@@ -1,11 +1,13 @@
 package models.project.graphql;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import models.graphql.GraphQLResponse;
 import models.project.Project;
 
 import java.util.Arrays;
 
-public class AllocatedAnalysisQL extends GraphQLResponse {
+public class AllocatedAnalysisQL {
 
     private Project[] collection;
 
@@ -13,23 +15,11 @@ public class AllocatedAnalysisQL extends GraphQLResponse {
         return collection;
     }
 
-    public void setCollection(Project[] collection) {
-        this.collection = collection;
-    }
-    
     public void sanitizeProjects(){
         for (Project p :
                 collection) {
             p.sanitize();
         }
     }
-
-    @Override
-    public String toString() {
-        return "AllocatedProjectsQL{" +
-                "data=" + data +
-                ", metadata=" + metadata +
-                ", collection=" + Arrays.toString(collection) +
-                '}';
-    }
+    
 }

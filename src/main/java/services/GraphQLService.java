@@ -8,10 +8,12 @@ import http.HttpClient;
 import models.graphql.GraphQLQuery;
 import models.services_manager.ServicesManager;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.client.HttpResponseException;
+import org.apache.http.util.EntityUtils;
 
-import javax.swing.*;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class GraphQLService extends Service {
@@ -21,7 +23,7 @@ public class GraphQLService extends Service {
     }
 
     public Boolean testApiKey() {
-        String query = "query{ allocatedProjects(page: " + 1 + ", limit: " + 1 + "){ collection{} } }";
+        String query = "query{ allocatedProjects(page: " + 1 + ", limit: " + 1 + "){ collection{id} } }";
 
         try {
             this.executeQuery(query);
@@ -50,15 +52,28 @@ public class GraphQLService extends Service {
 
     public String executeQueryMultipart(HttpEntity httpEntity) throws AuthenticationException, HttpResponseException {
         HttpClient httpClient = new HttpClient(this.callbacks, this.helpers);
-        IResponseInfo response = httpClient.postMultiForm(httpEntity);
-        if (response != null) {
-            int statusCode = response.getStatusCode();
-            if (statusCode == 201) {
-                return "";
+        HttpResponse response = httpClient.postMultiForm(httpEntity);
+        String responseContent = null;
+        try {
+            responseContent = EntityUtils.toString(response.getEntity());
+        } catch (IOException exception) {
+            throw new HttpResponseException(response.getStatusLine().getStatusCode(), "Something is wrong with the content!");
+        }
+
+        try {
+            EntityUtils.consume(response.getEntity());
+        } catch (IOException ignored) {
+            System.gc();
+        }
+
+        if (responseContent != null) {
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == 200) {
+                return responseContent;
             } else if (statusCode == 401) {
                 throw new AuthenticationException();
             } else {
-                throw new HttpResponseException(response.getStatusCode(), "");
+                throw new HttpResponseException(response.getStatusLine().getStatusCode(), "");
             }
         } else {
             throw new NullPointerException();

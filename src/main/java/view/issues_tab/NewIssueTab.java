@@ -10,6 +10,7 @@ import models.project.Project;
 import models.services_manager.ServicesManager;
 import models.tabs_manager.TabsManager;
 import models.vulnerability.Evidence;
+import models.vulnerability.graphql.CreatedWebVulnerabilityQL;
 import models.vulnerability.template.Template;
 import models.vulnerability.Vulnerability;
 import org.apache.http.auth.AuthenticationException;
@@ -338,19 +339,24 @@ public class NewIssueTab extends FathersComponentTab {
                         Project workingProject = servicesManager.getProjectService().getWorkingProject();
                         if (workingProject != null) {
                             vulnerability.setAnalysisId(workingProject.getId());
-                                new Thread(() -> {
-                                    btnSubmitForm.setEnabled(false);
-                                    try {
-                                        vulnerabilityService.postVulnerability(vulnerability, NewIssueTab.this);
-                                    } catch (FileNotFoundException fileNotFoundException) {
-                                        JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "File not found!");
-                                    } catch (HttpResponseException httpResponseException) {
-                                        httpResponseException.printStackTrace();
-                                    } catch (AuthenticationException authenticationException) {
-                                        authenticationException.printStackTrace();
+                            new Thread(() -> {
+                                btnSubmitForm.setEnabled(false);
+                                try {
+                                    CreatedWebVulnerabilityQL createWebVulnerabilityResponseQL = vulnerabilityService.postVulnerability(vulnerability);
+                                    if (createWebVulnerabilityResponseQL.getErrors().length == 0) {
+                                        JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "Created!");
+                                    } else {
+                                        JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "Error!\nCheck the errors in extender tab!");
                                     }
-                                    btnSubmitForm.setEnabled(true);
-                                }).start();
+                                } catch (FileNotFoundException fileNotFoundException) {
+                                    JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "File not found!");
+                                } catch (HttpResponseException httpResponseException) {
+                                    JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "Something went wrong!\nCheck errors on extender tab!");
+                                } catch (AuthenticationException authenticationException) {
+                                    JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "Authentication not OK!\nPlease check API KEY!");
+                                }
+                                btnSubmitForm.setEnabled(true);
+                            }).start();
 
 
                         } else {
@@ -375,16 +381,16 @@ public class NewIssueTab extends FathersComponentTab {
         btnPreviewStepsToReproduce.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                previewMarkdownStepsToReproduce = !previewMarkdownStepsToReproduce;
-                previewMarkDownText(previewMarkdownStepsToReproduce, "Steps to Reproduce", txtAreaStepsToReproduce);
+                togglePreviewStepsToReproduce();
             }
         });
 
         btnPreviewDescription.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                previewMarkdownDescription = !previewMarkdownDescription;
-                previewMarkDownText(previewMarkdownDescription, "Description", txtAreaDescription);
+                togglePreviewDescription();
+//                previewMarkdownDescription = !previewMarkdownDescription;
+//                previewMarkDownText(previewMarkdownDescription, "Description", txtAreaDescription);
             }
         });
 
@@ -536,19 +542,20 @@ public class NewIssueTab extends FathersComponentTab {
 
     private void setBoldTitleTab(JTabbedPane tabbedPane) {
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {
-            if (tabbedPane.getTitleAt(i).contains("style=\"color:red\"") || tabbedPane.getTitleAt(i).contains("style=\"color:orange\"")) {
+            String tabTitle = tabbedPane.getTitleAt(i);
+            if (tabTitle.contains("style=\"color:red\"") || tabTitle.contains("style=\"color:orange\"")) {
                 if (i == tabbedPane.getSelectedIndex()) {
                     if (this.isDarkBackground) {
-                        tabbedPane.setTitleAt(i, String.format(defaultRequiredSelectedTabTitle, this.cleanTabTitle(tabbedPane.getTitleAt(i))));
-                    } else {
                         tabbedPane.setTitleAt(i, String.format(defaultRequiredSelectedTabTitleDarkBackground, this.cleanTabTitle(tabbedPane.getTitleAt(i))));
+                    } else {
+                        tabbedPane.setTitleAt(i, String.format(defaultRequiredSelectedTabTitle, this.cleanTabTitle(tabbedPane.getTitleAt(i))));
                     }
 
                 } else {
                     if (this.isDarkBackground) {
-                        tabbedPane.setTitleAt(i, String.format(defaultRequiredTabTitle, this.cleanTabTitle(tabbedPane.getTitleAt(i))));
-                    } else {
                         tabbedPane.setTitleAt(i, String.format(defaultRequiredTabTitleDarkBackground, this.cleanTabTitle(tabbedPane.getTitleAt(i))));
+                    } else {
+                        tabbedPane.setTitleAt(i, String.format(defaultRequiredTabTitle, this.cleanTabTitle(tabbedPane.getTitleAt(i))));
                     }
                 }
             } else {
@@ -675,11 +682,14 @@ public class NewIssueTab extends FathersComponentTab {
     private String getDescription() {
         if (txtAreaDescription.getText().isEmpty()) {
             this.setRequiredTitleTab(tabDescriptionImpactSteps, "Description");
-            return null;
+            return null; // to break the flow above
         } else {
             this.removeRequiredTitleTab(tabDescriptionImpactSteps, "Description");
+            if (this.previewMarkdownDescription) {
+                togglePreviewDescription();
+            }
             Node document = parser.parse(txtAreaDescription.getText().replaceAll("\\r?\\n", "</p><p>"));
-            return renderer.render(document);
+            return renderer.render(document).replace("\n", "");
         }
     }
 
@@ -699,8 +709,12 @@ public class NewIssueTab extends FathersComponentTab {
             return null;
         } else {
             this.removeRequiredTitleTab(tabDescriptionImpactSteps, "Steps to reproduce");
+            if (this.previewMarkdownStepsToReproduce) {
+                togglePreviewDescription();
+            }
             Node document = parser.parse(txtAreaStepsToReproduce.getText().replaceAll("\\r?\\n", "</p><p>"));
-            return renderer.render(document);
+            return renderer.render(document).replace("\n", "");
+
         }
     }
 
@@ -799,7 +813,7 @@ public class NewIssueTab extends FathersComponentTab {
     private String getParameterListAsString() {
         StringBuilder toReturn = new StringBuilder();
         for (int i = 0; i < parametersListModel.getSize(); i++) {
-            toReturn.append(parametersListModel.get(i)).append("\n");
+            toReturn.append(parametersListModel.get(i)).append("\\\\\n");
         }
         return toReturn.toString().trim();
     }
@@ -1027,6 +1041,16 @@ public class NewIssueTab extends FathersComponentTab {
         }
 
 
+    }
+
+    private void togglePreviewDescription() {
+        this.previewMarkdownDescription = !previewMarkdownDescription;
+        previewMarkDownText(previewMarkdownDescription, "Description", txtAreaDescription);
+    }
+
+    private void togglePreviewStepsToReproduce() {
+        previewMarkdownStepsToReproduce = !previewMarkdownStepsToReproduce;
+        previewMarkDownText(previewMarkdownStepsToReproduce, "Steps to Reproduce", txtAreaStepsToReproduce);
     }
 
     public DefaultListModel<Evidence> getEvidenceListModel() {
