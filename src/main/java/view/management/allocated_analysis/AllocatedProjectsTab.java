@@ -1,4 +1,4 @@
-package view.management.allocated_projects;
+package view.management.allocated_analysis;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
@@ -8,7 +8,7 @@ import models.project.Project;
 import models.services_manager.ServicesManager;
 import services.ProjectService;
 import view.FathersComponentTab;
-import view.management.allocated_projects.cell_renderer.WorkingProjectCellRenderer;
+import view.management.allocated_analysis.cell_renderer.WorkingProjectCellRenderer;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -27,27 +27,27 @@ public class AllocatedProjectsTab extends FathersComponentTab {
     private JButton defineButton;
     private JButton btnLoadProjects;
     private ProjectService projectService;
+    private WorkingProjectCellRenderer workingProjectCellRenderer;
     private DefaultTableModel tblAllocatedProjectsModel;
 
 
     public AllocatedProjectsTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
         super(callbacks, helpers, servicesManager);
-        this.projectService = super.servicesManager.getProjectService();
     }
 
     public void initializeComponent() {
         $$$setupUI$$$();
+        this.projectService = this.servicesManager.getProjectService();
         this.initiateAllocatedTableColumns();
-        WorkingProjectCellRenderer workingProjectCellRenderer = new WorkingProjectCellRenderer(this.projectService);
-        this.tblAllocatedProjects.getColumnModel().getColumn(0).setCellRenderer(workingProjectCellRenderer);
 
-        workingProjectCellRenderer.setDefaultForegroundColor(rootPanel.getForeground());
-        workingProjectCellRenderer.setDefaultBackgroundColor(rootPanel.getBackground());
 
         workingProjectCellRenderer.addPropertyChangeListener(evt -> {
             if (evt.getPropertyName().equals("foreground")) {
-                workingProjectCellRenderer.setDefaultForegroundColor(rootPanel.getForeground());
-                workingProjectCellRenderer.setDefaultBackgroundColor(rootPanel.getBackground());
+                workingProjectCellRenderer.setDefaultForegroundColor(workingProjectCellRenderer.getForeground());
+
+                if (btnLoadProjects.isEnabled()) {
+                    btnLoadProjects.doClick();
+                }
             }
         });
 
@@ -64,7 +64,7 @@ public class AllocatedProjectsTab extends FathersComponentTab {
                     tblAllocatedProjectsModel.setRowCount(0);
                     for (Project p :
                             projectService.getAllocatedProjects()) {
-                        tblAllocatedProjectsModel.addRow(new Object[]{p.getId(), p.getLabel(), p.getEnd_date()});
+                        tblAllocatedProjectsModel.addRow(new Object[]{p.getId(), p.getLabel(), p.getPrettyDueDate()});
                     }
                     btnLoadProjects.setText("Reload");
                     btnLoadProjects.setEnabled(true);
@@ -76,9 +76,14 @@ public class AllocatedProjectsTab extends FathersComponentTab {
         defineButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                projectService.setWorkingProject((Integer) tblAllocatedProjects.getValueAt(tblAllocatedProjects.getSelectedRow(), 0));
+                System.out.println("SELECTED ID: " + (int) tblAllocatedProjects.getValueAt(tblAllocatedProjects.getSelectedRow(), 0));
+                projectService.setWorkingProject((int) tblAllocatedProjects.getValueAt(tblAllocatedProjects.getSelectedRow(), 0));
             }
         });
+
+        SwingUtilities.invokeLater(() ->
+                this.projectService.getReadyForView()
+        );
     }
 
 
@@ -88,11 +93,18 @@ public class AllocatedProjectsTab extends FathersComponentTab {
         this.tblAllocatedProjectsModel.setColumnIdentifiers(columnsHeaders);
         this.tblAllocatedProjects.setModel(this.tblAllocatedProjectsModel);
 
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        for (int i = 0; i < tblAllocatedProjects.getColumnModel().getColumnCount(); i++) {
-            tblAllocatedProjects.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+
+        this.workingProjectCellRenderer = new WorkingProjectCellRenderer(this.projectService);
+        for (int i = 0; i < tblAllocatedProjects.getColumnCount(); i++) {
+            this.tblAllocatedProjects.getColumnModel().getColumn(i).setCellRenderer(workingProjectCellRenderer);
         }
+        this.workingProjectCellRenderer.setDefaultForegroundColor(rootPanel.getForeground());
+
+//        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+//        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+//        for (int i = 0; i < tblAllocatedProjects.getColumnModel().getColumnCount(); i++) {
+//            tblAllocatedProjects.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+//        }
 
 
     }
@@ -115,7 +127,7 @@ public class AllocatedProjectsTab extends FathersComponentTab {
         rootPanel = new JPanel();
         rootPanel.setLayout(new FormLayout("fill:d:grow", "center:d:noGrow,top:4dlu:noGrow,center:d:grow"));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new FormLayout("fill:37px:noGrow,left:4dlu:noGrow,fill:481px:grow,left:83dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:90px:noGrow,top:4dlu:noGrow,center:27px:noGrow,top:4dlu:noGrow,fill:194px:noGrow"));
+        panel1.setLayout(new FormLayout("fill:37px:noGrow,left:4dlu:noGrow,fill:481px:grow,left:83dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:90px:noGrow,top:4dlu:noGrow,center:27px:noGrow,top:4dlu:noGrow,fill:194px:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
         CellConstraints cc = new CellConstraints();
         rootPanel.add(panel1, cc.xywh(1, 1, 1, 3));
         final JLabel label1 = new JLabel();
@@ -139,6 +151,9 @@ public class AllocatedProjectsTab extends FathersComponentTab {
         btnLoadProjects = new JButton();
         btnLoadProjects.setText("Load");
         panel2.add(btnLoadProjects, cc.xy(3, 3, CellConstraints.DEFAULT, CellConstraints.TOP));
+        final JPanel panel3 = new JPanel();
+        panel3.setLayout(new FormLayout("fill:d:grow", "center:d:grow"));
+        panel1.add(panel3, cc.xy(3, 7));
     }
 
     /**

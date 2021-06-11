@@ -49,8 +49,8 @@ public class ConfigurationTab extends FathersComponentTab {
         // DO NOT EDIT OR ADD ANY CODE HERE!
         $$$setupUI$$$();
 
-        this.setTxtFlowApiKey(callbacks);
-        this.setTxtProjectId(callbacks);
+        this.setTxtFlowApiKey();
+        this.setTxtProjectId();
 
         this.setRootPanel(rootPanel);
         this.setDefaultColors(btnApiKey);
@@ -120,15 +120,15 @@ public class ConfigurationTab extends FathersComponentTab {
         });
     }
 
-    private void setTxtFlowApiKey(IBurpExtenderCallbacks callbacks) { // Definir a key no txtField
-        String API_KEY = callbacks.loadExtensionSetting(FLOW_API_KEY);
+    private void setTxtFlowApiKey() { // Definir a key no txtField
+        String API_KEY = this.callbacks.loadExtensionSetting(FLOW_API_KEY);
         if (API_KEY != null) {
             txtFlowApiKey.setText(API_KEY);
         }
     }
 
-    private void setTxtProjectId(IBurpExtenderCallbacks callbacks) { // Definir a key no txtField
-        String flowEndpointUrl = callbacks.loadExtensionSetting(FLOW_ENDPOINT_URL);
+    private void setTxtProjectId() { // Definir a key no txtField
+        String flowEndpointUrl = this.callbacks.loadExtensionSetting(FLOW_ENDPOINT_URL);
         if (flowEndpointUrl != null) {
             txtEndpoint.setText(flowEndpointUrl);
         } else {

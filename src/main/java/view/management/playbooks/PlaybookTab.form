@@ -39,7 +39,9 @@
             <constraints>
               <tabbedpane title="In progress"/>
             </constraints>
-            <properties/>
+            <properties>
+              <font style="1"/>
+            </properties>
             <border type="none"/>
             <children>
               <scrollpane id="18f96">
@@ -64,7 +66,9 @@
             <constraints>
               <tabbedpane title="Not started"/>
             </constraints>
-            <properties/>
+            <properties>
+              <font style="1"/>
+            </properties>
             <border type="none"/>
             <children>
               <scrollpane id="8eeab">
@@ -89,7 +93,9 @@
             <constraints>
               <tabbedpane title="Done"/>
             </constraints>
-            <properties/>
+            <properties>
+              <font style="1"/>
+            </properties>
             <border type="none"/>
             <children>
               <scrollpane id="70ef7">

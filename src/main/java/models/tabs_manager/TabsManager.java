@@ -6,8 +6,8 @@ import burp.ITab;
 import models.services_manager.ServicesManager;
 import utilities.Util;
 import view.config.ConfigurationTab;
-import view.issues_tab.ClosablePane;
-import view.management.allocated_projects.AllocatedProjectsTab;
+import view.issues_tab.closable_pane.ClosablePane;
+import view.management.allocated_analysis.AllocatedProjectsTab;
 import view.management.playbooks.PlaybookTab;
 import view.issues_tab.NewIssueTab;
 
@@ -121,7 +121,7 @@ public class TabsManager implements ITab {
 
     }
 
-    public void verifyApiKey() {
+    public void verifyIfApiKeyIsSet() {
         if (callbacks.loadExtensionSetting(FLOW_API_KEY) == null || callbacks.loadExtensionSetting(FLOW_API_KEY).isEmpty()) {
             this.rootTab.setSelectedIndex(CONFIG_INDEX);
         }

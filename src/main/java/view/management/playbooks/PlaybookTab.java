@@ -90,6 +90,8 @@ public class PlaybookTab extends FathersComponentTab {
         rootPanel.add(tabbedPane1, cc.xywh(3, 5, 1, 5));
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new FormLayout("fill:481px:grow", "fill:240px:grow"));
+        Font panel1Font = this.$$$getFont$$$(null, Font.BOLD, -1, panel1.getFont());
+        if (panel1Font != null) panel1.setFont(panel1Font);
         tabbedPane1.addTab("In progress", panel1);
         final JScrollPane scrollPane1 = new JScrollPane();
         panel1.add(scrollPane1, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
@@ -98,6 +100,8 @@ public class PlaybookTab extends FathersComponentTab {
         scrollPane1.setViewportView(tblInProgressPlaybooks);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new FormLayout("fill:481px:grow", "fill:194px:grow"));
+        Font panel2Font = this.$$$getFont$$$(null, Font.BOLD, -1, panel2.getFont());
+        if (panel2Font != null) panel2.setFont(panel2Font);
         tabbedPane1.addTab("Not started", panel2);
         final JScrollPane scrollPane2 = new JScrollPane();
         panel2.add(scrollPane2, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
@@ -106,6 +110,8 @@ public class PlaybookTab extends FathersComponentTab {
         scrollPane2.setViewportView(tblNotStartedPlaybooks);
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new FormLayout("fill:481px:grow", "fill:194px:grow"));
+        Font panel3Font = this.$$$getFont$$$(null, Font.BOLD, -1, panel3.getFont());
+        if (panel3Font != null) panel3.setFont(panel3Font);
         tabbedPane1.addTab("Done", panel3);
         final JScrollPane scrollPane3 = new JScrollPane();
         panel3.add(scrollPane3, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));

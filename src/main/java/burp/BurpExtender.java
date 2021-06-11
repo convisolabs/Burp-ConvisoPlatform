@@ -43,7 +43,8 @@ public class BurpExtender implements IBurpExtender {
 //            tabsManager.addTab("Playbooks", playbookTab.$$$getRootComponent$$$());
             callbacks.addSuiteTab(tabsManager);
 
-            tabsManager.verifyApiKey();
+            tabsManager.verifyIfApiKeyIsSet();
+
         });
 
 

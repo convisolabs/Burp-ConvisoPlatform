@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="view.management.allocated_projects.AllocatedProjectsTab">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="view.management.allocated_analysis.AllocatedProjectsTab">
   <grid id="27dc6" binding="rootPanel" layout-manager="FormLayout">
     <rowspec value="center:d:noGrow"/>
     <rowspec value="top:4dlu:noGrow"/>
@@ -17,6 +17,8 @@
         <rowspec value="center:27px:noGrow"/>
         <rowspec value="top:4dlu:noGrow"/>
         <rowspec value="fill:194px:noGrow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:max(d;4px):noGrow"/>
         <colspec value="fill:37px:noGrow"/>
         <colspec value="left:4dlu:noGrow"/>
         <colspec value="fill:481px:grow"/>
@@ -91,6 +93,17 @@
                 </properties>
               </component>
             </children>
+          </grid>
+          <grid id="9980d" layout-manager="FormLayout">
+            <rowspec value="center:d:grow"/>
+            <colspec value="fill:d:grow"/>
+            <constraints>
+              <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children/>
           </grid>
         </children>
       </grid>

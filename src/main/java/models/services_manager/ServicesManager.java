@@ -30,31 +30,17 @@ public class ServicesManager {
         return graphQLService;
     }
 
-    public void setGraphQLService(GraphQLService graphQLService) {
-        this.graphQLService = graphQLService;
-    }
-
     public ProjectService getProjectService() {
         return projectService;
-    }
-
-    public void setProjectService(ProjectService projectService) {
-        this.projectService = projectService;
     }
 
     public TemplateService getTemplateService() {
         return templateService;
     }
 
-    public void setTemplateService(TemplateService templateService) {
-        this.templateService = templateService;
-    }
-
     public VulnerabilityService getVulnerabilityService() {
         return vulnerabilityService;
     }
 
-    public void setVulnerabilityService(VulnerabilityService vulnerabilityService) {
-        this.vulnerabilityService = vulnerabilityService;
-    }
+
 }

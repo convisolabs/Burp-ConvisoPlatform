@@ -1,4 +1,4 @@
-package view.issues_tab;
+package view.issues_tab.closable_pane;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;

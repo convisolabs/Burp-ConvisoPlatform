@@ -12,7 +12,7 @@ public class Project {
     private String description;
     private String project_type;
     private String start_date;
-    private String end_date;
+    private String dueDate;
     private int contracted_hours;
     private String scope;
     private int scopeId;
@@ -97,12 +97,18 @@ public class Project {
         this.start_date = start_date;
     }
 
-    public String getEnd_date() {
-        return end_date;
+    public String getDueDate() {
+        return dueDate;
     }
 
-    public void setEnd_date(String end_date) {
-        this.end_date = end_date;
+    public String getPrettyDueDate() {
+        String fullDate = dueDate.split("T")[0];
+        String[] splittedDate = fullDate.split("-");
+        return splittedDate[2] + "-" + splittedDate[1] + "-" + splittedDate[0];
+    }
+
+    public void setDueDate(String dueDate) {
+        this.dueDate = dueDate;
     }
 
     public int getContracted_hours() {
@@ -386,7 +392,7 @@ public class Project {
                 ", description='" + description + '\'' +
                 ", project_type='" + project_type + '\'' +
                 ", start_date='" + start_date + '\'' +
-                ", end_date='" + end_date + '\'' +
+                ", end_date='" + dueDate + '\'' +
                 ", contracted_hours=" + contracted_hours +
                 ", scope='" + scope + '\'' +
                 ", scope_id=" + scopeId +
