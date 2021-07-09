@@ -1,10 +1,12 @@
-package models.project;
+package models.analysis;
+
+import utilities.Util;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Project {
+public class Analysis {
 
     private int id;
     private String pid;
@@ -15,7 +17,7 @@ public class Project {
     private String dueDate;
     private int contracted_hours;
     private String scope;
-    private int scopeId;
+    private int companyId;
     private boolean is_public;
     private boolean is_open;
     private String language;
@@ -47,6 +49,8 @@ public class Project {
     private String[] tag_list;
     private String[] tecnology_list;
     private String created_at;
+    private Activity[] activities;
+
 
 
     public int getId() {
@@ -102,9 +106,7 @@ public class Project {
     }
 
     public String getPrettyDueDate() {
-        String fullDate = dueDate.split("T")[0];
-        String[] splittedDate = fullDate.split("-");
-        return splittedDate[2] + "-" + splittedDate[1] + "-" + splittedDate[0];
+        return (this.dueDate != null) ? Util.prettifyDate(this.dueDate) : "";
     }
 
     public void setDueDate(String dueDate) {
@@ -375,12 +377,20 @@ public class Project {
         this.created_at = created_at;
     }
 
-    public int getScopeId() {
-        return scopeId;
+    public int getCompanyId() {
+        return companyId;
     }
 
-    public void setScopeId(int scopeId) {
-        this.scopeId = scopeId;
+    public void setCompanyId(int companyId) {
+        this.companyId = companyId;
+    }
+
+    public Activity[] getActivities() {
+        return activities;
+    }
+
+    public void setActivities(Activity[] activities) {
+        this.activities = activities;
     }
 
     @Override
@@ -395,7 +405,7 @@ public class Project {
                 ", end_date='" + dueDate + '\'' +
                 ", contracted_hours=" + contracted_hours +
                 ", scope='" + scope + '\'' +
-                ", scope_id=" + scopeId +
+                ", scope_id=" + companyId +
                 ", is_public=" + is_public +
                 ", is_open=" + is_open +
                 ", language='" + language + '\'' +
@@ -434,13 +444,13 @@ public class Project {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Project project = (Project) o;
-        return id == project.id && scopeId == project.scopeId && pid.equals(project.pid) && label.equals(project.label);
+        Analysis analysis = (Analysis) o;
+        return id == analysis.id && companyId == analysis.companyId && pid.equals(analysis.pid) && label.equals(analysis.label);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, pid, label, scopeId);
+        return Objects.hash(id, pid, label, companyId);
     }
 
     public void sanitize() {

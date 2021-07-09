@@ -99,7 +99,7 @@ public class TabsManager implements ITab {
 
     private void initializeManagementTab() {
         /* Management tab */
-        this.allocatedProjectsTab = new AllocatedProjectsTab(this.callbacks, this.helpers, this.servicesManager);
+        this.allocatedProjectsTab = new AllocatedProjectsTab(this.callbacks, this.helpers, this.servicesManager, this);
         this.playbookTab = new PlaybookTab(this.callbacks, this.helpers, this.servicesManager);
 
         this.allocatedProjectsTab.initializeComponent();

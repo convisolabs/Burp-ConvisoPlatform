@@ -1,30 +1,18 @@
 package http;
 
 import burp.*;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import jdk.jfr.ContentType;
-import models.vulnerability.Vulnerability;
 import org.apache.http.*;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import utilities.Util;
 
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class HttpClient {
 
@@ -143,10 +131,10 @@ public class HttpClient {
             httpPost.setHeader("User-Agent", userAgent);
             httpPost.setHeader("x-api-key", flowApiKey);
             httpPost.setEntity(httpMultipartEntity);
-            HttpResponse response = httpClient.execute(httpPost);
-            return response;
+            return httpClient.execute(httpPost);
         } catch (IOException e) {
-            util.sendStderr("Connection not established");
+            util.sendStderr("Connection not established. Reason:");
+            util.sendStderr(e.toString());
             return null;
         }
 

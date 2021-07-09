@@ -4,16 +4,16 @@ import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import models.project.Project;
+import models.analysis.Analysis;
 import models.services_manager.ServicesManager;
-import services.ProjectService;
+import models.tabs_manager.TabsManager;
+import services.AnalysisService;
 import view.FathersComponentTab;
-import view.management.allocated_analysis.cell_renderer.WorkingProjectCellRenderer;
+import view.management.allocated_analysis.cell_renderer.WorkingAnalysisCellRenderer;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.plaf.FontUIResource;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.StyleContext;
 import java.awt.*;
@@ -26,24 +26,24 @@ public class AllocatedProjectsTab extends FathersComponentTab {
     private JTable tblAllocatedProjects;
     private JButton defineButton;
     private JButton btnLoadProjects;
-    private ProjectService projectService;
-    private WorkingProjectCellRenderer workingProjectCellRenderer;
+    private AnalysisService analysisService;
+    private WorkingAnalysisCellRenderer workingAnalysisCellRenderer;
     private DefaultTableModel tblAllocatedProjectsModel;
 
 
-    public AllocatedProjectsTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
-        super(callbacks, helpers, servicesManager);
+    public AllocatedProjectsTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager, final TabsManager tabsManager) {
+        super(callbacks, helpers, servicesManager, tabsManager);
     }
 
     public void initializeComponent() {
         $$$setupUI$$$();
-        this.projectService = this.servicesManager.getProjectService();
+        this.analysisService = this.servicesManager.getProjectService();
         this.initiateAllocatedTableColumns();
 
 
-        workingProjectCellRenderer.addPropertyChangeListener(evt -> {
+        workingAnalysisCellRenderer.addPropertyChangeListener(evt -> {
             if (evt.getPropertyName().equals("foreground")) {
-                workingProjectCellRenderer.setDefaultForegroundColor(workingProjectCellRenderer.getForeground());
+                workingAnalysisCellRenderer.setDefaultForegroundColor(workingAnalysisCellRenderer.getForeground());
 
                 if (btnLoadProjects.isEnabled()) {
                     btnLoadProjects.doClick();
@@ -62,8 +62,8 @@ public class AllocatedProjectsTab extends FathersComponentTab {
                 new Thread(() -> {
                     btnLoadProjects.setEnabled(false);
                     tblAllocatedProjectsModel.setRowCount(0);
-                    for (Project p :
-                            projectService.getAllocatedProjects()) {
+                    for (Analysis p :
+                            analysisService.getAllocatedProjects()) {
                         tblAllocatedProjectsModel.addRow(new Object[]{p.getId(), p.getLabel(), p.getPrettyDueDate()});
                     }
                     btnLoadProjects.setText("Reload");
@@ -77,28 +77,44 @@ public class AllocatedProjectsTab extends FathersComponentTab {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("SELECTED ID: " + (int) tblAllocatedProjects.getValueAt(tblAllocatedProjects.getSelectedRow(), 0));
-                projectService.setWorkingProject((int) tblAllocatedProjects.getValueAt(tblAllocatedProjects.getSelectedRow(), 0));
+                analysisService.setWorkingProject((int) tblAllocatedProjects.getValueAt(tblAllocatedProjects.getSelectedRow(), 0));
+
+                new Thread(() -> {
+                    tblAllocatedProjects.revalidate();
+                    tblAllocatedProjects.repaint();
+                }).start();
+
+                new Thread(() -> {
+                    tabsManager.getPlaybookTab().updatePlaybooksTables();
+                }).start();
+
             }
         });
 
         SwingUtilities.invokeLater(() ->
-                this.projectService.getReadyForView()
+                this.analysisService.getReadyForView()
         );
     }
 
 
     private void initiateAllocatedTableColumns() {
         Object[] columnsHeaders = {"ID", "Title", "End date"};
-        this.tblAllocatedProjectsModel = new DefaultTableModel();
+
+        this.tblAllocatedProjectsModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
         this.tblAllocatedProjectsModel.setColumnIdentifiers(columnsHeaders);
         this.tblAllocatedProjects.setModel(this.tblAllocatedProjectsModel);
 
-
-        this.workingProjectCellRenderer = new WorkingProjectCellRenderer(this.projectService);
+        this.workingAnalysisCellRenderer = new WorkingAnalysisCellRenderer(this.analysisService);
         for (int i = 0; i < tblAllocatedProjects.getColumnCount(); i++) {
-            this.tblAllocatedProjects.getColumnModel().getColumn(i).setCellRenderer(workingProjectCellRenderer);
+            this.tblAllocatedProjects.getColumnModel().getColumn(i).setCellRenderer(workingAnalysisCellRenderer);
         }
-        this.workingProjectCellRenderer.setDefaultForegroundColor(rootPanel.getForeground());
+        this.workingAnalysisCellRenderer.setDefaultForegroundColor(rootPanel.getForeground());
 
 //        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 //        centerRenderer.setHorizontalAlignment(JLabel.CENTER);

@@ -50,7 +50,7 @@ public class GraphQLService extends Service {
         return response.substring(bodyOffset);
     }
 
-    public String executeQueryMultipart(HttpEntity httpEntity) throws AuthenticationException, HttpResponseException {
+    public String executeQueryMultipart(HttpEntity httpEntity) throws AuthenticationException, HttpResponseException, NullPointerException {
         HttpClient httpClient = new HttpClient(this.callbacks, this.helpers);
         HttpResponse response = httpClient.postMultiForm(httpEntity);
         String responseContent = null;
@@ -58,6 +58,8 @@ public class GraphQLService extends Service {
             responseContent = EntityUtils.toString(response.getEntity());
         } catch (IOException exception) {
             throw new HttpResponseException(response.getStatusLine().getStatusCode(), "Something is wrong with the content!");
+        } catch(NullPointerException nullPointerException){
+            throw new NullPointerException();
         }
 
         try {

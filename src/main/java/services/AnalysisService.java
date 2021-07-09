@@ -4,45 +4,45 @@ import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import com.google.gson.Gson;
 import models.graphql.GraphQLResponse;
-import models.project.graphql.AllocatedAnalysisQL;
-import models.project.Project;
+import models.analysis.Analysis;
+import models.analysis.graphql.requests.AllocatedAnalysisQL;
+import models.graphql.query.GraphQLQueries;
 import models.services_manager.ServicesManager;
 import org.apache.http.auth.AuthenticationException;
 
 import java.util.*;
 
-public class ProjectService extends Service {
+public class AnalysisService extends Service {
 
-    private Set<Project> allocatedProjects = new HashSet<>();
-    private Project workingProject;
+    private Set<Analysis> allocatedAnalyses = new HashSet<>();
+    private Analysis workingAnalysis;
     final String FLOW_ALLOCATED_PROJECTS = "FLOW.ALLOCATED.PROJECTS";
     final String FLOW_WORKING_PROJECT = "FLOW.WORKING.PROJECT";
 
-    public ProjectService(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
+    public AnalysisService(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
         super(callbacks, helpers, servicesManager);
     }
 
     private synchronized void getAllocatedProjectsFromApi() {
-        int actualPage = 1;
-        int limit = 1000;
-        String query = "query{ allocatedAnalyses(page: " + actualPage + ", limit: " + limit + "){ collection{id label dueDate scopeId} metadata{ currentPage limitValue totalCount totalPages } } }";
-
+        String query = new GraphQLQueries().getGetAllocatedAnalysesQuery();
+        String content = null;
         try {
             GraphQLService graphQLService = this.servicesManager.getGraphQLService();
-            String content = graphQLService.executeQuery(query);
+            content = graphQLService.executeQuery(query);
             GraphQLResponse graphQLResponse = new GraphQLResponse(content);
             AllocatedAnalysisQL allocatedProjectsQL = new Gson().fromJson(graphQLResponse.getContentOfData("allocatedAnalyses"), AllocatedAnalysisQL.class);
             allocatedProjectsQL.sanitizeProjects();
-            this.allocatedProjects = new HashSet<>(Arrays.asList(allocatedProjectsQL.getCollection()));
+            this.allocatedAnalyses = new HashSet<>(Arrays.asList(allocatedProjectsQL.getCollection()));
             this.saveLocalProjects();
             this.setLastRequest();
-            util.sendStdout("[Re]Loaded projects from API.");
+            util.sendStdout("[Re]Loaded analyses from API.");
         } catch (AuthenticationException e) {
             util.sendStderr("Invalid API KEY.");
-            this.allocatedProjects = new HashSet<>();
+            this.allocatedAnalyses = new HashSet<>();
         } catch (Exception e) {
-            util.sendStderr("Error loading projects.");
-            this.allocatedProjects = new HashSet<>();
+            util.sendStderr("Error [re]loading analyses.");
+            util.sendStderr(content);
+            this.allocatedAnalyses = new HashSet<>();
         }
     }
 
@@ -51,44 +51,45 @@ public class ProjectService extends Service {
             this.getAllocatedProjects();
         }
         Set<Integer> scopeIds = new HashSet<>();
-        for (Project p :
-                allocatedProjects) {
-            scopeIds.add(p.getScopeId());
+        for (Analysis p :
+                allocatedAnalyses) {
+            scopeIds.add(p.getCompanyId());
         }
         return scopeIds;
     }
 
-    public Set<Project> getAllocatedProjects() {
+    public Set<Analysis> getAllocatedProjects() {
         if (this.alreadyLoaded && (this.lastRequestTime == null || (System.currentTimeMillis() - this.lastRequestTime.getTimeInMillis()) > 1000)) {
             this.getAllocatedProjectsFromApi();
         } else if (!alreadyLoaded) {
             loadLocalProjects();
         }
-        return this.allocatedProjects;
+        return this.allocatedAnalyses;
     }
 
-    public Project getWorkingProject() {
-        return workingProject;
+    public Analysis getWorkingAnalysis() {
+        return this.workingAnalysis;
     }
 
     private void checkIfStillWorkingOnProject(){
-        this.util.sendStdout("Checking status of working project:");
-        if(this.workingProject != null){
+
+        if(this.workingAnalysis != null){
             loadLocalProjects();
             this.getAllocatedProjectsFromApi();
 
             boolean stillWorkingOnProject = false;
-            for (Project p :
-                    allocatedProjects) {
-                if (this.workingProject.getId() == p.getId()) {
+            for (Analysis p :
+                    allocatedAnalyses) {
+                if (this.workingAnalysis.getId() == p.getId()) {
                     stillWorkingOnProject = true;
                     break;
                 }
             }
 
+            this.util.sendStdout("Checking status of working project:");
             if(!stillWorkingOnProject){
                 this.util.sendStdout("Working project not in execution anymore.");
-                this.workingProject = null;
+                this.workingAnalysis = null;
                 this.saveLocalWorkingProject();
             }else{
                 this.util.sendStdout("Working project still in execution.");
@@ -99,10 +100,10 @@ public class ProjectService extends Service {
     }
 
     public void setWorkingProject(int projectID) {
-        for (Project p :
-                this.allocatedProjects) {
+        for (Analysis p :
+                this.allocatedAnalyses) {
             if (p.getId() == projectID) {
-                this.workingProject = p;
+                this.workingAnalysis = p;
                 this.saveLocalWorkingProject();
                 return;
             }
@@ -111,29 +112,29 @@ public class ProjectService extends Service {
 
     private synchronized void loadLocalProjects() {
         util.sendStdout("Loaded allocated projects.");
-        this.allocatedProjects = new HashSet<>(Arrays.asList(new Gson().fromJson(callbacks.loadExtensionSetting(FLOW_ALLOCATED_PROJECTS), Project[].class)));
+        this.allocatedAnalyses = new HashSet<>(Arrays.asList(new Gson().fromJson(callbacks.loadExtensionSetting(FLOW_ALLOCATED_PROJECTS), Analysis[].class)));
         this.alreadyLoaded = true;
     }
 
 
     private void loadLocalWorkingProject() {
-        this.workingProject = new Gson().fromJson(callbacks.loadExtensionSetting(FLOW_WORKING_PROJECT), Project.class);
-        if(this.workingProject != null){
-            util.sendStdout("Loaded working project, ID:"+this.workingProject.getId());
+        this.workingAnalysis = new Gson().fromJson(callbacks.loadExtensionSetting(FLOW_WORKING_PROJECT), Analysis.class);
+        if(this.workingAnalysis != null){
+            util.sendStdout("Loaded working project, ID:"+this.workingAnalysis.getId());
         }
     }
 
     private void saveLocalWorkingProject() {
-        if(this.workingProject != null){
-            util.sendStdout("Saved working project, ID:"+this.workingProject.getId()+".");
+        if(this.workingAnalysis != null){
+            util.sendStdout("Saved working project, ID:"+this.workingAnalysis.getId()+".");
         }else{
             util.sendStdout("Resetting the working project.");
         }
-        callbacks.saveExtensionSetting(FLOW_WORKING_PROJECT, new Gson().toJson(this.workingProject));
+        callbacks.saveExtensionSetting(FLOW_WORKING_PROJECT, new Gson().toJson(this.workingAnalysis));
     }
 
     private void saveLocalProjects() {
-        callbacks.saveExtensionSetting(FLOW_ALLOCATED_PROJECTS, new Gson().toJson(this.allocatedProjects));
+        callbacks.saveExtensionSetting(FLOW_ALLOCATED_PROJECTS, new Gson().toJson(this.allocatedAnalyses));
         util.sendStdout("Saved new allocated projects.");
     }
 

@@ -2,11 +2,13 @@ package view.issues_tab.closable_pane;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import utilities.Util;
+
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Objects;
 
 public class ClosablePane extends JPanel {
 
@@ -31,7 +33,7 @@ public class ClosablePane extends JPanel {
         btnCloseTab = new JButton();
         btnCloseTab.setBorderPainted(false);
         btnCloseTab.setFocusable(false);
-        btnCloseTab.setIcon(new ImageIcon(getClass().getResource("/icons/cancel-lightbkg.png")));
+        btnCloseTab.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/icons/cancel-lightbkg.png"))));
         btnCloseTab.setText("");
         panel2.add(btnCloseTab, cc.xy(1, 1, CellConstraints.DEFAULT, CellConstraints.CENTER));
 
@@ -61,7 +63,9 @@ public class ClosablePane extends JPanel {
             }
         });
 
-        if(this.isColorDark(rootPanel.getBackground())){
+
+
+        if(Util.isColorDark(rootPanel.getBackground())){
             this.isDarkBackground = true;
             this.setBtnCloseTabToDarkBkg();
         }
@@ -86,17 +90,12 @@ public class ClosablePane extends JPanel {
 
     private void setBtnCloseTabToDarkBkg(){
         btnCloseTab.setContentAreaFilled(false);
-        btnCloseTab.setIcon(new ImageIcon(getClass().getResource("/icons/cancel-darkbkg.png")));
+        btnCloseTab.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/icons/cancel-darkbkg.png"))));
         btnCloseTab.setBackground(this.rootPanel.getBackground());
     }
 
     private void setBtnCloseTabToLightBkg(){
         btnCloseTab.setContentAreaFilled(true);
-        btnCloseTab.setIcon(new ImageIcon(getClass().getResource("/icons/cancel-lightbkg.png")));
-    }
-
-    public boolean isColorDark(Color color){
-        double darkness = 1-((0.299* color.getRed()) + (0.587*color.getGreen())+ (0.114*color.getBlue()))/255;
-        return !(darkness < 0.5); // It's a light color
+        btnCloseTab.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/icons/cancel-lightbkg.png"))));
     }
 }

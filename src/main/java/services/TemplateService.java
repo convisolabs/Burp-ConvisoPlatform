@@ -2,6 +2,7 @@ package services;
 
 import burp.*;
 import models.graphql.GraphQLResponse;
+import models.graphql.query.GraphQLQueries;
 import models.services_manager.ServicesManager;
 import com.google.gson.*;
 import models.vulnerability.template.Template;
@@ -12,7 +13,7 @@ import java.util.*;
 
 
 public class TemplateService extends Service {
-    private final ProjectService projectService;
+    private final AnalysisService analysisService;
     private Set<Template> allTemplates = new HashSet<>();
 
     private static final String FLOW_ALL_TEMPLATES = "FLOW.ALL.TEMPLATES";
@@ -20,12 +21,12 @@ public class TemplateService extends Service {
     public TemplateService(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
         super(callbacks, helpers, servicesManager);
         alreadyLoaded = false;
-        this.projectService = this.servicesManager.getProjectService();
+        this.analysisService = this.servicesManager.getProjectService();
     }
 
     public Set<Template> getAllTemplates() {
         if (this.alreadyLoaded && (this.lastRequestTime == null || (System.currentTimeMillis() - this.lastRequestTime.getTimeInMillis()) > 30000)) {
-            this.projectService.getAllocatedProjects();
+            this.analysisService.getAllocatedProjects();
             this.allTemplates = new HashSet<>();
             this.getAllTemplatesByScopeIds();
         } else {
@@ -40,22 +41,19 @@ public class TemplateService extends Service {
     }
 
     /* Buscar os templates da API */
-    private void getAllVulnerabilitiesModelsFromApi(Integer scopeId) {
-        int actualPage = 1;
-        int limit = 1000;
-        String query = "query{ vulnerabilitiesTemplatesByCompanyId(id: " + scopeId + ", page: " + actualPage + ", limit: " + limit + "){ collection{  id title     description reference solution impact probability notification impactResume deletedAt}}}";
+    private void getAllVulnerabilitiesModelsFromApi(Integer companyId) {
+
         String content = null;
         try {
             GraphQLService graphQLService = this.servicesManager.getGraphQLService();
-            content = graphQLService.executeQuery(query);
-            Gson gson = new Gson();
+            content = graphQLService.executeQuery(String.format(new GraphQLQueries().getGetVulnerabilitiesTemplatesByCompany(), companyId));
             GraphQLResponse graphQLResponse = new GraphQLResponse(content);
             TemplateByCompanyIdQL templateByCompanyIdQL = new Gson().fromJson(graphQLResponse.getContentOfData("vulnerabilitiesTemplatesByCompanyId"), TemplateByCompanyIdQL.class);
 //                    gson.fromJson(((JsonObject) (gson.fromJson(content, JsonObject.class)).get("data")).get("vulnerabilitiesTemplatesByCompanyId"), TemplateByCompanyIdQL.class);
             templateByCompanyIdQL.sanitizeTemplates();
             this.allTemplates.addAll(Arrays.asList(templateByCompanyIdQL.getCollection()));
             this.saveTemplatesLocally();
-            util.sendStdout("[Re]Loaded templates from API. Scope Id: " + scopeId);
+            util.sendStdout("[Re]Loaded templates from API. Scope Id: " + companyId);
         } catch (AuthenticationException e) {
             util.sendStderr("Invalid API KEY.");
         } catch (Exception e) {
@@ -123,7 +121,7 @@ public class TemplateService extends Service {
         ArrayList<Thread> threadArrayList = new ArrayList<>();
         this.allTemplates = new HashSet<>();
         for (Integer i :
-                projectService.getScopeIdsOfProjects()) {
+                analysisService.getScopeIdsOfProjects()) {
             Thread t = new Thread(() -> getAllVulnerabilitiesModelsFromApi(i));
             threadArrayList.add(t);
             t.start();

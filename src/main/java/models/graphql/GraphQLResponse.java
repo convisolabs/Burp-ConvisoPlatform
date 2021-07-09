@@ -1,13 +1,14 @@
 package models.graphql;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import models.project.graphql.AllocatedAnalysisQL;
 
 public class GraphQLResponse {
     protected String data;
     protected Metadata metadata;
     protected JsonObject contentOfData;
+    protected GraphQLErrors errors;
 
 
     public GraphQLResponse(String data) {
@@ -32,7 +33,12 @@ public class GraphQLResponse {
     }
 
     public void prepareContentOfData(){
-        this.contentOfData = (JsonObject) (new Gson().fromJson(this.data.toString(), JsonObject.class)).get("data");
+
+        this.contentOfData = (JsonObject) (new Gson().fromJson(this.data, JsonObject.class)).get("data");
+        this.errors = new Gson().fromJson(this.data, GraphQLErrors.class);
+        if(this.errors.getErrors() != null && this.errors.getErrors().length > 0){
+            throw new Error();
+        }
     }
 
     public JsonObject getContentOfData(String key) {

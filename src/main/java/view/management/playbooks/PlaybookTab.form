@@ -54,7 +54,10 @@
                 <children>
                   <component id="45e72" class="javax.swing.JTable" binding="tblInProgressPlaybooks">
                     <constraints/>
-                    <properties/>
+                    <properties>
+                      <autoCreateRowSorter value="true"/>
+                      <autoResizeMode value="4"/>
+                    </properties>
                   </component>
                 </children>
               </scrollpane>
@@ -81,7 +84,10 @@
                 <children>
                   <component id="3f8a5" class="javax.swing.JTable" binding="tblNotStartedPlaybooks">
                     <constraints/>
-                    <properties/>
+                    <properties>
+                      <autoCreateRowSorter value="true"/>
+                      <autoResizeMode value="4"/>
+                    </properties>
                   </component>
                 </children>
               </scrollpane>
@@ -106,9 +112,12 @@
                 <properties/>
                 <border type="none" title=""/>
                 <children>
-                  <component id="7b0f7" class="javax.swing.JTable" binding="tbDonePlaybooks">
+                  <component id="7b0f7" class="javax.swing.JTable" binding="tblDonePlaybooks">
                     <constraints/>
-                    <properties/>
+                    <properties>
+                      <autoCreateRowSorter value="true"/>
+                      <autoResizeMode value="4"/>
+                    </properties>
                   </component>
                 </children>
               </scrollpane>
@@ -118,6 +127,8 @@
       </tabbedpane>
       <grid id="5b45a" layout-manager="FormLayout">
         <rowspec value="center:45px:noGrow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:max(d;4px):noGrow"/>
         <rowspec value="top:4dlu:noGrow"/>
         <rowspec value="center:d:grow"/>
         <rowspec value="top:4dlu:noGrow"/>
@@ -130,13 +141,6 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="70b03" class="javax.swing.JProgressBar" binding="progressBar1" default-binding="true">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <forms defaultalign-horz="false" defaultalign-vert="false"/>
-            </constraints>
-            <properties/>
-          </component>
           <component id="d9200" class="javax.swing.JLabel">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="2" fill="0" indent="0" use-parent-layout="false"/>
@@ -144,15 +148,62 @@
             </constraints>
             <properties>
               <font style="1"/>
-              <text value="Progress"/>
+              <text value="Progress:"/>
             </properties>
           </component>
           <component id="7b546" class="javax.swing.JSeparator">
             <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <forms defaultalign-horz="false" defaultalign-vert="false"/>
             </constraints>
             <properties/>
+          </component>
+          <grid id="c4739" binding="progressBarsPanel" layout-manager="FormLayout">
+            <rowspec value="center:d:grow"/>
+            <colspec value="fill:d:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <constraints>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false" defaultalign-vert="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="8c0bb" class="javax.swing.JProgressBar" binding="pgBarNotStarted">
+                <constraints>
+                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="57ef3" class="javax.swing.JProgressBar" binding="pgBarInProgress">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="70b03" class="javax.swing.JProgressBar" binding="pgBarDone">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+              </component>
+            </children>
+          </grid>
+          <component id="f773" class="javax.swing.JLabel" binding="lblWorkingAnalysisTitle">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+            <properties>
+              <font style="1"/>
+              <text value=""/>
+            </properties>
           </component>
         </children>
       </grid>

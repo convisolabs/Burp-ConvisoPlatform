@@ -23,6 +23,8 @@ public class GraphQLMutation {
         this.query = query;
     }
 
+
+
     //    public HttpEntity notificationToMultipart() throws FileNotFoundException {
 //        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 //        builder.addTextBody("vulnerability[project_id]", this.analysisId +"");

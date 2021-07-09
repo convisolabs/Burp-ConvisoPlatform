@@ -3,16 +3,16 @@ package models.services_manager;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import services.GraphQLService;
-import services.ProjectService;
+import services.AnalysisService;
 import services.TemplateService;
-import services.VulnerabilityService;
+import services.IssuesService;
 
 public class ServicesManager {
 
     private GraphQLService graphQLService;
-    private ProjectService projectService;
+    private AnalysisService analysisService;
     private TemplateService templateService;
-    private VulnerabilityService vulnerabilityService;
+    private IssuesService issuesService;
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
 
@@ -21,25 +21,25 @@ public class ServicesManager {
         this.callbacks = callbacks;
         this.helpers = helpers;
         this.graphQLService = new GraphQLService(this.callbacks, this.helpers, this);
-        this.projectService = new ProjectService(this.callbacks, this.helpers, this);
+        this.analysisService = new AnalysisService(this.callbacks, this.helpers, this);
         this.templateService = new TemplateService(this.callbacks, this.helpers, this);
-        this.vulnerabilityService = new VulnerabilityService(this.callbacks, this.helpers, this);
+        this.issuesService = new IssuesService(this.callbacks, this.helpers, this);
     }
 
     public GraphQLService getGraphQLService() {
         return graphQLService;
     }
 
-    public ProjectService getProjectService() {
-        return projectService;
+    public AnalysisService getProjectService() {
+        return analysisService;
     }
 
     public TemplateService getTemplateService() {
         return templateService;
     }
 
-    public VulnerabilityService getVulnerabilityService() {
-        return vulnerabilityService;
+    public IssuesService getVulnerabilityService() {
+        return issuesService;
     }
 
 

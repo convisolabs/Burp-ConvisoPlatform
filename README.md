@@ -15,7 +15,7 @@
 
 ### Summary
 
-[AppSec Flow](https://blog.convisoappsec.com/en/appsec-flow-a-complete-devsecops-platform/) is a Software as a Service (SaaS) platform created by [Conviso](https://www.convisoappsec.com/) that supports the entire security cycle in the software development life cycle. It was created based on the Software Assurance Maturity Model (SAMM) - a project in the portfolio of the Open Web Application Security Project (OWASP) that defines a series of practices with the objective of improving software security. The extension of Burp Suite for AppSec Flow aims to serve as an integration between them, making the life of an analyst easier, because he can now send vulnerabilities directly from Burp to AppSec Flow.
+[AppSec Flow](https://blog.convisoappsec.com/en/appsec-flow-a-complete-devsecops-platform/) is a Software as a Service (SaaS) platform created by [Conviso](https://www.convisoappsec.com/) that supports the entire security cycle in the software development life cycle. It was created based on the Software Assurance Maturity Model (SAMM) - a analysis in the portfolio of the Open Web Application Security Project (OWASP) that defines a series of practices with the objective of improving software security. The extension of Burp Suite for AppSec Flow aims to serve as an integration between them, making the life of an analyst easier, because he can now send vulnerabilities directly from Burp to AppSec Flow.
 
 
 If you want to read more about this extension, we have a blog post: [https://blog.convisoappsec.com/en/appsec-flow-extension-for-burp-suite/](https://blog.convisoappsec.com/en/appsec-flow-extension-for-burp-suite/)

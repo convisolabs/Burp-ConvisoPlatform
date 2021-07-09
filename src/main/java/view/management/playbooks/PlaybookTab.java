@@ -4,29 +4,44 @@ import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import models.analysis.Activity;
+import models.analysis.Analysis;
 import models.services_manager.ServicesManager;
-import models.tabs_manager.TabsManager;
 import view.FathersComponentTab;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.plaf.FontUIResource;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.util.Locale;
+
 
 public class PlaybookTab extends FathersComponentTab {
 
     private JTable tblInProgressPlaybooks;
+    private DefaultTableModel tblInProgressPlaybooksModel;
+
     private JTable tblNotStartedPlaybooks;
-    private JTable tbDonePlaybooks;
+    private DefaultTableModel tblNotStartedPlaybooksModel;
+
+    private JTable tblDonePlaybooks;
+    private DefaultTableModel tblDonePlaybooksModel;
+
+
     private JPanel rootPanel;
-    private JProgressBar progressBar1;
+    private JProgressBar pgBarDone;
+    private JProgressBar pgBarInProgress;
+    private JProgressBar pgBarNotStarted;
+    private JLabel lblWorkingAnalysisTitle;
+    private JPanel progressBarsPanel;
 
     public PlaybookTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
         super(callbacks, helpers, servicesManager);
+        pgBarInProgress.addMouseListener(new MouseAdapter() {
+        });
     }
 
     public void initializeComponent() {
@@ -38,32 +53,98 @@ public class PlaybookTab extends FathersComponentTab {
         $$$setupUI$$$();
 
         this.initializePlaybooksTables();
+
+        SwingUtilities.invokeLater(this::updatePlaybooksTables);
     }
 
     private void initializePlaybooksTables() {
-        this.addColumnToColumnModel(tblInProgressPlaybooks.getColumnModel(), "Title");
-        this.addColumnToColumnModel(tblInProgressPlaybooks.getColumnModel(), "Last change");
-        this.addColumnToColumnModel(tblInProgressPlaybooks.getColumnModel(), "Analyst");
-        this.addColumnToColumnModel(tblInProgressPlaybooks.getColumnModel(), "Evidence");
-        this.addColumnToColumnModel(tblInProgressPlaybooks.getColumnModel(), "Actions");
 
-        this.addColumnToColumnModel(tblNotStartedPlaybooks.getColumnModel(), "Title");
-        this.addColumnToColumnModel(tblNotStartedPlaybooks.getColumnModel(), "Last change");
-        this.addColumnToColumnModel(tblNotStartedPlaybooks.getColumnModel(), "Analyst");
-        this.addColumnToColumnModel(tblNotStartedPlaybooks.getColumnModel(), "Evidence");
-        this.addColumnToColumnModel(tblNotStartedPlaybooks.getColumnModel(), "Actions");
+        Object[] columnsHeaders = {"Title", "Last change", "Analyst", "Evidence", "Actions"};
 
-        this.addColumnToColumnModel(tbDonePlaybooks.getColumnModel(), "Title");
-        this.addColumnToColumnModel(tbDonePlaybooks.getColumnModel(), "Last change");
-        this.addColumnToColumnModel(tbDonePlaybooks.getColumnModel(), "Analyst");
-        this.addColumnToColumnModel(tbDonePlaybooks.getColumnModel(), "Evidence");
-        this.addColumnToColumnModel(tbDonePlaybooks.getColumnModel(), "Actions");
+        this.tblNotStartedPlaybooksModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        this.tblInProgressPlaybooksModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        this.tblDonePlaybooksModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        this.tblNotStartedPlaybooksModel.setColumnIdentifiers(columnsHeaders);
+        this.tblInProgressPlaybooksModel.setColumnIdentifiers(columnsHeaders);
+        this.tblDonePlaybooksModel.setColumnIdentifiers(columnsHeaders);
+
+        this.tblNotStartedPlaybooks.setModel(tblNotStartedPlaybooksModel);
+        this.tblInProgressPlaybooks.setModel(tblInProgressPlaybooksModel);
+        this.tblDonePlaybooks.setModel(tblDonePlaybooksModel);
+
+
+        this.pgBarDone.setValue(100);
+        this.pgBarInProgress.setValue(100);
+
+        this.pgBarDone.setForeground(new Color(44, 194, 86));
+        this.pgBarInProgress.setForeground(new Color(242, 197, 0));
+
+
     }
 
-    private void addColumnToColumnModel(TableColumnModel tblColumnModel, String title) {
-        TableColumn t = new TableColumn();
-        t.setHeaderValue(title);
-        tblColumnModel.addColumn(t);
+    public void updatePlaybooksTables() {
+        int notStartedActivity = 0;
+        int inProgressActivity = 0;
+        int doneActivity = 0;
+
+        tblNotStartedPlaybooksModel.setRowCount(0);
+        tblInProgressPlaybooksModel.setRowCount(0);
+        tblDonePlaybooksModel.setRowCount(0);
+
+        Analysis workingAnalysis = this.servicesManager.getProjectService().getWorkingAnalysis();
+        if (workingAnalysis == null) {
+            return;
+        }
+
+        this.lblWorkingAnalysisTitle.setText(workingAnalysis.getPid() + " - " + workingAnalysis.getLabel());
+
+
+        for (Activity a :
+                workingAnalysis.getActivities()) {
+            System.out.println(a.getId());
+            System.out.println(a.getStatus());
+            switch (a.getStatus()) {
+                case "not_started":
+                    this.tblNotStartedPlaybooksModel.addRow(new Object[]{a.getTitle(), a.getPrettyUpdateAt(), "", (a.getArchiveFilename() == null) ? a.getEvidenceText() : a.getArchiveFilename(), a.getId()});
+                    notStartedActivity += 1;
+                    break;
+                case "in_progress":
+                    this.tblInProgressPlaybooksModel.addRow(new Object[]{a.getTitle(), a.getPrettyUpdateAt(), a.getPortalUser().getName(), (a.getArchiveFilename() == null) ? a.getEvidenceText() : a.getArchiveFilename(), a.getId()});
+                    inProgressActivity += 1;
+                case "done":
+                    this.tblDonePlaybooksModel.addRow(new Object[]{a.getTitle(), a.getPrettyUpdateAt(), a.getPortalUser().getName(), (a.getArchiveFilename() == null) ? a.getEvidenceText() : a.getArchiveFilename(), a.getId()});
+                    doneActivity += 1;
+            }
+        }
+
+        int totalOfActivities = notStartedActivity + inProgressActivity + doneActivity;
+
+
+        this.pgBarNotStarted.setPreferredSize(new Dimension(((this.progressBarsPanel.getWidth() * notStartedActivity) / totalOfActivities), this.pgBarNotStarted.getHeight()));
+        this.pgBarInProgress.setPreferredSize(new Dimension(((this.progressBarsPanel.getWidth() * inProgressActivity) / totalOfActivities), this.pgBarInProgress.getHeight()));
+        this.pgBarDone.setPreferredSize(new Dimension(((this.progressBarsPanel.getWidth() * doneActivity) / totalOfActivities), this.pgBarDone.getHeight()));
+        this.progressBarsPanel.revalidate();
+        this.progressBarsPanel.repaint();
+
+
     }
 
     {
@@ -97,6 +178,8 @@ public class PlaybookTab extends FathersComponentTab {
         panel1.add(scrollPane1, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
         scrollPane1.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         tblInProgressPlaybooks = new JTable();
+        tblInProgressPlaybooks.setAutoCreateRowSorter(true);
+        tblInProgressPlaybooks.setAutoResizeMode(4);
         scrollPane1.setViewportView(tblInProgressPlaybooks);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new FormLayout("fill:481px:grow", "fill:194px:grow"));
@@ -107,6 +190,8 @@ public class PlaybookTab extends FathersComponentTab {
         panel2.add(scrollPane2, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
         scrollPane2.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         tblNotStartedPlaybooks = new JTable();
+        tblNotStartedPlaybooks.setAutoCreateRowSorter(true);
+        tblNotStartedPlaybooks.setAutoResizeMode(4);
         scrollPane2.setViewportView(tblNotStartedPlaybooks);
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new FormLayout("fill:481px:grow", "fill:194px:grow"));
@@ -116,20 +201,34 @@ public class PlaybookTab extends FathersComponentTab {
         final JScrollPane scrollPane3 = new JScrollPane();
         panel3.add(scrollPane3, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
         scrollPane3.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-        tbDonePlaybooks = new JTable();
-        scrollPane3.setViewportView(tbDonePlaybooks);
+        tblDonePlaybooks = new JTable();
+        tblDonePlaybooks.setAutoCreateRowSorter(true);
+        tblDonePlaybooks.setAutoResizeMode(4);
+        scrollPane3.setViewportView(tblDonePlaybooks);
         final JPanel panel4 = new JPanel();
-        panel4.setLayout(new FormLayout("fill:d:grow", "center:45px:noGrow,top:4dlu:noGrow,center:d:grow,top:4dlu:noGrow,center:2dlu:noGrow"));
+        panel4.setLayout(new FormLayout("fill:d:grow", "center:45px:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:d:grow,top:4dlu:noGrow,center:2dlu:noGrow"));
         rootPanel.add(panel4, cc.xy(3, 3, CellConstraints.FILL, CellConstraints.FILL));
-        progressBar1 = new JProgressBar();
-        panel4.add(progressBar1, cc.xy(1, 3, CellConstraints.FILL, CellConstraints.CENTER));
         final JLabel label1 = new JLabel();
         Font label1Font = this.$$$getFont$$$(null, Font.BOLD, -1, label1.getFont());
         if (label1Font != null) label1.setFont(label1Font);
-        label1.setText("Progress");
+        label1.setText("Progress:");
         panel4.add(label1, cc.xy(1, 1, CellConstraints.CENTER, CellConstraints.BOTTOM));
         final JSeparator separator1 = new JSeparator();
-        panel4.add(separator1, cc.xy(1, 5, CellConstraints.FILL, CellConstraints.FILL));
+        panel4.add(separator1, cc.xy(1, 7, CellConstraints.FILL, CellConstraints.FILL));
+        progressBarsPanel = new JPanel();
+        progressBarsPanel.setLayout(new FormLayout("fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:d:grow", "center:d:grow"));
+        panel4.add(progressBarsPanel, cc.xy(1, 5, CellConstraints.FILL, CellConstraints.FILL));
+        pgBarNotStarted = new JProgressBar();
+        progressBarsPanel.add(pgBarNotStarted, cc.xy(5, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+        pgBarInProgress = new JProgressBar();
+        progressBarsPanel.add(pgBarInProgress, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+        pgBarDone = new JProgressBar();
+        progressBarsPanel.add(pgBarDone, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.CENTER));
+        lblWorkingAnalysisTitle = new JLabel();
+        Font lblWorkingAnalysisTitleFont = this.$$$getFont$$$(null, Font.BOLD, -1, lblWorkingAnalysisTitle.getFont());
+        if (lblWorkingAnalysisTitleFont != null) lblWorkingAnalysisTitle.setFont(lblWorkingAnalysisTitleFont);
+        lblWorkingAnalysisTitle.setText("");
+        panel4.add(lblWorkingAnalysisTitle, cc.xy(1, 3, CellConstraints.CENTER, CellConstraints.DEFAULT));
     }
 
     /**

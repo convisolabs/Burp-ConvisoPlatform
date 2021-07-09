@@ -6,21 +6,21 @@ import burp.IParameter;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import models.auto_filter_combobox.AutoFilterComboboxModel;
-import models.project.Project;
+import models.analysis.Analysis;
 import models.services_manager.ServicesManager;
 import models.tabs_manager.TabsManager;
 import models.vulnerability.Evidence;
-import models.vulnerability.graphql.CreatedWebVulnerabilityQL;
+import models.vulnerability.graphql.responses.CreatedIssueQL;
 import models.vulnerability.template.Template;
-import models.vulnerability.Vulnerability;
+import models.vulnerability.Issue;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.client.HttpResponseException;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
-import services.ProjectService;
+import services.AnalysisService;
 import services.TemplateService;
-import services.VulnerabilityService;
+import services.IssuesService;
 import view.FathersComponentTab;
 import view.info_template.ShowTemplateInformation;
 import view.issues_tab.popup_menu.EvidencePopupMenu;
@@ -65,8 +65,8 @@ public class NewIssueTab extends FathersComponentTab {
     private JPanel rootPanel2;
 
     private TemplateService templateService;
-    private VulnerabilityService vulnerabilityService;
-    private ProjectService projectService;
+    private IssuesService issuesService;
+    private AnalysisService analysisService;
     DefaultListModel<String> parametersListModel;
     private DefaultListModel<Evidence> evidenceListModel;
     private JEditorPane txtAreaStepsToReproduce;
@@ -112,9 +112,9 @@ public class NewIssueTab extends FathersComponentTab {
 
     public NewIssueTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager, TabsManager tabsManager) {
         super(callbacks, helpers, servicesManager, tabsManager);
-        this.projectService = super.servicesManager.getProjectService();
+        this.analysisService = super.servicesManager.getProjectService();
         this.templateService = super.servicesManager.getTemplateService();
-        this.vulnerabilityService = super.servicesManager.getVulnerabilityService();
+        this.issuesService = super.servicesManager.getVulnerabilityService();
         this.parametersListModel = new DefaultListModel<String>();
         this.evidenceListModel = new DefaultListModel<Evidence>();
         this.fromContextMenu = false;
@@ -328,32 +328,42 @@ public class NewIssueTab extends FathersComponentTab {
             public void mouseClicked(MouseEvent e) {
                 try {
                     Template templatePicked = (Template) autoFilterComboboxModel.getSelectedItem();
-                    Vulnerability vulnerability;
+                    Issue issue;
                     if (templatePicked.getNotification()) {
-                        vulnerability = validateNotification();
+                        issue = validateNotification();
                     } else {
-                        vulnerability = validateVulnerability();
+                        issue = validateVulnerability();
                     }
 
-                    if (vulnerability != null) {
-                        Project workingProject = servicesManager.getProjectService().getWorkingProject();
-                        if (workingProject != null) {
-                            vulnerability.setAnalysisId(workingProject.getId());
+                    if (issue != null) {
+                        Analysis workingAnalysis = servicesManager.getProjectService().getWorkingAnalysis();
+                        if (workingAnalysis != null) {
+                            issue.setAnalysisId(workingAnalysis.getId());
                             new Thread(() -> {
                                 btnSubmitForm.setEnabled(false);
                                 try {
-                                    CreatedWebVulnerabilityQL createWebVulnerabilityResponseQL = vulnerabilityService.postVulnerability(vulnerability);
-                                    if (createWebVulnerabilityResponseQL.getErrors().length == 0) {
+                                    CreatedIssueQL createdIssueQL;
+                                    if (issue.isNotification()) {
+                                        createdIssueQL = issuesService.postNotification(issue);
+                                    } else {
+                                        createdIssueQL = issuesService.postVulnerability(issue);
+                                    }
+                                    if (createdIssueQL.getErrors().length == 0) {
                                         JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "Created!");
+                                        clearForm();
                                     } else {
                                         JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "Error!\nCheck the errors in extender tab!");
                                     }
                                 } catch (FileNotFoundException fileNotFoundException) {
                                     JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "File not found!");
-                                } catch (HttpResponseException httpResponseException) {
+                                } catch (HttpResponseException | NullPointerException httpResponseException) {
                                     JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "Something went wrong!\nCheck errors on extender tab!");
                                 } catch (AuthenticationException authenticationException) {
                                     JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "Authentication not OK!\nPlease check API KEY!");
+                                } catch (Error error) {
+                                    util.sendStderr(error.toString());
+                                    error.printStackTrace();
+                                    JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "Something went wrong!\nCheck errors on extender tab!");
                                 }
                                 btnSubmitForm.setEnabled(true);
                             }).start();
@@ -853,23 +863,23 @@ public class NewIssueTab extends FathersComponentTab {
         }
     }
 
-    public Vulnerability validateNotification() {
-        Vulnerability vulnerability = new Vulnerability();
-        vulnerability.setNotification(true);
+    public Issue validateNotification() {
+        Issue issue = new Issue();
+        issue.setNotification(true);
 
         int templateId = getDefinedTemplateId();
         if (templateId != 0) {
-            vulnerability.setVulnerabilityTemplateId(templateId);
+            issue.setVulnerabilityTemplateId(templateId);
         }
 
         String definedDescription = getDescription();
         if (definedDescription != null) {
-            vulnerability.setDescription(definedDescription);
+            issue.setDescription(definedDescription);
         }
 
         ArrayList<Evidence> definedEvidences = getEvidence();
         if (definedEvidences != null) {
-            vulnerability.setVulnerabilityArchives(definedEvidences);
+            issue.setEvidences(definedEvidences);
         }
 
         if (templateId == 0 ||
@@ -878,85 +888,85 @@ public class NewIssueTab extends FathersComponentTab {
             JOptionPane.showMessageDialog(rootPanel2, "Required camps are missing!");
             return null;
         } else {
-            return vulnerability;
+            return issue;
         }
 
     }
 
-    public Vulnerability validateVulnerability() {
-        Vulnerability vulnerability = new Vulnerability();
+    public Issue validateVulnerability() {
+        Issue issue = new Issue();
 
         int templateId = getDefinedTemplateId();
         if (templateId != 0) {
-            vulnerability.setVulnerabilityTemplateId(getDefinedTemplateId());
+            issue.setVulnerabilityTemplateId(getDefinedTemplateId());
         }
 
         String definedImpact = getDefinedImpact();
         if (definedImpact != null) {
-            vulnerability.setImpact(definedImpact);
+            issue.setImpact(definedImpact);
         }
 
 
         String definedProbability = getDefinedProbability();
         if (definedProbability != null) {
-            vulnerability.setProbability(definedProbability);
+            issue.setProbability(definedProbability);
         }
 
         Boolean definedCompromisedEnvironment = getCompromisedEnvironment();
         if (definedCompromisedEnvironment != null) {
-            vulnerability.setInvaded(definedCompromisedEnvironment);
+            issue.setInvaded(definedCompromisedEnvironment);
         }
 
         String definedCompromisedEnvironmentText = getCompromisedEnvironmentText();
         if (definedCompromisedEnvironmentText != null) {
-            vulnerability.setInvadedEnvironmentDescription(definedCompromisedEnvironmentText);
+            issue.setInvadedEnvironmentDescription(definedCompromisedEnvironmentText);
         }
 
         String definedDescription = getDescription();
         if (definedDescription != null) {
-            vulnerability.setDescription(definedDescription);
+            issue.setDescription(definedDescription);
         }
 
         String definedImpactDescription = getImpactDescription();
         if (definedImpactDescription != null) {
-            vulnerability.setImpactResume(definedImpactDescription);
+            issue.setImpactResume(definedImpactDescription);
         }
 
         String definedStepsToReproduce = getStepsToReproduce();
         if (definedStepsToReproduce != null) {
-            vulnerability.setWebSteps(definedStepsToReproduce);
+            issue.setWebSteps(definedStepsToReproduce);
         }
 
         ArrayList<Evidence> definedEvidences = getEvidence();
         if (definedEvidences != null) {
-            vulnerability.setVulnerabilityArchives(definedEvidences);
+            issue.setEvidences(definedEvidences);
         }
 
         String definedMethod = getMethod();
         if (definedMethod != null) {
-            vulnerability.setWebMethod(definedMethod);
+            issue.setWebMethod(definedMethod);
         }
 
         String definedProtocol = getProtocol();
         if (definedProtocol != null) {
-            vulnerability.setWebProtocol(definedProtocol);
+            issue.setWebProtocol(definedProtocol);
         }
 
         String definedUrl = getUrl();
         if (definedUrl != null) {
-            vulnerability.setWebUrl(definedUrl);
+            issue.setWebUrl(definedUrl);
         }
 
-        vulnerability.setWebParameters(getParameterListAsString()); // it is not required, so it can be empty.
+        issue.setWebParameters(getParameterListAsString()); // it is not required, so it can be empty.
 
         String definedRequest = getRequest();
         if (definedRequest != null) {
-            vulnerability.setWebRequest(definedRequest);
+            issue.setWebRequest(definedRequest);
         }
 
         String definedResponse = getResponse();
         if (definedResponse != null) {
-            vulnerability.setWebResponse(definedResponse);
+            issue.setWebResponse(definedResponse);
         }
 
         if (templateId == 0 ||
@@ -976,7 +986,7 @@ public class NewIssueTab extends FathersComponentTab {
             JOptionPane.showMessageDialog(rootPanel2, "Required camps are missing!");
             return null;
         } else {
-            return vulnerability;
+            return issue;
         }
 
     }

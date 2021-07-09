@@ -74,6 +74,12 @@ public class Util {
         return !(darkness < 0.5); // It's a light color
     }
 
+    public static String prettifyDate(String dateToPrettify){
+        String fullDate = dateToPrettify.split("T")[0];
+        String[] splittedDate = fullDate.split("-");
+        return splittedDate[2] + "-" + splittedDate[1] + "-" + splittedDate[0];
+    }
+
     public static String jsonSafeString(String payload){
         return payload.replace("\n", "\\\\\n").replace("\"", "\\\\\\\"");
     }
