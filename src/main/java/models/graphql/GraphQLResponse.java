@@ -3,6 +3,7 @@ package models.graphql;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
 public class GraphQLResponse {
     protected String data;
@@ -11,7 +12,7 @@ public class GraphQLResponse {
     protected GraphQLErrors errors;
 
 
-    public GraphQLResponse(String data) {
+    public GraphQLResponse(String data) throws JsonSyntaxException, Error{
         this.data = data;
         this.prepareContentOfData();
     }
@@ -32,28 +33,17 @@ public class GraphQLResponse {
         this.data = data;
     }
 
-    public void prepareContentOfData(){
-
+    public void prepareContentOfData() throws JsonSyntaxException {
         this.contentOfData = (JsonObject) (new Gson().fromJson(this.data, JsonObject.class)).get("data");
         this.errors = new Gson().fromJson(this.data, GraphQLErrors.class);
         if(this.errors.getErrors() != null && this.errors.getErrors().length > 0){
-            throw new Error();
+            throw new Error(this.errors.toString());
         }
     }
 
     public JsonObject getContentOfData(String key) {
         return (JsonObject) contentOfData.get(key);
     }
-
-    public void setContentOfData(JsonObject contentOfData) {
-        this.contentOfData = contentOfData;
-    }
-
-    //    public getProperty(){
-//
-//
-//        gson.fromJson(().get("allocatedAnalyses"), AllocatedAnalysisQL.class);
-//    }
 
     @Override
     public String toString() {

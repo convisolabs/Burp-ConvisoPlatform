@@ -5,7 +5,7 @@ import burp.IExtensionHelpers;
 import burp.ITab;
 import models.services_manager.ServicesManager;
 import utilities.Util;
-import view.config.ConfigurationTab;
+import view.settings.config.ConfigurationTab;
 import view.issues_tab.closable_pane.ClosablePane;
 import view.management.allocated_analysis.AllocatedProjectsTab;
 import view.management.playbooks.PlaybookTab;
@@ -28,7 +28,7 @@ public class TabsManager implements ITab {
     private final int MANAGETMENT_INDEX = 1;
     private final int CONFIG_INDEX = 2;
 
-    private final int[] ALLOCATED_ANALYSIS_TAB = {1,1};
+    private final int[] ALLOCATED_ANALYSIS_TAB = {1, 1};
 
     /* Tabs */
     private ConfigurationTab configurationTab;
@@ -60,7 +60,6 @@ public class TabsManager implements ITab {
         initializeIssuesTab();
         initializeManagementTab();
         initializeConfigTab();
-
 
 
         this.rootTab.add("Issues", this.issuesTab);
@@ -127,9 +126,32 @@ public class TabsManager implements ITab {
         }
     }
 
-    public void setFocusToAllocatedProjectsTab(){
+    public void setFocusToAllocatedProjectsTab() {
         this.rootTab.setSelectedIndex(ALLOCATED_ANALYSIS_TAB[0]);
         this.managementTab.setSelectedIndex(ALLOCATED_ANALYSIS_TAB[1]);
+    }
+
+    public void setFocusToLastIssue(){
+        this.setFocusToAppSecFlow();
+        this.rootTab.setSelectedIndex(ISSUES_INDEX);
+        this.issuesTab.setSelectedIndex(this.issuesTab.getTabCount()-1);
+    }
+
+    private void setFocusToAppSecFlow() {
+        JTabbedPane tabPane = (JTabbedPane) this.rootTab.getParent();
+        for (int i = 0; i < tabPane.getTabCount(); i++) {
+            if (tabPane.getTitleAt(i).equals("AppSec Flow")) {
+                tabPane.setSelectedIndex(i);
+            }
+        }
+    }
+
+    public NewIssueTab returnLastIssue(){
+        return this.getIssuesArray().get(this.getIssuesArray().size()-1);
+    }
+
+    public JTabbedPane getRootTab() {
+        return rootTab;
     }
 
     public ConfigurationTab getConfigurationTab() {
@@ -142,6 +164,14 @@ public class TabsManager implements ITab {
 
     public PlaybookTab getPlaybookTab() {
         return playbookTab;
+    }
+
+    public ArrayList<NewIssueTab> getIssuesArray() {
+        return issuesArray;
+    }
+
+    public JTabbedPane getIssuesTab() {
+        return issuesTab;
     }
 
     /* IMPLEMENTAÇÃO DO ITAB */

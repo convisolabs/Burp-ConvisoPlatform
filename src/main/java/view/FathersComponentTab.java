@@ -12,7 +12,7 @@ import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.util.Locale;
 
-public abstract class FathersComponentTab {
+public abstract class FathersComponentTab extends DefaultView{
 
     protected Color defaultLblColor;
     protected Color defaultBackgroundBtn;

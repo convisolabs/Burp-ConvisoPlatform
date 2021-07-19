@@ -24,7 +24,7 @@ public class AnalysisService extends Service {
     }
 
     private synchronized void getAllocatedProjectsFromApi() {
-        String query = new GraphQLQueries().getGetAllocatedAnalysesQuery();
+        String query = GraphQLQueries.getAllocatedAnalysesQuery;
         String content = null;
         try {
             GraphQLService graphQLService = this.servicesManager.getGraphQLService();
@@ -72,30 +72,45 @@ public class AnalysisService extends Service {
     }
 
     private void checkIfStillWorkingOnProject(){
-
         if(this.workingAnalysis != null){
             loadLocalProjects();
             this.getAllocatedProjectsFromApi();
 
             boolean stillWorkingOnProject = false;
-            for (Analysis p :
+            for (Analysis analysis :
                     allocatedAnalyses) {
-                if (this.workingAnalysis.getId() == p.getId()) {
+                if (this.workingAnalysis.getId() == analysis.getId()) {
                     stillWorkingOnProject = true;
+                    this.workingAnalysis = analysis;
+                    this.saveLocalWorkingProject();
                     break;
                 }
             }
 
-            this.util.sendStdout("Checking status of working project:");
+
             if(!stillWorkingOnProject){
-                this.util.sendStdout("Working project not in execution anymore.");
+                this.util.sendStdout("Checking status of working project: Working project not in execution anymore.");
                 this.workingAnalysis = null;
                 this.saveLocalWorkingProject();
             }else{
-                this.util.sendStdout("Working project still in execution.");
+                this.util.sendStdout("Checking status of working project: Working project still in execution.");
             }
         }else{
-            this.util.sendStdout("Working project is null. Exiting!");
+            this.util.sendStdout("Checking status of working project: Working project is null.");
+        }
+    }
+
+    public void updateWorkingProject(){
+        if(this.workingAnalysis != null) {
+            this.getAllocatedProjectsFromApi();
+            for (Analysis p :
+                    allocatedAnalyses) {
+                if (this.workingAnalysis.getId() == p.getId()) {
+                    this.workingAnalysis = p;
+                    this.saveLocalWorkingProject();
+                    break;
+                }
+            }
         }
     }
 
@@ -124,7 +139,7 @@ public class AnalysisService extends Service {
         }
     }
 
-    private void saveLocalWorkingProject() {
+    public void saveLocalWorkingProject() {
         if(this.workingAnalysis != null){
             util.sendStdout("Saved working project, ID:"+this.workingAnalysis.getId()+".");
         }else{
@@ -141,6 +156,5 @@ public class AnalysisService extends Service {
     public void getReadyForView(){
         this.loadLocalWorkingProject();
         new Thread(this::checkIfStillWorkingOnProject).start();
-
     }
 }

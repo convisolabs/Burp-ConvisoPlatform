@@ -80,8 +80,16 @@ public class Util {
         return splittedDate[2] + "-" + splittedDate[1] + "-" + splittedDate[0];
     }
 
-    public static String jsonSafeString(String payload){
-        return payload.replace("\n", "\\\\\n").replace("\"", "\\\\\\\"");
+    public static String jsonSafeString(String raw) {
+        String escaped = raw;
+        escaped = escaped.replace("\\", "\\\\\\");
+        escaped = escaped.replace("\"", "\\\\\\\"");
+        escaped = escaped.replace("\b", "\\b");
+        escaped = escaped.replace("\f", "\\f");
+        escaped = escaped.replace("\n", "\\n");
+        escaped = escaped.replace("\r", "\\r");
+        escaped = escaped.replace("\t", "\\t");
+        return escaped;
     }
 
 

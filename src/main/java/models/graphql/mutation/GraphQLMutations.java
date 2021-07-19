@@ -2,7 +2,7 @@ package models.graphql.mutation;
 
 public class GraphQLMutations {
 
-    private final String queryCreateWebVulnerabilityNotInvaded = "{\"query\": \"mutation($evidenceArchives: [Upload!]!){" +
+    public final static String mutationCreateWebVulnerabilityNotInvaded = "{\"query\": \"mutation($evidenceArchives: [Upload!]!){" +
             "createWebVulnerability(input: {" +
             "analysisId: %1$d, " +
             "vulnerabilityTemplateId: %2$d, " +
@@ -24,7 +24,7 @@ public class GraphQLMutations {
             "\"operationName\":null}";
 
 
-    private final String queryCreateWebVulnerabilityInvaded = "{\"query\": \"mutation($evidenceArchives: [Upload!]!){" +
+    public final static String mutationCreateWebVulnerabilityInvaded = "{\"query\": \"mutation($evidenceArchives: [Upload!]!){" +
             "createWebVulnerability(input: {" +
             "analysisId: %1$d, " +
             "vulnerabilityTemplateId: %2$d, " +
@@ -47,7 +47,7 @@ public class GraphQLMutations {
             "\"operationName\":null}";
 
 
-    private final String queryCreateNotification = "{\"query\": \"mutation($evidenceArchives: [Upload!]!){" +
+    public final static String mutationCreateNotification = "{\"query\": \"mutation($evidenceArchives: [Upload!]!){" +
             "createNotification(input: { " +
             "analysisId: %1$d, " +
             "vulnerabilityTemplateId: %2$d, " +
@@ -59,19 +59,32 @@ public class GraphQLMutations {
                     "\"variables\":{\"evidenceArchives\": [%4$s]}," +
                     "\"operationName\":null}";
 
+    public final static String mutationUpdateActivityStatusToStart = "mutation{" +
+            "updateActivityStatusToStart(input: { " +
+            "activityId : %1$d }){ " +
+            "activity{ id archiveFilename evidenceText justify portalUser{ name } status title updatedAt } "+
+            "errors }}";
 
 
+    public final static String mutationUpdateActivityStatusToFinishWithTextEvidence = "mutation{" +
+            "updateActivityStatusToFinish(input: {" +
+            "activityId: %1$d, " +
+            "evidence: \"%2$s\" }){" +
+            "activity{ id archiveFilename evidenceText justify portalUser{ name } status title updatedAt } " +
+            "errors }}";
 
 
-    public String getQueryCreateWebVulnerabilityNotInvaded() {
-        return queryCreateWebVulnerabilityNotInvaded;
-    }
+    public final static String mutationActivityStatusToRestart = "mutation{" +
+            "updateActivityStatusToRestart(input: {" +
+            "activityId: %1$d }){" +
+            "activity{ id archiveFilename evidenceText justify portalUser{ name } status title updatedAt } " +
+            "errors }}";
 
-    public String getQueryCreateWebVulnerabilityInvaded() {
-        return queryCreateWebVulnerabilityInvaded;
-    }
+    public final static String mutationUpdateActivityStatusToNotApply = "mutation{" +
+            "updateActivityStatusToNotApply(input: {" +
+            "activityId: %1$d " +
+            "justify: \"%2$s\" }){" +
+            "activity{ id archiveFilename evidenceText justify portalUser{ name } status title updatedAt } " +
+            "errors }}";
 
-    public String getQueryCreateNotification() {
-        return queryCreateNotification;
-    }
 }

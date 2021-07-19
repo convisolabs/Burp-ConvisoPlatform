@@ -1,5 +1,6 @@
 package models.analysis;
 
+import models.activity.Activity;
 import utilities.Util;
 
 import java.io.UnsupportedEncodingException;
@@ -47,7 +48,7 @@ public class Analysis {
     private String plan;
     private String connectivity;
     private String[] tag_list;
-    private String[] tecnology_list;
+    private String[] technology_list;
     private String created_at;
     private Activity[] activities;
 
@@ -361,12 +362,12 @@ public class Analysis {
         this.tag_list = tag_list;
     }
 
-    public String[] getTecnology_list() {
-        return tecnology_list;
+    public String[] getTechnology_list() {
+        return technology_list;
     }
 
-    public void setTecnology_list(String[] tecnology_list) {
-        this.tecnology_list = tecnology_list;
+    public void setTechnology_list(String[] technology_list) {
+        this.technology_list = technology_list;
     }
 
     public String getCreated_at() {
@@ -435,7 +436,7 @@ public class Analysis {
                 ", plan='" + plan + '\'' +
                 ", connectivity='" + connectivity + '\'' +
                 ", tag_list=" + Arrays.toString(tag_list) +
-                ", tecnology_list=" + Arrays.toString(tecnology_list) +
+                ", tecnology_list=" + Arrays.toString(technology_list) +
                 ", created_at='" + created_at + '\'' +
                 '}';
     }
@@ -458,6 +459,15 @@ public class Analysis {
             this.setLabel(new String(this.label.getBytes("ISO-8859-1"), "UTF-8").trim());
         } catch (UnsupportedEncodingException ignored) {
 
+        }
+    }
+
+    public void updateActivity(Activity activity){
+        for (int i = 0; i < this.activities.length; i++) {
+            if(this.activities[i].getId().equals(activity.getId())){
+                this.activities[i] = activity;
+                break;
+            }
         }
     }
 }

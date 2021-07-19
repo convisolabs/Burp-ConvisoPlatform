@@ -5,7 +5,7 @@ package view.issues_tab.listeners;
 import models.auto_filter_combobox.AutoFilterComboboxModel;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
-import models.vulnerability.template.Template;
+import models.issue.template.Template;
 import services.TemplateService;
 
 import javax.swing.*;

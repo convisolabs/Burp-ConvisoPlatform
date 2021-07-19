@@ -5,8 +5,8 @@ import models.graphql.GraphQLResponse;
 import models.graphql.query.GraphQLQueries;
 import models.services_manager.ServicesManager;
 import com.google.gson.*;
-import models.vulnerability.template.Template;
-import models.vulnerability.template.TemplateByCompanyIdQL;
+import models.issue.template.Template;
+import models.issue.template.TemplateByCompanyIdQL;
 import org.apache.http.auth.AuthenticationException;
 
 import java.util.*;
@@ -21,7 +21,7 @@ public class TemplateService extends Service {
     public TemplateService(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
         super(callbacks, helpers, servicesManager);
         alreadyLoaded = false;
-        this.analysisService = this.servicesManager.getProjectService();
+        this.analysisService = this.servicesManager.getAnalysisService();
     }
 
     public Set<Template> getAllTemplates() {
@@ -46,7 +46,7 @@ public class TemplateService extends Service {
         String content = null;
         try {
             GraphQLService graphQLService = this.servicesManager.getGraphQLService();
-            content = graphQLService.executeQuery(String.format(new GraphQLQueries().getGetVulnerabilitiesTemplatesByCompany(), companyId));
+            content = graphQLService.executeQuery(String.format(GraphQLQueries.getVulnerabilitiesTemplatesByCompany, companyId));
             GraphQLResponse graphQLResponse = new GraphQLResponse(content);
             TemplateByCompanyIdQL templateByCompanyIdQL = new Gson().fromJson(graphQLResponse.getContentOfData("vulnerabilitiesTemplatesByCompanyId"), TemplateByCompanyIdQL.class);
 //                    gson.fromJson(((JsonObject) (gson.fromJson(content, JsonObject.class)).get("data")).get("vulnerabilitiesTemplatesByCompanyId"), TemplateByCompanyIdQL.class);

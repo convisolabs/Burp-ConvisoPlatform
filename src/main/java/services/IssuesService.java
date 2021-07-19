@@ -3,12 +3,13 @@ package services;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import models.graphql.GraphQLResponse;
 import models.services_manager.ServicesManager;
-import models.vulnerability.Issue;
-import models.vulnerability.graphql.mutations.notification.CreateNotificationIssueQL;
-import models.vulnerability.graphql.mutations.vulnerability.CreateWebVulnerabilityQL;
-import models.vulnerability.graphql.responses.CreatedIssueQL;
+import models.issue.Issue;
+import models.issue.graphql.mutations.notification.CreateNotificationIssueQL;
+import models.issue.graphql.mutations.vulnerability.CreateWebVulnerabilityQL;
+import models.issue.graphql.mutations.responses.CreatedIssueQL;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.client.HttpResponseException;
 
@@ -20,7 +21,7 @@ public class IssuesService extends Service {
         super(callbacks, helpers, servicesManager);
     }
 
-    public CreatedIssueQL postVulnerability(Issue issue) throws FileNotFoundException, AuthenticationException, HttpResponseException, NullPointerException {
+    public CreatedIssueQL postVulnerability(Issue issue) throws FileNotFoundException, AuthenticationException, HttpResponseException, NullPointerException, JsonSyntaxException {
         GraphQLService graphQLService = this.servicesManager.getGraphQLService();
         CreateWebVulnerabilityQL newVulnerability = new CreateWebVulnerabilityQL(issue);
         String response = graphQLService.executeQueryMultipart(newVulnerability.getHttpEntity());
@@ -28,7 +29,7 @@ public class IssuesService extends Service {
         return new Gson().fromJson(graphQLResponse.getContentOfData("createWebVulnerability"), CreatedIssueQL.class);
     }
 
-    public CreatedIssueQL postNotification(Issue issue) throws FileNotFoundException, AuthenticationException, HttpResponseException, NullPointerException {
+    public CreatedIssueQL postNotification(Issue issue) throws FileNotFoundException, AuthenticationException, HttpResponseException, NullPointerException, JsonSyntaxException {
         GraphQLService graphQLService = this.servicesManager.getGraphQLService();
         CreateNotificationIssueQL createNotificationIssueQL = new CreateNotificationIssueQL(issue);
         String response = graphQLService.executeQueryMultipart(createNotificationIssueQL.getHttpEntity());

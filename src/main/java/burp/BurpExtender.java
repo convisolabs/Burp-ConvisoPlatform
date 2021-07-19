@@ -35,12 +35,6 @@ public class BurpExtender implements IBurpExtender {
 
             tabsManager.initializeComponents();
 
-//            this.newVulnerabilityTab.initializeComponent();
-//            tabsManager.addTab("New Vulnerability", newVulnerabilityTab.$$$getRootComponent$$$());
-//            this.configurationTab.initializeComponent();
-//            tabsManager.addTab("Configuration", configurationTab.$$$getRootComponent$$$());
-//            tabsManager.addTab("Allocated Projects", allocatedProjectsTab.$$$getRootComponent$$$());
-//            tabsManager.addTab("Playbooks", playbookTab.$$$getRootComponent$$$());
             callbacks.addSuiteTab(tabsManager);
 
             tabsManager.verifyIfApiKeyIsSet();
@@ -52,8 +46,8 @@ public class BurpExtender implements IBurpExtender {
          * Cria a opção no menu do botão direito, tambem conhecido como contextmenu
          */
 
-//        this.contextMenuOption = new ContextMenuOption(this.callbacks, this.helpers, tabsManager.getNewVulnerabilityTab());
-//        this.callbacks.registerContextMenuFactory(this.contextMenuOption);
+        this.contextMenuOption = new ContextMenuOption(this.callbacks, this.helpers, tabsManager);
+        this.callbacks.registerContextMenuFactory(this.contextMenuOption);
 
 
         new Util(this.callbacks).sendStdout("Extension loaded");

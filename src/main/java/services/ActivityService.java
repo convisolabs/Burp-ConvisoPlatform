@@ -1,0 +1,98 @@
+package services;
+
+import burp.IBurpExtenderCallbacks;
+import burp.IExtensionHelpers;
+import com.google.gson.Gson;
+import models.activity.Activity;
+import models.activity.graphql.mutations.UpdateActivityStatusToFinish;
+import models.activity.graphql.mutations.UpdateActivityStatusToNotApply;
+import models.activity.graphql.mutations.UpdateActivityStatusToRestart;
+import models.activity.graphql.mutations.UpdateActivityStatusToStart;
+import models.activity.graphql.mutations.responses.UpdatedActivityToFinish;
+import models.activity.graphql.mutations.responses.UpdatedActivityToNotApply;
+import models.activity.graphql.mutations.responses.UpdatedActivityToRestart;
+import models.activity.graphql.mutations.responses.UpdatedActivityToStart;
+import models.evidences.EvidenceArchive;
+import models.graphql.GraphQLResponse;
+import models.graphql.mutation.GraphQLMutations;
+import models.issue.graphql.mutations.responses.CreatedIssueQL;
+import models.services_manager.ServicesManager;
+import org.apache.http.auth.AuthenticationException;
+
+public class ActivityService extends Service {
+    private final AnalysisService analysisService;
+
+    public ActivityService(IBurpExtenderCallbacks callbacks, IExtensionHelpers helpers, ServicesManager servicesManager) {
+        super(callbacks, helpers, servicesManager);
+        this.analysisService = servicesManager.getAnalysisService();
+    }
+
+    public void updateActivityToFinish(int activityId, EvidenceArchive evidenceArchive, String evidenceText) throws AuthenticationException {
+        GraphQLService graphQLService = this.servicesManager.getGraphQLService();
+        UpdatedActivityToFinish updatedActivityToFinish = null;
+
+        if (evidenceArchive != null) {
+            // evidencia é arquivo
+//            String response = graphQLService.executeQuery()
+//            String response = graphQLService.executeQueryMultipart(newVulnerability.getHttpEntity());
+//            GraphQLResponse graphQLResponse = new GraphQLResponse(response);
+//            return new Gson().fromJson(graphQLResponse.getContentOfData("createWebVulnerability"), CreatedIssueQL.class);
+        } else {
+            //evidencia é texto
+            String response = graphQLService.executeQuery(new UpdateActivityStatusToFinish(activityId, evidenceText).getQuery());
+            GraphQLResponse graphQLResponse = new GraphQLResponse(response);
+            updatedActivityToFinish = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatusToFinish"), UpdatedActivityToFinish.class);
+        }
+
+        //somente se a acao der sucesso
+        if (updatedActivityToFinish != null) {
+            analysisService.getWorkingAnalysis().updateActivity(updatedActivityToFinish.getActivity());
+            analysisService.saveLocalWorkingProject();
+        }
+    }
+
+
+    public void updateActivityToNotApply(int activityId, String justification) throws AuthenticationException {
+        GraphQLService graphQLService = this.servicesManager.getGraphQLService();
+        UpdatedActivityToNotApply updatedActivityToNotApply;
+
+        String response = graphQLService.executeQuery(new UpdateActivityStatusToNotApply(activityId, justification).getQuery());
+        GraphQLResponse graphQLResponse = new GraphQLResponse(response);
+        updatedActivityToNotApply = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatusToNotApply"), UpdatedActivityToNotApply.class);
+
+        if(updatedActivityToNotApply != null){
+            analysisService.getWorkingAnalysis().updateActivity(updatedActivityToNotApply.getActivity());
+            analysisService.saveLocalWorkingProject();
+        }
+    }
+
+    public void updateActivityToStart(int activityId) throws AuthenticationException {
+        GraphQLService graphQLService = this.servicesManager.getGraphQLService();
+        UpdatedActivityToStart updatedActivityToStart;
+
+        String response = graphQLService.executeQuery(new UpdateActivityStatusToStart(activityId).getQuery());
+        GraphQLResponse graphQLResponse = new GraphQLResponse(response);
+        updatedActivityToStart = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatusToStart"), UpdatedActivityToStart.class);
+
+        if(updatedActivityToStart != null){
+            analysisService.getWorkingAnalysis().updateActivity(updatedActivityToStart.getActivity());
+            analysisService.saveLocalWorkingProject();
+        }
+    }
+
+    public void updateActivityToRestart(int activityId) throws AuthenticationException {
+        GraphQLService graphQLService = this.servicesManager.getGraphQLService();
+        UpdatedActivityToRestart updatedActivityToRestart;
+
+        String response = graphQLService.executeQuery(new UpdateActivityStatusToRestart(activityId).getQuery());
+        GraphQLResponse graphQLResponse = new GraphQLResponse(response);
+        updatedActivityToRestart = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatusToRestart"), UpdatedActivityToRestart.class);
+
+        if(updatedActivityToRestart != null){
+            analysisService.getWorkingAnalysis().updateActivity(updatedActivityToRestart.getActivity());
+            analysisService.saveLocalWorkingProject();
+        }
+    }
+
+
+}

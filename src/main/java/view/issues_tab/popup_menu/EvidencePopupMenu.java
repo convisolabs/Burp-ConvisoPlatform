@@ -1,6 +1,7 @@
 package view.issues_tab.popup_menu;
 
-import models.vulnerability.Evidence;
+import models.evidences.EvidenceArchive;
+import models.evidences.EvidenceFileChooser;
 import utilities.Util;
 import view.issues_tab.NewIssueTab;
 
@@ -27,13 +28,12 @@ public class EvidencePopupMenu extends JPopupMenu {
         addEvidence = new JMenuItem("Add file");
 
         addEvidence.addActionListener(e -> new Thread(() -> {
-            JFileChooser jFileChooser = new JFileChooser(prefs.get(LAST_USED_FOLDER, new File(String.valueOf(FileSystemView.getFileSystemView().getDefaultDirectory())).getAbsolutePath()));
-            int returnValue = jFileChooser.showOpenDialog(this);
-
+            EvidenceFileChooser evidenceFileChooser = new EvidenceFileChooser(prefs.get(LAST_USED_FOLDER, new File(String.valueOf(FileSystemView.getFileSystemView().getDefaultDirectory())).getAbsolutePath()));
+            int returnValue = evidenceFileChooser.showOpenDialog(this);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = jFileChooser.getSelectedFile();
-                prefs.put(LAST_USED_FOLDER, jFileChooser.getSelectedFile().getParent());
-                this.newIssueTab.addEvidence(new Evidence(selectedFile.getAbsolutePath(), selectedFile.getName()));
+                File selectedFile = evidenceFileChooser.getSelectedFile();
+                prefs.put(LAST_USED_FOLDER, evidenceFileChooser.getSelectedFile().getParent());
+                this.newIssueTab.addEvidence(new EvidenceArchive(selectedFile.getAbsolutePath(), selectedFile.getName()));
             }
         }).start());
 
@@ -55,7 +55,7 @@ public class EvidencePopupMenu extends JPopupMenu {
             String content = jTextArea.getText();
             if(!content.isEmpty()){
                 File textEvidence = util.createTempFile("evidence-uid-", content);
-                newIssueTab.addEvidence(new Evidence(textEvidence.getAbsolutePath(), textEvidence.getName()));
+                newIssueTab.addEvidence(new EvidenceArchive(textEvidence.getAbsolutePath(), textEvidence.getName()));
             }
         });
 

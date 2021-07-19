@@ -20,12 +20,14 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Locale;
+import java.util.concurrent.Executors;
 
 public class AllocatedProjectsTab extends FathersComponentTab {
     private JPanel rootPanel;
     private JTable tblAllocatedProjects;
     private JButton defineButton;
     private JButton btnLoadProjects;
+    private JLabel lblAllocatedProjects;
     private AnalysisService analysisService;
     private WorkingAnalysisCellRenderer workingAnalysisCellRenderer;
     private DefaultTableModel tblAllocatedProjectsModel;
@@ -37,9 +39,10 @@ public class AllocatedProjectsTab extends FathersComponentTab {
 
     public void initializeComponent() {
         $$$setupUI$$$();
-        this.analysisService = this.servicesManager.getProjectService();
+        this.analysisService = this.servicesManager.getAnalysisService();
         this.initiateAllocatedTableColumns();
 
+        super.addLblBoldListener(lblAllocatedProjects);
 
         workingAnalysisCellRenderer.addPropertyChangeListener(evt -> {
             if (evt.getPropertyName().equals("foreground")) {
@@ -68,15 +71,14 @@ public class AllocatedProjectsTab extends FathersComponentTab {
                     }
                     btnLoadProjects.setText("Reload");
                     btnLoadProjects.setEnabled(true);
+                    updatePlaybooksTable();
                 }).start();
-
             }
         });
 
         defineButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("SELECTED ID: " + (int) tblAllocatedProjects.getValueAt(tblAllocatedProjects.getSelectedRow(), 0));
                 analysisService.setWorkingProject((int) tblAllocatedProjects.getValueAt(tblAllocatedProjects.getSelectedRow(), 0));
 
                 new Thread(() -> {
@@ -84,18 +86,20 @@ public class AllocatedProjectsTab extends FathersComponentTab {
                     tblAllocatedProjects.repaint();
                 }).start();
 
-                new Thread(() -> {
-                    tabsManager.getPlaybookTab().updatePlaybooksTables();
-                }).start();
-
+                updatePlaybooksTable();
             }
         });
 
-        SwingUtilities.invokeLater(() ->
-                this.analysisService.getReadyForView()
+        SwingUtilities.invokeLater(() -> {
+                    this.analysisService.getReadyForView();
+                    this.updatePlaybooksTable();
+                }
         );
     }
 
+    private void updatePlaybooksTable() {
+        new Thread(() -> tabsManager.getPlaybookTab().updatePlaybooksTables()).start();
+    }
 
     private void initiateAllocatedTableColumns() {
         Object[] columnsHeaders = {"ID", "Title", "End date"};
@@ -115,14 +119,6 @@ public class AllocatedProjectsTab extends FathersComponentTab {
             this.tblAllocatedProjects.getColumnModel().getColumn(i).setCellRenderer(workingAnalysisCellRenderer);
         }
         this.workingAnalysisCellRenderer.setDefaultForegroundColor(rootPanel.getForeground());
-
-//        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-//        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-//        for (int i = 0; i < tblAllocatedProjects.getColumnModel().getColumnCount(); i++) {
-//            tblAllocatedProjects.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-//        }
-
-
     }
 
     {
@@ -146,11 +142,11 @@ public class AllocatedProjectsTab extends FathersComponentTab {
         panel1.setLayout(new FormLayout("fill:37px:noGrow,left:4dlu:noGrow,fill:481px:grow,left:83dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:90px:noGrow,top:4dlu:noGrow,center:27px:noGrow,top:4dlu:noGrow,fill:194px:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
         CellConstraints cc = new CellConstraints();
         rootPanel.add(panel1, cc.xywh(1, 1, 1, 3));
-        final JLabel label1 = new JLabel();
-        Font label1Font = this.$$$getFont$$$(null, Font.BOLD, -1, label1.getFont());
-        if (label1Font != null) label1.setFont(label1Font);
-        label1.setText("Allocated projects");
-        panel1.add(label1, cc.xy(3, 3, CellConstraints.CENTER, CellConstraints.DEFAULT));
+        lblAllocatedProjects = new JLabel();
+        Font lblAllocatedProjectsFont = this.$$$getFont$$$(null, Font.BOLD, -1, lblAllocatedProjects.getFont());
+        if (lblAllocatedProjectsFont != null) lblAllocatedProjects.setFont(lblAllocatedProjectsFont);
+        lblAllocatedProjects.setText("Allocated projects");
+        panel1.add(lblAllocatedProjects, cc.xy(3, 3, CellConstraints.CENTER, CellConstraints.DEFAULT));
         final JScrollPane scrollPane1 = new JScrollPane();
         panel1.add(scrollPane1, cc.xy(3, 5, CellConstraints.FILL, CellConstraints.FILL));
         scrollPane1.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));

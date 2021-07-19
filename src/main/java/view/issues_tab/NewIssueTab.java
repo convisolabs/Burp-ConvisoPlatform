@@ -3,16 +3,18 @@ package view.issues_tab;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import burp.IParameter;
+import com.google.gson.JsonSyntaxException;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import models.auto_filter_combobox.AutoFilterComboboxModel;
 import models.analysis.Analysis;
+import models.evidences.EvidenceFileChooser;
 import models.services_manager.ServicesManager;
 import models.tabs_manager.TabsManager;
-import models.vulnerability.Evidence;
-import models.vulnerability.graphql.responses.CreatedIssueQL;
-import models.vulnerability.template.Template;
-import models.vulnerability.Issue;
+import models.evidences.EvidenceArchive;
+import models.issue.graphql.mutations.responses.CreatedIssueQL;
+import models.issue.template.Template;
+import models.issue.Issue;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.client.HttpResponseException;
 import org.commonmark.node.Node;
@@ -22,7 +24,7 @@ import services.AnalysisService;
 import services.TemplateService;
 import services.IssuesService;
 import view.FathersComponentTab;
-import view.info_template.ShowTemplateInformation;
+import view.issues_tab.info_template.ShowTemplateInformation;
 import view.issues_tab.popup_menu.EvidencePopupMenu;
 import view.issues_tab.listeners.AutoFilterComboboxListener;
 import view.issues_tab.listeners.RefreshTemplatesButtonListener;
@@ -68,7 +70,7 @@ public class NewIssueTab extends FathersComponentTab {
     private IssuesService issuesService;
     private AnalysisService analysisService;
     DefaultListModel<String> parametersListModel;
-    private DefaultListModel<Evidence> evidenceListModel;
+    private DefaultListModel<EvidenceArchive> evidenceListModel;
     private JEditorPane txtAreaStepsToReproduce;
     private JButton btnSubmitForm;
     private JButton btnClearForm;
@@ -95,6 +97,7 @@ public class NewIssueTab extends FathersComponentTab {
     private String evidencePlaceholder = "<html><b>Double left click</b> or <b>Right click</b> to add new evidence</html>";
     private AutoFilterComboboxModel autoFilterComboboxModel;
     private boolean fromContextMenu;
+    private int qtdEvidence = 0;
     boolean previewMarkdownDescription, previewMarkdownStepsToReproduce;
     HashMap<String, String> beforePreviewContents;
     Parser parser = Parser.builder().build();
@@ -112,11 +115,11 @@ public class NewIssueTab extends FathersComponentTab {
 
     public NewIssueTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager, TabsManager tabsManager) {
         super(callbacks, helpers, servicesManager, tabsManager);
-        this.analysisService = super.servicesManager.getProjectService();
+        this.analysisService = super.servicesManager.getAnalysisService();
         this.templateService = super.servicesManager.getTemplateService();
         this.issuesService = super.servicesManager.getVulnerabilityService();
         this.parametersListModel = new DefaultListModel<String>();
-        this.evidenceListModel = new DefaultListModel<Evidence>();
+        this.evidenceListModel = new DefaultListModel<EvidenceArchive>();
         this.fromContextMenu = false;
         this.previewMarkdownDescription = false;
         this.previewMarkdownStepsToReproduce = false;
@@ -184,7 +187,7 @@ public class NewIssueTab extends FathersComponentTab {
 
         this.listEvidence.setModel(this.evidenceListModel);
 
-        evidenceListModel.addElement(new Evidence(evidencePlaceholder, evidencePlaceholder));
+        evidenceListModel.addElement(new EvidenceArchive(evidencePlaceholder, evidencePlaceholder));
 
         AutoFilterComboboxListener autoFilterComboboxListener = new AutoFilterComboboxListener(this.callbacks, this.helpers, cbVulnerabilityTemplates);
 
@@ -336,7 +339,7 @@ public class NewIssueTab extends FathersComponentTab {
                     }
 
                     if (issue != null) {
-                        Analysis workingAnalysis = servicesManager.getProjectService().getWorkingAnalysis();
+                        Analysis workingAnalysis = servicesManager.getAnalysisService().getWorkingAnalysis();
                         if (workingAnalysis != null) {
                             issue.setAnalysisId(workingAnalysis.getId());
                             new Thread(() -> {
@@ -360,9 +363,9 @@ public class NewIssueTab extends FathersComponentTab {
                                     JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "Something went wrong!\nCheck errors on extender tab!");
                                 } catch (AuthenticationException authenticationException) {
                                     JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "Authentication not OK!\nPlease check API KEY!");
-                                } catch (Error error) {
-                                    util.sendStderr(error.toString());
-                                    error.printStackTrace();
+                                } catch (Error | JsonSyntaxException err) {
+                                    util.sendStderr(err.toString());
+                                    err.printStackTrace();
                                     JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "Something went wrong!\nCheck errors on extender tab!");
                                 }
                                 btnSubmitForm.setEnabled(true);
@@ -535,7 +538,7 @@ public class NewIssueTab extends FathersComponentTab {
 
         evidenceListModel.clear();
         listEvidence.putClientProperty("html.disable", Boolean.FALSE);
-        evidenceListModel.addElement(new Evidence(evidencePlaceholder, evidencePlaceholder));
+        evidenceListModel.addElement(new EvidenceArchive(evidencePlaceholder, evidencePlaceholder));
 
         this.notificationTemplateSelected(false);
 
@@ -606,21 +609,6 @@ public class NewIssueTab extends FathersComponentTab {
         return tabTitle.replaceAll("(<.+?>)+", "").replace("*", "");
     }
 
-    private void setLblRequired(JLabel label, String text) {
-        label.setText(text + "*");
-        if (this.isDarkBackground) {
-            label.setForeground(new Color(225, 107, 46));
-        } else {
-            label.setForeground(Color.RED);
-        }
-    }
-
-    private void setLblDefault(JLabel label) {
-        label.setText(label.getText().replace("*", ""));
-        label.setForeground(defaultLblColor);
-
-    }
-
     private int getDefinedTemplateId() {
         int templateId = 0;
         try {
@@ -629,42 +617,47 @@ public class NewIssueTab extends FathersComponentTab {
         }
 
         if (templateId == 0) {
-            this.setLblRequired(lblVulnerabilityTemplate, "Vulnerability Template");
+
+            this.setLblRequired(new JLabel[]{lblVulnerabilityTemplate}, this.rootPanel);
             return 0;
         } else {
-            this.setLblDefault(lblVulnerabilityTemplate);
+            this.setLblDefault(new JLabel[]{lblVulnerabilityTemplate}, this.rootPanel);
             return templateId;
         }
     }
 
     private String getDefinedImpact() {
         if (this.impactHighRButton.isSelected()) {
-            this.setLblDefault(lblImpact);
+            this.setLblDefault(new JLabel[]{lblImpact}, this.rootPanel);
             return this.impactHighRButton.getText().toLowerCase();
         } else if (this.impactMediumRButton.isSelected()) {
-            this.setLblDefault(lblImpact);
+            this.setLblDefault(new JLabel[]{lblImpact}, this.rootPanel);
             return this.impactMediumRButton.getText().toLowerCase();
         } else if (this.impactLowRButton.isSelected()) {
-            this.setLblDefault(lblImpact);
+            this.setLblDefault(new JLabel[]{lblImpact}, this.rootPanel);
             return this.impactLowRButton.getText().toLowerCase();
         } else {
-            this.setLblRequired(lblImpact, "Impact");
+            this.setLblDefault(new JLabel[]{lblImpact}, this.rootPanel);
             return null;
         }
     }
 
     private String getDefinedProbability() {
         if (this.probabilityHighRButton.isSelected()) {
-            this.setLblDefault(lblProbability);
+            this.setLblDefault(new JLabel[]{lblProbability}, this.rootPanel);
+//            this.setLblDefault(lblProbability);
             return this.probabilityHighRButton.getText().toLowerCase();
         } else if (this.probabilityMediumRButton.isSelected()) {
-            this.setLblDefault(lblProbability);
+            this.setLblDefault(new JLabel[]{lblProbability}, this.rootPanel);
+//            this.setLblDefault(lblProbability);
             return this.probabilityMediumRButton.getText().toLowerCase();
         } else if (this.probabilityLowRButton.isSelected()) {
-            this.setLblDefault(lblProbability);
+            this.setLblDefault(new JLabel[]{lblProbability}, this.rootPanel);
+//            this.setLblDefault(lblProbability);
             return this.probabilityLowRButton.getText().toLowerCase();
         } else {
-            this.setLblRequired(lblProbability, "Probability");
+//            this.setLblRequired(lblProbability, "Probability");
+            this.setLblDefault(new JLabel[]{lblProbability}, this.rootPanel);
             return null;
         }
     }
@@ -681,10 +674,12 @@ public class NewIssueTab extends FathersComponentTab {
 
     private String getCompromisedEnvironmentText() {
         if ((getCompromisedEnvironment() == null || getCompromisedEnvironment()) && txtAreaCompromisedEnvironment.getText().isEmpty()) {
-            this.setLblRequired(lblCompromisedEnvironment, "Compromised Environment");
+            this.setLblDefault(new JLabel[]{lblCompromisedEnvironment}, this.rootPanel);
+//            this.setLblRequired(lblCompromisedEnvironment, "Compromised Environment");
             return null;
         } else {
-            this.setLblDefault(lblCompromisedEnvironment);
+            this.setLblDefault(new JLabel[]{lblCompromisedEnvironment}, this.rootPanel);
+//            this.setLblDefault(lblCompromisedEnvironment);
             return txtAreaCompromisedEnvironment.getText();
         }
     }
@@ -730,20 +725,24 @@ public class NewIssueTab extends FathersComponentTab {
 
     private String getProtocol() {
         if (txtFieldProtocol.getText().isEmpty()) {
-            this.setLblRequired(lblProtocol, "Protocol");
+            this.setLblDefault(new JLabel[]{lblProtocol}, this.rootPanel);
+//            this.setLblRequired(lblProtocol, "Protocol");
             return null;
         } else {
-            this.setLblDefault(lblProtocol);
+            this.setLblDefault(new JLabel[]{lblProtocol}, this.rootPanel);
+//            this.setLblDefault(lblProtocol);
             return txtFieldProtocol.getText();
         }
     }
 
     private String getMethod() {
         if (txtFieldMethod.getText().isEmpty()) {
-            this.setLblRequired(lblMethod, "Method");
+//            this.setLblRequired(lblMethod, "Method");
+            this.setLblDefault(new JLabel[]{lblMethod}, this.rootPanel);
             return null;
         } else {
-            this.setLblDefault(lblMethod);
+            this.setLblDefault(new JLabel[]{lblMethod}, this.rootPanel);
+//            this.setLblDefault(lblMethod);
             return txtFieldMethod.getText();
 
         }
@@ -751,10 +750,12 @@ public class NewIssueTab extends FathersComponentTab {
 
     private String getUrl() {
         if (txtFieldUrl.getText().isEmpty()) {
-            this.setLblRequired(lblUrl, "URI");
+//            this.setLblRequired(lblUrl, "URI");
+            this.setLblDefault(new JLabel[]{lblUrl}, this.rootPanel);
             return null;
         } else {
-            this.setLblDefault(lblUrl);
+            this.setLblDefault(new JLabel[]{lblUrl}, this.rootPanel);
+//            this.setLblDefault(lblUrl);
             return txtFieldUrl.getText();
         }
     }
@@ -779,8 +780,8 @@ public class NewIssueTab extends FathersComponentTab {
         }
     }
 
-    private ArrayList<Evidence> getEvidence() {
-        ArrayList<Evidence> evidenceArrayList = new ArrayList<>();
+    private ArrayList<EvidenceArchive> getEvidence() {
+        ArrayList<EvidenceArchive> evidenceArchiveArrayList = new ArrayList<>();
 
         if (evidenceListModel.get(0).getName().equals(evidencePlaceholder)) {
             this.setRequiredTitleTab(tabDescriptionImpactSteps, "Evidence");
@@ -788,24 +789,25 @@ public class NewIssueTab extends FathersComponentTab {
         }
 
         for (int i = 0; i < evidenceListModel.getSize(); i++) {
-            evidenceArrayList.add(evidenceListModel.get(i));
+            evidenceArchiveArrayList.add(evidenceListModel.get(i));
         }
 
         this.removeRequiredTitleTab(tabDescriptionImpactSteps, "Evidence");
-        return evidenceArrayList;
+        return evidenceArchiveArrayList;
 
     }
 
-    public void addEvidence(Evidence evidence) {
-        if (evidence.validateExtension()) {
+    public void addEvidence(EvidenceArchive evidenceArchive) {
+        if (evidenceArchive.validateExtension()) {
             if (evidenceListModel.get(0).getName().equals(evidencePlaceholder)) {
                 evidenceListModel.clear();
                 listEvidence.putClientProperty("html.disable", Boolean.TRUE);
             }
-            evidenceListModel.addElement(evidence);
+            evidenceListModel.addElement(evidenceArchive);
+            this.qtdEvidence++;
         } else {
             JOptionPane.showMessageDialog(this.getRootPanel2(), "Invalid extension!\n" +
-                    "Please use : .pdf .zip .jpg .jpeg .png .txt .doc .xls .rar .docx .gif");
+                    "Please use: " + String.join(", ", EvidenceFileChooser.acceptedExtensions));
         }
     }
 
@@ -816,14 +818,14 @@ public class NewIssueTab extends FathersComponentTab {
 
         if (evidenceListModel.size() == 0) {
             listEvidence.putClientProperty("html.disable", Boolean.FALSE);
-            evidenceListModel.addElement(new Evidence(evidencePlaceholder, evidencePlaceholder));
+            evidenceListModel.addElement(new EvidenceArchive(evidencePlaceholder, evidencePlaceholder));
         }
     }
 
     private String getParameterListAsString() {
         StringBuilder toReturn = new StringBuilder();
         for (int i = 0; i < parametersListModel.getSize(); i++) {
-            toReturn.append(parametersListModel.get(i)).append("\\\\\n");
+            toReturn.append(parametersListModel.get(i)).append("<br>");
         }
         return toReturn.toString().trim();
     }
@@ -877,14 +879,14 @@ public class NewIssueTab extends FathersComponentTab {
             issue.setDescription(definedDescription);
         }
 
-        ArrayList<Evidence> definedEvidences = getEvidence();
-        if (definedEvidences != null) {
-            issue.setEvidences(definedEvidences);
+        ArrayList<EvidenceArchive> definedEvidenceArchives = getEvidence();
+        if (definedEvidenceArchives != null) {
+            issue.setEvidences(definedEvidenceArchives);
         }
 
         if (templateId == 0 ||
                 definedDescription == null ||
-                definedEvidences == null) {
+                definedEvidenceArchives == null) {
             JOptionPane.showMessageDialog(rootPanel2, "Required camps are missing!");
             return null;
         } else {
@@ -937,9 +939,9 @@ public class NewIssueTab extends FathersComponentTab {
             issue.setWebSteps(definedStepsToReproduce);
         }
 
-        ArrayList<Evidence> definedEvidences = getEvidence();
-        if (definedEvidences != null) {
-            issue.setEvidences(definedEvidences);
+        ArrayList<EvidenceArchive> definedEvidenceArchives = getEvidence();
+        if (definedEvidenceArchives != null) {
+            issue.setEvidences(definedEvidenceArchives);
         }
 
         String definedMethod = getMethod();
@@ -977,7 +979,7 @@ public class NewIssueTab extends FathersComponentTab {
                 definedDescription == null ||
                 definedImpactDescription == null ||
                 definedStepsToReproduce == null ||
-                definedEvidences == null ||
+                definedEvidenceArchives == null ||
                 definedMethod == null ||
                 definedProtocol == null ||
                 definedUrl == null ||
@@ -1063,11 +1065,11 @@ public class NewIssueTab extends FathersComponentTab {
         previewMarkDownText(previewMarkdownStepsToReproduce, "Steps to Reproduce", txtAreaStepsToReproduce);
     }
 
-    public DefaultListModel<Evidence> getEvidenceListModel() {
+    public DefaultListModel<EvidenceArchive> getEvidenceListModel() {
         return evidenceListModel;
     }
 
-    public void setEvidenceListModel(DefaultListModel<Evidence> evidenceListModel) {
+    public void setEvidenceListModel(DefaultListModel<EvidenceArchive> evidenceListModel) {
         this.evidenceListModel = evidenceListModel;
     }
 
@@ -1094,6 +1096,14 @@ public class NewIssueTab extends FathersComponentTab {
 
     public JButton getBtnSubmitForm() {
         return btnSubmitForm;
+    }
+
+    public int getQtdEvidence() {
+        return qtdEvidence;
+    }
+
+    public void setQtdEvidence(int qtdEvidence) {
+        this.qtdEvidence = qtdEvidence;
     }
 
     {
