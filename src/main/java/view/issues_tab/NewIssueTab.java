@@ -143,20 +143,20 @@ public class NewIssueTab extends FathersComponentTab {
 
         if (this.isDarkBackground) {
             lblCopyUri.setIcon(new ImageIcon(getClass().getResource("/icons/copy-darkbkg.png")));
-            btnSubmitForm.setForeground(this.rootPanel2.getForeground());
+//            btnSubmitForm.setForeground(this.rootPanel2.getForeground());
         } else {
             lblCopyUri.setIcon(new ImageIcon(getClass().getResource("/icons/copy-lightbkg.png")));
-            btnSubmitForm.setForeground(new Color(255, 255, 255));
+//            btnSubmitForm.setForeground(new Color(255, 255, 255));
         }
 
         lblCopyUri.addPropertyChangeListener(evt -> {
             if (evt.getPropertyName().equals("foreground")) {
                 if (this.isDarkBackground) {
                     lblCopyUri.setIcon(new ImageIcon(getClass().getResource("/icons/copy-darkbkg.png")));
-                    btnSubmitForm.setForeground(this.rootPanel2.getForeground());
+//                    btnSubmitForm.setForeground(this.rootPanel2.getForeground());
                 } else {
-                    btnSubmitForm.setForeground(new Color(255, 255, 255));
                     lblCopyUri.setIcon(new ImageIcon(getClass().getResource("/icons/copy-lightbkg.png")));
+//                    btnSubmitForm.setForeground(new Color(255, 255, 255));
                 }
             }
         });
@@ -1339,7 +1339,7 @@ public class NewIssueTab extends FathersComponentTab {
         panel16.add(btnClearForm, cc.xy(1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
         btnSubmitForm = new JButton();
         btnSubmitForm.setBackground(new Color(-14260834));
-        btnSubmitForm.setForeground(new Color(-4473925));
+        btnSubmitForm.setForeground(new Color(-1));
         btnSubmitForm.setText("Submit");
         panel16.add(btnSubmitForm, cc.xy(3, 1));
         final JPanel panel17 = new JPanel();

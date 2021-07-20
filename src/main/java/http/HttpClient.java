@@ -19,12 +19,12 @@ public class HttpClient {
     //https://api.convisoappsec.com/
 
 //    private static final String CONVISO_API_HOST = "app.conviso.com.br";
-    private static String CONVISO_API_HOST = "homologa.conviso.com.br";
+    private static String CONVISO_API_HOST;
     private static final String CONVISO_API_PATH = "/graphql";
     private static final String FLOW_API_KEY = "FLOW.API.KEY";
     private static final String FLOW_ENDPOINT_URL = "FLOW.ENDPOINT.URL";
     private static String flowApiKey;
-    private static final String userAgent = "AppSecFlow-BurpExtender/1.4-develop";
+    private static final String userAgent = "AppSecFlow-BurpExtender/2.0.0-develop";
 
     private final IBurpExtenderCallbacks callbacks;
     private final IExtensionHelpers helpers;
@@ -123,9 +123,9 @@ public class HttpClient {
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpPost httpPost = new HttpPost("https://"+CONVISO_API_HOST+CONVISO_API_PATH);
 
-            HttpHost proxy = new HttpHost("127.0.0.1", 8080, "http");
-            RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
-            httpPost.setConfig(config);
+//            HttpHost proxy = new HttpHost("127.0.0.1", 8080, "http");
+//            RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
+//            httpPost.setConfig(config);
 
 
             httpPost.setHeader("User-Agent", userAgent);

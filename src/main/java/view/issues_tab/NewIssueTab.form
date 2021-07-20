@@ -770,7 +770,7 @@
                 </constraints>
                 <properties>
                   <background color="-14260834"/>
-                  <foreground color="-4473925"/>
+                  <foreground color="-1"/>
                   <text value="Submit"/>
                 </properties>
               </component>
