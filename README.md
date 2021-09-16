@@ -48,13 +48,13 @@ Here you can learn here: [How to add extesion to Burp](https://github.com/convis
 
 ### Documentation
 
-You can find the full documentation at: [wiki page.](/wiki)
+You can find the full documentation at: [wiki page.](https://github.com/convisoappsec/Burp-AppSecFlow/wiki)
 
 ---
 
 ### Contribution
 
-- Your contributions and suggestions are heartily ♥ welcome. [See here the contribution guidelines.](/.github/CONTRIBUTING.md) Please, report bugs via [issues page](https://github.com/convisoappsec/Burp-AppSecFlow/ssues) and for security issues, see here the [security policy.](/SECURITY.md)
+- Your contributions and suggestions are heartily ♥ welcome. [See here the contribution guidelines.](/.github/CONTRIBUTING.md) Please, report bugs via [issues page](https://github.com/convisoappsec/Burp-AppSecFlow/issues) and for security issues, see here the [security policy.](/SECURITY.md)
 
 ---
 
