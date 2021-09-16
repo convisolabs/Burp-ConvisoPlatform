@@ -40,9 +40,9 @@ Here you can learn here: [How to add extesion to Burp](https://github.com/convis
 
 ### Demo
 
-![Image](https://raw.githubusercontent.com/convisoappsec/Burp-AppSecFlow/master/assets/readme/new-vuln-or-not.gif)
+![Image](https://github.com/convisoappsec/Burp-AppSecFlow/blob/master/assets/readme/as_new_issue.gif)
 
-![Image](https://raw.githubusercontent.com/convisoappsec/Burp-AppSecFlow/master/assets/readme/multi-vuln-or-not.gif)
+![Image](https://github.com/convisoappsec/Burp-AppSecFlow/blob/master/assets/readme/multi_requests_issue.gif)
 
 ---
 
