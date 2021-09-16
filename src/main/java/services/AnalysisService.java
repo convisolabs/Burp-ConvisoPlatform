@@ -3,6 +3,7 @@ package services;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import models.graphql.GraphQLResponse;
 import models.analysis.Analysis;
 import models.analysis.graphql.requests.AllocatedAnalysisQL;
@@ -87,7 +88,6 @@ public class AnalysisService extends Service {
                 }
             }
 
-
             if(!stillWorkingOnProject){
                 this.util.sendStdout("Checking status of working project: Working project not in execution anymore.");
                 this.workingAnalysis = null;
@@ -127,7 +127,12 @@ public class AnalysisService extends Service {
 
     private synchronized void loadLocalProjects() {
         util.sendStdout("Loaded allocated projects.");
-        this.allocatedAnalyses = new HashSet<>(Arrays.asList(new Gson().fromJson(callbacks.loadExtensionSetting(FLOW_ALLOCATED_PROJECTS), Analysis[].class)));
+        try {
+            this.allocatedAnalyses = new HashSet<>(Arrays.asList(new Gson().fromJson(callbacks.loadExtensionSetting(FLOW_ALLOCATED_PROJECTS), Analysis[].class)));
+        }catch (NullPointerException exception){
+            util.sendStderr("No projects saved locally.");
+            this.getAllocatedProjectsFromApi();
+        }
         this.alreadyLoaded = true;
     }
 

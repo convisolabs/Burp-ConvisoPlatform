@@ -22,7 +22,7 @@ import java.awt.event.MouseEvent;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 
-public class AllocatedProjectsTab extends FathersComponentTab {
+public class AllocatedAnalysesTab extends FathersComponentTab {
     private JPanel rootPanel;
     private JTable tblAllocatedProjects;
     private JButton defineButton;
@@ -33,7 +33,7 @@ public class AllocatedProjectsTab extends FathersComponentTab {
     private DefaultTableModel tblAllocatedProjectsModel;
 
 
-    public AllocatedProjectsTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager, final TabsManager tabsManager) {
+    public AllocatedAnalysesTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager, final TabsManager tabsManager) {
         super(callbacks, helpers, servicesManager, tabsManager);
     }
 
@@ -58,11 +58,12 @@ public class AllocatedProjectsTab extends FathersComponentTab {
         btnLoadProjects.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (!btnLoadProjects.isEnabled()) {
-                    return;
-                }
+
 
                 new Thread(() -> {
+                    if (!btnLoadProjects.isEnabled()) {
+                        return;
+                    }
                     btnLoadProjects.setEnabled(false);
                     tblAllocatedProjectsModel.setRowCount(0);
                     for (Analysis p :

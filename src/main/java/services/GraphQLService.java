@@ -6,6 +6,7 @@ import burp.IResponseInfo;
 import com.google.gson.Gson;
 import http.HttpClient;
 import models.graphql.GraphQLQuery;
+import models.graphql.query.GraphQLQueries;
 import models.services_manager.ServicesManager;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -23,10 +24,8 @@ public class GraphQLService extends Service {
     }
 
     public Boolean testApiKey() {
-        String query = "query{ allocatedProjects(page: " + 1 + ", limit: " + 1 + "){ collection{id} } }";
-
         try {
-            this.executeQuery(query);
+            this.executeQuery(GraphQLQueries.testAPIKey);
             this.util.sendStdout("API Key OK!");
             return true;
         } catch (AuthenticationException e) {

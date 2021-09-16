@@ -53,7 +53,6 @@ public class Analysis {
     private Activity[] activities;
 
 
-
     public int getId() {
         return id;
     }
@@ -457,14 +456,28 @@ public class Analysis {
     public void sanitize() {
         try {
             this.setLabel(new String(this.label.getBytes("ISO-8859-1"), "UTF-8").trim());
+            this.sanitizeActivities();
         } catch (UnsupportedEncodingException ignored) {
 
         }
     }
 
-    public void updateActivity(Activity activity){
+    public void sanitizeActivities() {
+        for (Activity activity :
+                this.activities) {
+            try {
+                activity.setTitle(new String(activity.getTitle().getBytes("ISO-8859-1"), "UTF-8").trim());
+                activity.setEvidenceText(new String(activity.getEvidenceText().getBytes("ISO-8859-1"), "UTF-8").trim());
+                activity.setArchiveFilename(new String(activity.getArchiveFilename().getBytes("ISO-8859-1"), "UTF-8").trim());
+            } catch (UnsupportedEncodingException | NullPointerException ignored) {
+
+            }
+        }
+    }
+
+    public void updateActivity(Activity activity) {
         for (int i = 0; i < this.activities.length; i++) {
-            if(this.activities[i].getId().equals(activity.getId())){
+            if (this.activities[i].getId().equals(activity.getId())) {
                 this.activities[i] = activity;
                 break;
             }

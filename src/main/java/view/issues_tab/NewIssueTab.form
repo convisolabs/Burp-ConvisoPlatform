@@ -485,6 +485,10 @@
               </grid>
               <grid id="c1860" layout-manager="FormLayout">
                 <rowspec value="center:84px:grow"/>
+                <rowspec value="top:4dlu:noGrow"/>
+                <rowspec value="center:max(d;4px):noGrow"/>
+                <rowspec value="top:4dlu:noGrow"/>
+                <rowspec value="center:max(d;4px):noGrow"/>
                 <colspec value="fill:d:grow"/>
                 <constraints>
                   <tabbedpane title="Impact"/>
@@ -500,18 +504,21 @@
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <component id="cadeb" class="javax.swing.JTextArea" binding="txtAreaImpact">
+                      <component id="8a8be" class="javax.swing.JEditorPane" binding="txtAreaImpact">
                         <constraints/>
-                        <properties>
-                          <lineWrap value="true"/>
-                          <text value=""/>
-                        </properties>
-                        <clientProperties>
-                          <html.disable class="java.lang.Boolean" value="true"/>
-                        </clientProperties>
+                        <properties/>
                       </component>
                     </children>
                   </scrollpane>
+                  <component id="8f6a9" class="javax.swing.JButton" binding="btnPreviewImpact">
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <text value="Preview"/>
+                    </properties>
+                  </component>
                 </children>
               </grid>
               <grid id="a175" layout-manager="FormLayout">

@@ -7,7 +7,7 @@ import models.services_manager.ServicesManager;
 import utilities.Util;
 import view.settings.config.ConfigurationTab;
 import view.issues_tab.closable_pane.ClosablePane;
-import view.management.allocated_analysis.AllocatedProjectsTab;
+import view.management.allocated_analysis.AllocatedAnalysesTab;
 import view.management.playbooks.PlaybookTab;
 import view.issues_tab.NewIssueTab;
 
@@ -33,7 +33,7 @@ public class TabsManager implements ITab {
     /* Tabs */
     private ConfigurationTab configurationTab;
     ArrayList<NewIssueTab> issuesArray = new ArrayList<>();
-    private AllocatedProjectsTab allocatedProjectsTab;
+    private AllocatedAnalysesTab allocatedAnalysesTab;
     private PlaybookTab playbookTab;
 
 
@@ -98,14 +98,14 @@ public class TabsManager implements ITab {
 
     private void initializeManagementTab() {
         /* Management tab */
-        this.allocatedProjectsTab = new AllocatedProjectsTab(this.callbacks, this.helpers, this.servicesManager, this);
+        this.allocatedAnalysesTab = new AllocatedAnalysesTab(this.callbacks, this.helpers, this.servicesManager, this);
         this.playbookTab = new PlaybookTab(this.callbacks, this.helpers, this.servicesManager);
 
-        this.allocatedProjectsTab.initializeComponent();
+        this.allocatedAnalysesTab.initializeComponent();
         this.playbookTab.initializeComponent();
 
         this.managementTab.addTab("Playbooks", this.playbookTab.$$$getRootComponent$$$());
-        this.managementTab.addTab("Allocated Projects", this.allocatedProjectsTab.$$$getRootComponent$$$());
+        this.managementTab.addTab("Allocated Projects", this.allocatedAnalysesTab.$$$getRootComponent$$$());
 
     }
 
@@ -158,8 +158,8 @@ public class TabsManager implements ITab {
         return configurationTab;
     }
 
-    public AllocatedProjectsTab getAllocatedProjectsTab() {
-        return allocatedProjectsTab;
+    public AllocatedAnalysesTab getAllocatedProjectsTab() {
+        return allocatedAnalysesTab;
     }
 
     public PlaybookTab getPlaybookTab() {

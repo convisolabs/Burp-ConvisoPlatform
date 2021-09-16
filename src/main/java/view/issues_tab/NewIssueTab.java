@@ -74,7 +74,7 @@ public class NewIssueTab extends FathersComponentTab {
     private JEditorPane txtAreaStepsToReproduce;
     private JButton btnSubmitForm;
     private JButton btnClearForm;
-    private JTextArea txtAreaImpact;
+    private JEditorPane txtAreaImpact;
     private JRadioButton noCompromisedEnvironmentRButton;
     private JRadioButton yesCompromisedEnvironmentRButton;
     private JTabbedPane tabParametersRequestResponse;
@@ -94,11 +94,12 @@ public class NewIssueTab extends FathersComponentTab {
     private JLabel lblViewTemplate;
     private JButton btnImportParametersFromRequest;
     private JLabel lblCopyUri;
+    private JButton btnPreviewImpact;
     private String evidencePlaceholder = "<html><b>Double left click</b> or <b>Right click</b> to add new evidence</html>";
     private AutoFilterComboboxModel autoFilterComboboxModel;
     private boolean fromContextMenu;
     private int qtdEvidence = 0;
-    boolean previewMarkdownDescription, previewMarkdownStepsToReproduce;
+    boolean previewMarkdownDescription, previewMarkdownStepsToReproduce, previewMarkdownImpact;
     HashMap<String, String> beforePreviewContents;
     Parser parser = Parser.builder().build();
     HtmlRenderer renderer = HtmlRenderer.builder().build();
@@ -398,12 +399,17 @@ public class NewIssueTab extends FathersComponentTab {
             }
         });
 
+        btnPreviewImpact.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                togglePreviewImpact();
+            }
+        });
+
         btnPreviewDescription.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 togglePreviewDescription();
-//                previewMarkdownDescription = !previewMarkdownDescription;
-//                previewMarkDownText(previewMarkdownDescription, "Description", txtAreaDescription);
             }
         });
 
@@ -701,10 +707,14 @@ public class NewIssueTab extends FathersComponentTab {
     private String getImpactDescription() {
         if (txtAreaImpact.getText().isEmpty()) {
             this.setRequiredTitleTab(tabDescriptionImpactSteps, "Impact");
-            return null;
+            return null; // to break the flow above
         } else {
             this.removeRequiredTitleTab(tabDescriptionImpactSteps, "Impact");
-            return txtAreaImpact.getText();
+            if (this.previewMarkdownImpact) {
+                togglePreviewImpact();
+            }
+            Node document = parser.parse(txtAreaImpact.getText().replaceAll("\\r?\\n", "</p><p>"));
+            return renderer.render(document).replace("\n", "");
         }
     }
 
@@ -1060,6 +1070,11 @@ public class NewIssueTab extends FathersComponentTab {
         previewMarkDownText(previewMarkdownDescription, "Description", txtAreaDescription);
     }
 
+    private void togglePreviewImpact() {
+        this.previewMarkdownImpact = !previewMarkdownImpact;
+        previewMarkDownText(previewMarkdownImpact, "Impact", txtAreaImpact);
+    }
+
     private void togglePreviewStepsToReproduce() {
         previewMarkdownStepsToReproduce = !previewMarkdownStepsToReproduce;
         previewMarkDownText(previewMarkdownStepsToReproduce, "Steps to Reproduce", txtAreaStepsToReproduce);
@@ -1253,15 +1268,15 @@ public class NewIssueTab extends FathersComponentTab {
         btnPreviewDescription.setText("Preview");
         panel8.add(btnPreviewDescription, cc.xy(1, 3));
         final JPanel panel9 = new JPanel();
-        panel9.setLayout(new FormLayout("fill:d:grow", "center:84px:grow"));
+        panel9.setLayout(new FormLayout("fill:d:grow", "center:84px:grow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
         tabDescriptionImpactSteps.addTab("Impact", panel9);
         final JScrollPane scrollPane2 = new JScrollPane();
         panel9.add(scrollPane2, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
-        txtAreaImpact = new JTextArea();
-        txtAreaImpact.setLineWrap(true);
-        txtAreaImpact.setText("");
-        txtAreaImpact.putClientProperty("html.disable", Boolean.TRUE);
+        txtAreaImpact = new JEditorPane();
         scrollPane2.setViewportView(txtAreaImpact);
+        btnPreviewImpact = new JButton();
+        btnPreviewImpact.setText("Preview");
+        panel9.add(btnPreviewImpact, cc.xy(1, 3));
         final JPanel panel10 = new JPanel();
         panel10.setLayout(new FormLayout("fill:d:grow", "center:84px:grow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
         tabDescriptionImpactSteps.addTab("Steps to reproduce", panel10);
