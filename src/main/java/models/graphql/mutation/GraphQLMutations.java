@@ -73,6 +73,20 @@ public class GraphQLMutations {
             "activity{ id archiveFilename evidenceText justify portalUser{ name } status title updatedAt } " +
             "errors }}";
 
+    public final static String mutationUpdateActivityStatusToFinishWithArchiveEvidence = "{\"query\": \"mutation($evidenceArchive: Upload){" +
+            "updateActivityStatusToFinish(input: {" +
+            "activityId: %1$d" +
+            "evidenceArchive: $evidenceArchive })" +
+            "{ activity{ id archiveFilename evidenceText justify portalUser{ name } status title updatedAt } errors }}\", " +
+            "\"variables\": { \"evidenceArchive\": null }, \"operationName\": null}";
+
+    public final static String mutationUpdateActivityStatusToFinishWithArchiveEvidenceAndTextEvidence = "{\"query\": \"mutation($evidenceArchive: Upload){" +
+            "updateActivityStatusToFinish(input: {" +
+            "activityId: %1$d" +
+            "evidenceArchive: $evidenceArchive" +
+            "evidence: \"%2$s\" })" +
+            "{ activity{ id archiveFilename evidenceText justify portalUser{ name } status title updatedAt } errors }}\", " +
+            "\"variables\": { \"evidenceArchive\": null }, \"operationName\": null}";
 
     public final static String mutationActivityStatusToRestart = "mutation{" +
             "updateActivityStatusToRestart(input: {" +

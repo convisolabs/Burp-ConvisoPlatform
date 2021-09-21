@@ -82,7 +82,7 @@ public class Util {
 
     public static String jsonSafeString(String raw) {
         String escaped = raw;
-        escaped = escaped.replace("\\", "\\\\\\");
+        escaped = escaped.replace("\\", "\\\\\\\\");
         escaped = escaped.replace("\"", "\\\\\\\"");
         escaped = escaped.replace("\b", "\\b");
         escaped = escaped.replace("\f", "\\f");

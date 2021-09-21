@@ -18,6 +18,9 @@ import models.graphql.mutation.GraphQLMutations;
 import models.issue.graphql.mutations.responses.CreatedIssueQL;
 import models.services_manager.ServicesManager;
 import org.apache.http.auth.AuthenticationException;
+import org.apache.http.client.HttpResponseException;
+
+import java.io.FileNotFoundException;
 
 public class ActivityService extends Service {
     private final AnalysisService analysisService;
@@ -27,24 +30,29 @@ public class ActivityService extends Service {
         this.analysisService = servicesManager.getAnalysisService();
     }
 
-    public void updateActivityToFinish(int activityId, EvidenceArchive evidenceArchive, String evidenceText) throws AuthenticationException {
+    public void updateActivityToFinish(int activityId, EvidenceArchive evidenceArchive, String evidenceText) throws AuthenticationException, FileNotFoundException, HttpResponseException {
         GraphQLService graphQLService = this.servicesManager.getGraphQLService();
         UpdatedActivityToFinish updatedActivityToFinish = null;
 
-        if (evidenceArchive != null) {
-            // evidencia é arquivo
-//            String response = graphQLService.executeQuery()
-//            String response = graphQLService.executeQueryMultipart(newVulnerability.getHttpEntity());
-//            GraphQLResponse graphQLResponse = new GraphQLResponse(response);
-//            return new Gson().fromJson(graphQLResponse.getContentOfData("createWebVulnerability"), CreatedIssueQL.class);
+        if (evidenceArchive != null && !evidenceText.isEmpty()){
+             // has some archives as evidence, also text.
+            String response = graphQLService.executeQueryMultipart(new UpdateActivityStatusToFinish(activityId, evidenceArchive, evidenceText).getHttpEntity());
+            GraphQLResponse graphQLResponse = new GraphQLResponse(response);
+            updatedActivityToFinish = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatusToFinish"), UpdatedActivityToFinish.class);
+
+        } else if (evidenceArchive != null) {
+            // the evidence is only archive.
+            String response = graphQLService.executeQueryMultipart(new UpdateActivityStatusToFinish(activityId, evidenceArchive).getHttpEntity());
+            GraphQLResponse graphQLResponse = new GraphQLResponse(response);
+            updatedActivityToFinish = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatusToFinish"), UpdatedActivityToFinish.class);
         } else {
-            //evidencia é texto
+            //the evidence is text.
             String response = graphQLService.executeQuery(new UpdateActivityStatusToFinish(activityId, evidenceText).getQuery());
             GraphQLResponse graphQLResponse = new GraphQLResponse(response);
             updatedActivityToFinish = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatusToFinish"), UpdatedActivityToFinish.class);
         }
 
-        //somente se a acao der sucesso
+        //only if the action has succes.
         if (updatedActivityToFinish != null) {
             analysisService.getWorkingAnalysis().updateActivity(updatedActivityToFinish.getActivity());
             analysisService.saveLocalWorkingProject();

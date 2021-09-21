@@ -7,6 +7,7 @@ import models.evidences.EvidenceFileChooser;
 import models.services_manager.ServicesManager;
 import models.evidences.EvidenceArchive;
 import org.apache.http.auth.AuthenticationException;
+import org.apache.http.client.HttpResponseException;
 import services.ActivityService;
 import utilities.Util;
 import view.DefaultView;
@@ -23,6 +24,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -95,11 +97,12 @@ public class UploadEvidence extends DefaultView {
                                 activityService.updateActivityToFinish((Integer) jTable.getValueAt(i, 0), evidenceArchiveOfActivity, textEvidence);
                                 SwingUtilities.getWindowAncestor(rootPanel).setVisible(false);
                                 playbookTab.updatePlaybooksTables();
-                            } catch (Error | JsonSyntaxException err) {
+                            } catch (Error | JsonSyntaxException | HttpResponseException | FileNotFoundException err) {
                                 util.sendStderr(err.toString());
                                 JOptionPane.showMessageDialog(rootPanel, "Error!\nCheck the errors in extender tab!");
                             } catch (AuthenticationException authenticationException) {
-                                authenticationException.printStackTrace();
+                                util.sendStderr(authenticationException.toString());
+                                JOptionPane.showMessageDialog(rootPanel, "Error!\nAuthentication exception!\nCheck the errors in extender tab!");
                             }
                         }
 
