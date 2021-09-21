@@ -215,7 +215,7 @@ public class Template {
 
     public void sanitize() {
         try {
-            this.setTitle(new String(this.title.getBytes("ISO-8859-1"), "UTF-8").trim() + ((this.notification) ? " - (Notificação)" : ""));
+            this.setTitle(new String(this.title.getBytes("ISO-8859-1"), "UTF-8").trim() + ((this.notification) ? " - (Notification)" : ""));
             this.setDescription(new String(this.description.getBytes("ISO-8859-1"), "UTF-8").trim());
 //            this.setReference(new String(this.reference.getBytes("ISO-8859-1"), "UTF-8").trim());
 

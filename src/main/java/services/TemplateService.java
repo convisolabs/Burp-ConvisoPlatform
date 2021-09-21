@@ -61,26 +61,6 @@ public class TemplateService extends Service {
             util.sendStderr(content);
             util.sendStderr("Error loading projects.");
         }
-//   Template[] templatesArray;
-////   HttpClient httpClient = new HttpClient(this.callbacks, this.helpers);
-////
-////   Map<String, String> parameters = new HashMap<>();
-////   parameters.put("per_page", "1000");
-////   String httpResult = httpClient.get("v3/company/" + scopeId + "/vulnerability_templates", parameters);
-////   IResponseInfo responseCleaned = helpers.analyzeResponse(helpers.stringToBytes(httpResult));
-////   String jsonResponse = httpResult.substring(responseCleaned.getBodyOffset());
-////   try {
-////  templatesArray = new Gson().fromJson(jsonResponse, Template[].class);
-////  this.sanitizeTemplates(templatesArray);
-////  util.sendStdout("[Re]Loaded templates from API. Scope Id: " + scopeId);
-////  this.allTemplates.addAll(Arrays.asList(templatesArray));
-////  this.saveTemplatesLocally();
-////  this.lastRequestTime = Calendar.getInstance();
-////   } catch (com.google.gson.JsonSyntaxException e) {
-////  util.sendStderr(jsonResponse);
-////   } catch (Exception e) {
-////  util.sendStderr("Error loading templates.");
-////   }
     }
 
 

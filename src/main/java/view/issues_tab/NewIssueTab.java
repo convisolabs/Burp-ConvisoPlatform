@@ -453,9 +453,10 @@ public class NewIssueTab extends FathersComponentTab {
                     requestFocusNextFieldRadioButtons();
                     yesCompromisedEnvironmentRButton.setEnabled(true);
                 }).start();
-
             }
         });
+
+
 
 
     }

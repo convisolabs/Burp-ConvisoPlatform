@@ -81,8 +81,6 @@ public class TabsManager implements ITab {
             this.issuesTab.addChangeListener(e -> {
                 int selectedIndex = issuesTab.getSelectedIndex();
                 if (issuesTab.getTitleAt(selectedIndex).equals("+")) {
-                    System.out.println(true);
-
                     NewIssueTab issue = new NewIssueTab(this.callbacks, this.helpers, this.servicesManager, this);
                     issue.initializeComponent();
                     this.issuesArray.add(issue);
@@ -91,7 +89,6 @@ public class TabsManager implements ITab {
                     this.issuesTab.setTabComponentAt(selectedIndex, new ClosablePane("#" + issuesArray.size()));
                     this.issuesTab.setSelectedIndex(selectedIndex);
                 }
-
             });
         });
     }
