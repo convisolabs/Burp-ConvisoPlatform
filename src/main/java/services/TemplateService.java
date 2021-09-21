@@ -81,7 +81,7 @@ public class TemplateService extends Service {
             callbacks.saveExtensionSetting(FLOW_ALL_TEMPLATES, templatesPayload);
             util.sendStdout("Saved templates locally.");
         } else {
-            util.sendStdout("Saved tempaltes are up to date.");
+            util.sendStdout("Saved templates are up to date.");
         }
     }
 

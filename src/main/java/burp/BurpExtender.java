@@ -27,6 +27,8 @@ public class BurpExtender implements IBurpExtender {
         this.servicesManager = new ServicesManager(this.callbacks, this.helpers);
 
         callbacks.setExtensionName("AppSec Flow");
+        new Util(this.callbacks).sendStdout("Extension loaded");
+        new Util(this.callbacks).sendStdout("Executing checks: \n");
 
 
         tabsManager = new TabsManager(this.callbacks, this.helpers, this.servicesManager);
@@ -49,8 +51,6 @@ public class BurpExtender implements IBurpExtender {
         this.contextMenuOption = new ContextMenuOption(this.callbacks, this.helpers, tabsManager);
         this.callbacks.registerContextMenuFactory(this.contextMenuOption);
 
-
-        new Util(this.callbacks).sendStdout("Extension loaded");
     }
 
 

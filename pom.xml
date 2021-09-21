@@ -51,6 +51,7 @@
             <groupId>org.commonmark</groupId>
             <artifactId>commonmark</artifactId>
             <version>0.17.1</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.intellij</groupId>
@@ -63,12 +64,14 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.13</version>
+            <scope>compile</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpmime -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
             <version>4.5.13</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

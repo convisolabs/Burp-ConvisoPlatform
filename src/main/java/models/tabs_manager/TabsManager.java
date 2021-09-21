@@ -4,6 +4,7 @@ import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import burp.ITab;
 import models.services_manager.ServicesManager;
+import services.IssuesService;
 import utilities.Util;
 import view.settings.config.ConfigurationTab;
 import view.issues_tab.closable_pane.ClosablePane;
@@ -25,7 +26,7 @@ public class TabsManager implements ITab {
 
     private final String FLOW_API_KEY = "FLOW.API.KEY";
     private final int ISSUES_INDEX = 0;
-    private final int MANAGETMENT_INDEX = 1;
+    private final int MANAGEMENT_INDEX = 1;
     private final int CONFIG_INDEX = 2;
 
     private final int[] ALLOCATED_ANALYSIS_TAB = {1, 1};
@@ -69,13 +70,42 @@ public class TabsManager implements ITab {
 
 
     private void initializeIssuesTab() {
-        /* Occurrences tab */
-        NewIssueTab newIssueTab = new NewIssueTab(this.callbacks, this.helpers, this.servicesManager, this);
-        newIssueTab.initializeComponent();
-        this.issuesArray.add(newIssueTab);
-        this.issuesTab.addTab(null, newIssueTab.$$$getRootComponent$$$());//
+        /* Issues tab */
+        IssuesService issuesService = this.servicesManager.getIssueService();
+        issuesService.loadWorkingIssuesLocally();
+
+        if(issuesService.getSavedIssues().size() > 0){
+
+            int load = JOptionPane.showConfirmDialog(this.getRootTab(), "Do you wish to load saved issues?", "Load working issues", JOptionPane.YES_NO_OPTION);
+            System.out.println(load);
+            if(load == JOptionPane.YES_OPTION){
+                for (String jsonObject :
+                        issuesService.getSavedIssues()) {
+                    NewIssueTab issue = new NewIssueTab(this.callbacks, this.helpers, this.servicesManager, this);
+                    issue.initializeComponent();
+                    issue.fromJsonObject(jsonObject);
+                    this.issuesArray.add(issue);
+                    this.issuesTab.insertTab(null, null, issue.$$$getRootComponent$$$(), null, issuesArray.size()-1);
+                    this.issuesTab.setTabComponentAt(issuesArray.size()-1, new ClosablePane("#" + issuesArray.size()));
+                }
+            }else{
+                NewIssueTab newIssueTab = new NewIssueTab(this.callbacks, this.helpers, this.servicesManager, this);
+                newIssueTab.initializeComponent();
+                this.issuesArray.add(newIssueTab);
+                this.issuesTab.addTab(null, newIssueTab.$$$getRootComponent$$$());//
+                this.issuesTab.setTabComponentAt(0, new ClosablePane("#1"));
+            }
+            issuesService.clearWorkingIssues();
+            this.issuesTab.setSelectedIndex(0);
+        }else{
+            NewIssueTab newIssueTab = new NewIssueTab(this.callbacks, this.helpers, this.servicesManager, this);
+            newIssueTab.initializeComponent();
+            this.issuesArray.add(newIssueTab);
+            this.issuesTab.addTab(null, newIssueTab.$$$getRootComponent$$$());//
+            this.issuesTab.setTabComponentAt(0, new ClosablePane("#1"));
+        }
         this.issuesTab.addTab("+", new JPanel());
-        this.issuesTab.setTabComponentAt(0, new ClosablePane("#1"));
+
 
         SwingUtilities.invokeLater(() -> {
             this.issuesTab.addChangeListener(e -> {
@@ -91,6 +121,8 @@ public class TabsManager implements ITab {
                 }
             });
         });
+
+
     }
 
     private void initializeManagementTab() {
@@ -141,6 +173,22 @@ public class TabsManager implements ITab {
                 tabPane.setSelectedIndex(i);
             }
         }
+    }
+
+    public void saveIssue(String objectToSave){
+        IssuesService issuesService = this.servicesManager.getIssueService();
+        if(!issuesService.verifySavedIssue(objectToSave)) {
+            issuesService.addToWorkingIssues(objectToSave);
+            issuesService.saveWorkingIssuesLocally();
+        }
+    }
+
+    public void removeIssue(String objectToRemove){
+        IssuesService issuesService = this.servicesManager.getIssueService();
+        if(issuesService.verifySavedIssue(objectToRemove)){
+            issuesService.removeFromWorkingIssues(objectToRemove);
+        }
+        issuesService.saveWorkingIssuesLocally();
     }
 
     public NewIssueTab returnLastIssue(){

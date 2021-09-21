@@ -43,7 +43,6 @@ public class ClosablePane extends JPanel {
                     fathersPane.setSelectedIndex(1);
                     fathersPane.remove(0);
                 }
-
             }
         });
 

@@ -38,7 +38,7 @@ public class ServicesManager {
         return templateService;
     }
 
-    public IssuesService getVulnerabilityService() {
+    public IssuesService getIssueService() {
         return issuesService;
     }
 

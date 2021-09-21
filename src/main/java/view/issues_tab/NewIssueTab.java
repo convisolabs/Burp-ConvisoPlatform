@@ -3,6 +3,8 @@ package view.issues_tab;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import burp.IParameter;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -118,7 +120,7 @@ public class NewIssueTab extends FathersComponentTab {
         super(callbacks, helpers, servicesManager, tabsManager);
         this.analysisService = super.servicesManager.getAnalysisService();
         this.templateService = super.servicesManager.getTemplateService();
-        this.issuesService = super.servicesManager.getVulnerabilityService();
+        this.issuesService = super.servicesManager.getIssueService();
         this.parametersListModel = new DefaultListModel<String>();
         this.evidenceListModel = new DefaultListModel<EvidenceArchive>();
         this.fromContextMenu = false;
@@ -144,20 +146,16 @@ public class NewIssueTab extends FathersComponentTab {
 
         if (this.isDarkBackground) {
             lblCopyUri.setIcon(new ImageIcon(getClass().getResource("/icons/copy-darkbkg.png")));
-//            btnSubmitForm.setForeground(this.rootPanel2.getForeground());
         } else {
             lblCopyUri.setIcon(new ImageIcon(getClass().getResource("/icons/copy-lightbkg.png")));
-//            btnSubmitForm.setForeground(new Color(255, 255, 255));
         }
 
         lblCopyUri.addPropertyChangeListener(evt -> {
             if (evt.getPropertyName().equals("foreground")) {
                 if (this.isDarkBackground) {
                     lblCopyUri.setIcon(new ImageIcon(getClass().getResource("/icons/copy-darkbkg.png")));
-//                    btnSubmitForm.setForeground(this.rootPanel2.getForeground());
                 } else {
                     lblCopyUri.setIcon(new ImageIcon(getClass().getResource("/icons/copy-lightbkg.png")));
-//                    btnSubmitForm.setForeground(new Color(255, 255, 255));
                 }
             }
         });
@@ -370,6 +368,7 @@ public class NewIssueTab extends FathersComponentTab {
                                     JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "Something went wrong!\nCheck errors on extender tab!");
                                 }
                                 btnSubmitForm.setEnabled(true);
+                                tabsManager.removeIssue(toJsonStringObject());
                             }).start();
 
 
@@ -456,7 +455,8 @@ public class NewIssueTab extends FathersComponentTab {
             }
         });
 
-
+        SwingUtilities.invokeLater(this::saveThisIssueIfExiting);
+        // To save this issue, if it was started but not ended and Burp closes.
 
 
     }
@@ -1079,6 +1079,125 @@ public class NewIssueTab extends FathersComponentTab {
     private void togglePreviewStepsToReproduce() {
         previewMarkdownStepsToReproduce = !previewMarkdownStepsToReproduce;
         previewMarkDownText(previewMarkdownStepsToReproduce, "Steps to Reproduce", txtAreaStepsToReproduce);
+    }
+
+    private boolean startedToFillIssue() {
+        return this.autoFilterComboboxModel.getSize() > 0 &&
+                this.getDefinedProbability() != null &&
+                this.getDefinedImpact() != null &&
+                (
+                        this.getDescription() != null ||
+                                this.getImpactDescription() != null ||
+                                this.getStepsToReproduce() != null ||
+                                this.getMethod() != null ||
+                                this.getProtocol() != null ||
+                                this.getUrl() != null ||
+                                this.getRequest() != null ||
+                                this.getResponse() != null
+                );
+
+    }
+
+    public void fromJsonObject(String jsonObjectAsString) {
+        JsonObject jsonObject = new Gson().fromJson(jsonObjectAsString, JsonObject.class);
+        this.loadTemplatesManually();
+        Template previousSelectedTemplate = new Gson().fromJson(jsonObject.get("template"), Template.class);
+        this.autoFilterComboboxModel.setSelectedItem(previousSelectedTemplate);
+
+        switch (jsonObject.get("probability").getAsString()) {
+            case "low" -> this.probabilityLowRButton.setSelected(true);
+            case "medium" -> this.probabilityMediumRButton.setSelected(true);
+            case "high" -> this.probabilityHighRButton.setSelected(true);
+        }
+
+        switch (jsonObject.get("impact").getAsString()) {
+            case "low" -> this.impactLowRButton.setSelected(true);
+            case "medium" -> this.impactMediumRButton.setSelected(true);
+            case "high" -> this.impactHighRButton.setSelected(true);
+        }
+
+        String previousDescription = jsonObject.get("description").getAsString();
+        if (previousDescription != null) {
+            this.txtAreaDescription.setText(previousDescription);
+        }
+
+        String previousImpactDescription = jsonObject.get("impactDescription").getAsString();
+        if (previousDescription != null) {
+            this.txtAreaImpact.setText(previousImpactDescription);
+        }
+
+        String previousSteps = jsonObject.get("steps").getAsString();
+        if (previousSteps != null) {
+            this.txtAreaStepsToReproduce.setText(previousSteps);
+        }
+
+        String previousMethod = jsonObject.get("method").getAsString();
+        if (previousMethod != null) {
+            this.lblMethod.setText(previousMethod);
+        }
+        String previousProtocol = jsonObject.get("protocol").getAsString();
+        if (previousProtocol != null) {
+            this.lblProtocol.setText(previousProtocol);
+        }
+        String previousUri = jsonObject.get("uri").getAsString();
+        if (previousUri != null) {
+            this.lblUrl.setText(previousUri);
+        }
+        String previousRequest = jsonObject.get("request").getAsString();
+        if (previousRequest != null) {
+            this.txtAreaRequest.setText(previousRequest);
+        }
+        String previousResponse = jsonObject.get("response").getAsString();
+        if (previousResponse != null) {
+            this.txtAreaResponse.setText(previousResponse);
+        }
+
+        DefaultListModel<EvidenceArchive> previousEvidences = (DefaultListModel<EvidenceArchive>) new Gson().fromJson(jsonObject.get("evidences"), DefaultListModel.class);
+        if (!previousEvidences.isEmpty()) {
+            this.evidenceListModel = previousEvidences;
+        }
+
+        DefaultListModel<String> previousParameters = (DefaultListModel<String>) new Gson().fromJson(jsonObject.get("parameters"), DefaultListModel.class);
+        if (!previousParameters.isEmpty()) {
+            this.parametersListModel = previousParameters;
+        }
+    }
+
+    private String toJsonStringObject() {
+        JsonObject toReturn = new JsonObject();
+        toReturn.addProperty("template", new Gson().toJson(this.autoFilterComboboxModel.getSelectedItem()));
+        toReturn.addProperty("probability", this.getDefinedProbability());
+        toReturn.addProperty("impact", this.getDefinedImpact());
+        toReturn.addProperty("description", this.getDescription());
+        toReturn.addProperty("impactDescription", this.getImpactDescription());
+        toReturn.addProperty("steps", this.getStepsToReproduce());
+        toReturn.addProperty("evidences", new Gson().toJson(this.evidenceListModel));
+        toReturn.addProperty("method", this.getMethod());
+        toReturn.addProperty("protocol", this.getProtocol());
+        toReturn.addProperty("uri", this.getUrl());
+        toReturn.addProperty("parameters", new Gson().toJson(this.parametersListModel));
+        toReturn.addProperty("request", this.getRequest());
+        toReturn.addProperty("response", this.getResponse());
+
+        return new Gson().toJson(toReturn);
+
+    }
+
+
+    private void saveThisIssueIfExiting() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (startedToFillIssue()) {
+                tabsManager.saveIssue(toJsonStringObject());
+            }
+        }));
+    }
+
+    private void loadTemplatesManually() {
+        Set<Template> templatesArray = this.templateService.getAllTemplates();
+
+        this.cbVulnerabilityTemplates.removeAllItems();
+        AutoFilterComboboxModel autoFilterComboboxModel = (AutoFilterComboboxModel) this.cbVulnerabilityTemplates.getModel();
+        autoFilterComboboxModel.setTemplatesList(new ArrayList<>(templatesArray));
     }
 
     public DefaultListModel<EvidenceArchive> getEvidenceListModel() {
