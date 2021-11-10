@@ -1,32 +1,32 @@
-package view.management.allocated_analysis.cell_renderer;
+package view.management.allocated_project.cell_renderer;
 
-import models.analysis.Analysis;
-import services.AnalysisService;
+import models.project.Project;
+import services.ProjectService;
 import utilities.Util;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
-public class WorkingAnalysisCellRenderer extends DefaultTableCellRenderer {
+public class WorkingProjectCellRenderer extends DefaultTableCellRenderer {
 
-    private AnalysisService analysisService;
+    private ProjectService projectService;
     private Color defaultForegroundColor;
 
-    public WorkingAnalysisCellRenderer(AnalysisService analysisService) {
-        this.analysisService = analysisService;
+    public WorkingProjectCellRenderer(ProjectService projectService) {
+        this.projectService = projectService;
     }
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         this.setHorizontalAlignment(JLabel.CENTER);
-        Analysis workingAnalysis = analysisService.getWorkingAnalysis();
+        Project workingProject = projectService.getWorkingProject();
 
         Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-        if(workingAnalysis != null){
+        if(workingProject != null){
             int projectId = (int) table.getValueAt(row, 0);
-            if(projectId == workingAnalysis.getId()){
+            if(projectId == workingProject.getId()){
                 component.setForeground(this.getHighlightColor());
             }else{
                 component.setForeground(table.getForeground());

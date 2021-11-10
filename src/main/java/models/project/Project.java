@@ -1,4 +1,4 @@
-package models.analysis;
+package models.project;
 
 import models.activity.Activity;
 import utilities.Util;
@@ -7,7 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Analysis {
+public class Project {
 
     private int id;
     private String pid;
@@ -444,8 +444,8 @@ public class Analysis {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Analysis analysis = (Analysis) o;
-        return id == analysis.id && companyId == analysis.companyId && pid.equals(analysis.pid) && label.equals(analysis.label);
+        Project project = (Project) o;
+        return id == project.id && companyId == project.companyId && pid.equals(project.pid) && label.equals(project.label);
     }
 
     @Override

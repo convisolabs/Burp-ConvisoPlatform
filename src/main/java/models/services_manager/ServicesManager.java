@@ -11,7 +11,7 @@ public class ServicesManager {
     private IExtensionHelpers helpers;
 
     private GraphQLService graphQLService;
-    private AnalysisService analysisService;
+    private ProjectService projectService;
     private TemplateService templateService;
     private IssuesService issuesService;
     private ActivityService activityService;
@@ -20,7 +20,7 @@ public class ServicesManager {
         this.callbacks = callbacks;
         this.helpers = helpers;
         this.graphQLService = new GraphQLService(this.callbacks, this.helpers, this);
-        this.analysisService = new AnalysisService(this.callbacks, this.helpers, this);
+        this.projectService = new ProjectService(this.callbacks, this.helpers, this);
         this.templateService = new TemplateService(this.callbacks, this.helpers, this);
         this.issuesService = new IssuesService(this.callbacks, this.helpers, this);
         this.activityService = new ActivityService(this.callbacks, this.helpers, this);
@@ -30,8 +30,8 @@ public class ServicesManager {
         return graphQLService;
     }
 
-    public AnalysisService getAnalysisService() {
-        return analysisService;
+    public ProjectService getProjectService() {
+        return projectService;
     }
 
     public TemplateService getTemplateService() {

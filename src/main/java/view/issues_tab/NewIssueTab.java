@@ -7,7 +7,7 @@ import com.google.gson.JsonSyntaxException;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import models.auto_filter_combobox.AutoFilterComboboxModel;
-import models.analysis.Analysis;
+import models.project.Project;
 import models.evidences.EvidenceFileChooser;
 import models.services_manager.ServicesManager;
 import models.tabs_manager.TabsManager;
@@ -20,7 +20,7 @@ import org.apache.http.client.HttpResponseException;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
-import services.AnalysisService;
+import services.ProjectService;
 import services.TemplateService;
 import services.IssuesService;
 import view.FathersComponentTab;
@@ -68,7 +68,7 @@ public class NewIssueTab extends FathersComponentTab {
 
     private TemplateService templateService;
     private IssuesService issuesService;
-    private AnalysisService analysisService;
+    private ProjectService projectService;
     DefaultListModel<String> parametersListModel;
     private DefaultListModel<EvidenceArchive> evidenceListModel;
     private JEditorPane txtAreaStepsToReproduce;
@@ -116,7 +116,7 @@ public class NewIssueTab extends FathersComponentTab {
 
     public NewIssueTab(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager, TabsManager tabsManager) {
         super(callbacks, helpers, servicesManager, tabsManager);
-        this.analysisService = super.servicesManager.getAnalysisService();
+        this.projectService = super.servicesManager.getProjectService();
         this.templateService = super.servicesManager.getTemplateService();
         this.issuesService = super.servicesManager.getVulnerabilityService();
         this.parametersListModel = new DefaultListModel<String>();
@@ -340,9 +340,9 @@ public class NewIssueTab extends FathersComponentTab {
                     }
 
                     if (issue != null) {
-                        Analysis workingAnalysis = servicesManager.getAnalysisService().getWorkingAnalysis();
-                        if (workingAnalysis != null) {
-                            issue.setAnalysisId(workingAnalysis.getId());
+                        Project workingProject = servicesManager.getProjectService().getWorkingProject();
+                        if (workingProject != null) {
+                            issue.setProjectId(workingProject.getId());
                             new Thread(() -> {
                                 btnSubmitForm.setEnabled(false);
                                 try {

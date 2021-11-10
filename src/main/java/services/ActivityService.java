@@ -3,7 +3,6 @@ package services;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import com.google.gson.Gson;
-import models.activity.Activity;
 import models.activity.graphql.mutations.UpdateActivityStatusToFinish;
 import models.activity.graphql.mutations.UpdateActivityStatusToNotApply;
 import models.activity.graphql.mutations.UpdateActivityStatusToRestart;
@@ -14,8 +13,6 @@ import models.activity.graphql.mutations.responses.UpdatedActivityToRestart;
 import models.activity.graphql.mutations.responses.UpdatedActivityToStart;
 import models.evidences.EvidenceArchive;
 import models.graphql.GraphQLResponse;
-import models.graphql.mutation.GraphQLMutations;
-import models.issue.graphql.mutations.responses.CreatedIssueQL;
 import models.services_manager.ServicesManager;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.client.HttpResponseException;
@@ -23,11 +20,11 @@ import org.apache.http.client.HttpResponseException;
 import java.io.FileNotFoundException;
 
 public class ActivityService extends Service {
-    private final AnalysisService analysisService;
+    private final ProjectService projectService;
 
     public ActivityService(IBurpExtenderCallbacks callbacks, IExtensionHelpers helpers, ServicesManager servicesManager) {
         super(callbacks, helpers, servicesManager);
-        this.analysisService = servicesManager.getAnalysisService();
+        this.projectService = servicesManager.getProjectService();
     }
 
     public void updateActivityToFinish(int activityId, EvidenceArchive evidenceArchive, String evidenceText) throws AuthenticationException, FileNotFoundException, HttpResponseException {
@@ -54,8 +51,8 @@ public class ActivityService extends Service {
 
         //only if the action has succes.
         if (updatedActivityToFinish != null) {
-            analysisService.getWorkingAnalysis().updateActivity(updatedActivityToFinish.getActivity());
-            analysisService.saveLocalWorkingProject();
+            projectService.getWorkingProject().updateActivity(updatedActivityToFinish.getActivity());
+            projectService.saveLocalWorkingProject();
         }
     }
 
@@ -69,8 +66,8 @@ public class ActivityService extends Service {
         updatedActivityToNotApply = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatusToNotApply"), UpdatedActivityToNotApply.class);
 
         if(updatedActivityToNotApply != null){
-            analysisService.getWorkingAnalysis().updateActivity(updatedActivityToNotApply.getActivity());
-            analysisService.saveLocalWorkingProject();
+            projectService.getWorkingProject().updateActivity(updatedActivityToNotApply.getActivity());
+            projectService.saveLocalWorkingProject();
         }
     }
 
@@ -83,8 +80,8 @@ public class ActivityService extends Service {
         updatedActivityToStart = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatusToStart"), UpdatedActivityToStart.class);
 
         if(updatedActivityToStart != null){
-            analysisService.getWorkingAnalysis().updateActivity(updatedActivityToStart.getActivity());
-            analysisService.saveLocalWorkingProject();
+            projectService.getWorkingProject().updateActivity(updatedActivityToStart.getActivity());
+            projectService.saveLocalWorkingProject();
         }
     }
 
@@ -97,8 +94,8 @@ public class ActivityService extends Service {
         updatedActivityToRestart = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatusToRestart"), UpdatedActivityToRestart.class);
 
         if(updatedActivityToRestart != null){
-            analysisService.getWorkingAnalysis().updateActivity(updatedActivityToRestart.getActivity());
-            analysisService.saveLocalWorkingProject();
+            projectService.getWorkingProject().updateActivity(updatedActivityToRestart.getActivity());
+            projectService.saveLocalWorkingProject();
         }
     }
 

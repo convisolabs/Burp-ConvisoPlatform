@@ -13,7 +13,7 @@ import java.util.*;
 
 
 public class TemplateService extends Service {
-    private final AnalysisService analysisService;
+    private final ProjectService projectService;
     private Set<Template> allTemplates = new HashSet<>();
 
     private static final String FLOW_ALL_TEMPLATES = "FLOW.ALL.TEMPLATES";
@@ -21,12 +21,12 @@ public class TemplateService extends Service {
     public TemplateService(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
         super(callbacks, helpers, servicesManager);
         alreadyLoaded = false;
-        this.analysisService = this.servicesManager.getAnalysisService();
+        this.projectService = this.servicesManager.getProjectService();
     }
 
     public Set<Template> getAllTemplates() {
         if (this.alreadyLoaded && (this.lastRequestTime == null || (System.currentTimeMillis() - this.lastRequestTime.getTimeInMillis()) > 30000)) {
-            this.analysisService.getAllocatedProjects();
+            this.projectService.getAllocatedProjects();
             this.allTemplates = new HashSet<>();
             this.getAllTemplatesByScopeIds();
         } else {
@@ -101,7 +101,7 @@ public class TemplateService extends Service {
         ArrayList<Thread> threadArrayList = new ArrayList<>();
         this.allTemplates = new HashSet<>();
         for (Integer i :
-                analysisService.getScopeIdsOfProjects()) {
+                projectService.getScopeIdsOfProjects()) {
             Thread t = new Thread(() -> getAllVulnerabilitiesModelsFromApi(i));
             threadArrayList.add(t);
             t.start();

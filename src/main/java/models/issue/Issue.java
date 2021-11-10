@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class Issue {
 
-    private int analysisId;//": 2188,                   //OBRIGATORIO
+    private int projectId;//": 2188,                   //OBRIGATORIO
     private int vulnerabilityTemplateId;//": 1,          //OBRIGATORIO
 
     private String impact;//": "medium",                //OBRIGATORIO
@@ -35,12 +35,12 @@ public class Issue {
 
     }
 
-    public Issue(int analysisId, int vulnerabilityTemplateId, String impact, String probability, Boolean invaded,
+    public Issue(int projectId, int vulnerabilityTemplateId, String impact, String probability, Boolean invaded,
                  String invadedDescription, String description, String impactResume, String webProtocol,
                  String webMethod, String webUrl, String webParameters,
                  String webSteps, String webRequest, String webResponse) {
 
-        this.analysisId = analysisId;
+        this.projectId = projectId;
         this.vulnerabilityTemplateId = vulnerabilityTemplateId;
         this.impact = impact;
         this.probability = probability;
@@ -58,8 +58,8 @@ public class Issue {
         this.evidenceArchives = new ArrayList<>();
     }
 
-    public void setAnalysisId(int analysisId) {
-        this.analysisId = analysisId;
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
     }
 
     public void setVulnerabilityTemplateId(int vulnerabilityTemplateId) {
@@ -150,8 +150,8 @@ public class Issue {
 //    }
 
 
-    public int getAnalysisId() {
-        return analysisId;
+    public int getProjectId() {
+        return projectId;
     }
 
     public int getVulnerabilityTemplateId() {
@@ -225,7 +225,7 @@ public class Issue {
     @Override
     public String toString() {
         return "Vulnerability{" +
-                "project_id=" + analysisId +
+                "project_id=" + projectId +
                 ", vulnerability_model_id=" + vulnerabilityTemplateId +
                 ", impact='" + impact + '\'' +
                 ", probability='" + probability + '\'' +
@@ -247,7 +247,7 @@ public class Issue {
     public JsonObject toJsonObject() {
 
         JsonObject toReturn = new JsonObject();
-        toReturn.addProperty("analysisId", this.analysisId);
+        toReturn.addProperty("projectId", this.projectId);
         toReturn.addProperty("vulnerabilityTemplateId", this.vulnerabilityTemplateId);
         toReturn.addProperty("impact", this.impact);
         toReturn.addProperty("probability", this.probability);

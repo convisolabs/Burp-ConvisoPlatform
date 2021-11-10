@@ -4,7 +4,7 @@ public class GraphQLMutations {
 
     public final static String mutationCreateWebVulnerabilityNotInvaded = "{\"query\": \"mutation($evidenceArchives: [Upload!]!){" +
             "createWebVulnerability(input: {" +
-            "analysisId: %1$d, " +
+            "projectId: %1$d, " +
             "vulnerabilityTemplateId: %2$d, " +
             "impact: \\\"%3$s\\\", " +
             "probability: \\\"%4$s\\\", " +
@@ -26,7 +26,7 @@ public class GraphQLMutations {
 
     public final static String mutationCreateWebVulnerabilityInvaded = "{\"query\": \"mutation($evidenceArchives: [Upload!]!){" +
             "createWebVulnerability(input: {" +
-            "analysisId: %1$d, " +
+            "projectId: %1$d, " +
             "vulnerabilityTemplateId: %2$d, " +
             "impact: \\\"%3$s\\\", " +
             "probability: \\\"%4$s\\\", " +
@@ -49,7 +49,7 @@ public class GraphQLMutations {
 
     public final static String mutationCreateNotification = "{\"query\": \"mutation($evidenceArchives: [Upload!]!){" +
             "createNotification(input: { " +
-            "analysisId: %1$d, " +
+            "projectId: %1$d, " +
             "vulnerabilityTemplateId: %2$d, " +
             "description: \\\"%3$s\\\", " +
             "evidenceArchives: $evidenceArchives " +

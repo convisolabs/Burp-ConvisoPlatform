@@ -13,7 +13,7 @@ public class CreateNotificationIssueQL extends CreateIssueQL {
     @Override
     protected void prepareQuery() {
         this.query = String.format(GraphQLMutations.mutationCreateNotification,
-                this.issue.getAnalysisId(),
+                this.issue.getProjectId(),
                 this.issue.getVulnerabilityTemplateId(),
                 this.issue.getDescription(),
                 this.issue.getNullByEvidencesListSize());

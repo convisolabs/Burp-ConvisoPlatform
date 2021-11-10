@@ -7,7 +7,7 @@ import models.services_manager.ServicesManager;
 import utilities.Util;
 import view.settings.config.ConfigurationTab;
 import view.issues_tab.closable_pane.ClosablePane;
-import view.management.allocated_analysis.AllocatedAnalysesTab;
+import view.management.allocated_project.AllocatedProjectsTab;
 import view.management.playbooks.PlaybookTab;
 import view.issues_tab.NewIssueTab;
 
@@ -28,12 +28,12 @@ public class TabsManager implements ITab {
     private final int MANAGETMENT_INDEX = 1;
     private final int CONFIG_INDEX = 2;
 
-    private final int[] ALLOCATED_ANALYSIS_TAB = {1, 1};
+    private final int[] ALLOCATED_PROJECT_TAB = {1, 1};
 
     /* Tabs */
     private ConfigurationTab configurationTab;
     ArrayList<NewIssueTab> issuesArray = new ArrayList<>();
-    private AllocatedAnalysesTab allocatedAnalysesTab;
+    private AllocatedProjectsTab allocatedProjectsTab;
     private PlaybookTab playbookTab;
 
 
@@ -95,14 +95,14 @@ public class TabsManager implements ITab {
 
     private void initializeManagementTab() {
         /* Management tab */
-        this.allocatedAnalysesTab = new AllocatedAnalysesTab(this.callbacks, this.helpers, this.servicesManager, this);
+        this.allocatedProjectsTab = new AllocatedProjectsTab(this.callbacks, this.helpers, this.servicesManager, this);
         this.playbookTab = new PlaybookTab(this.callbacks, this.helpers, this.servicesManager);
 
-        this.allocatedAnalysesTab.initializeComponent();
+        this.allocatedProjectsTab.initializeComponent();
         this.playbookTab.initializeComponent();
 
         this.managementTab.addTab("Playbooks", this.playbookTab.$$$getRootComponent$$$());
-        this.managementTab.addTab("Allocated Projects", this.allocatedAnalysesTab.$$$getRootComponent$$$());
+        this.managementTab.addTab("Allocated Projects", this.allocatedProjectsTab.$$$getRootComponent$$$());
 
     }
 
@@ -124,8 +124,8 @@ public class TabsManager implements ITab {
     }
 
     public void setFocusToAllocatedProjectsTab() {
-        this.rootTab.setSelectedIndex(ALLOCATED_ANALYSIS_TAB[0]);
-        this.managementTab.setSelectedIndex(ALLOCATED_ANALYSIS_TAB[1]);
+        this.rootTab.setSelectedIndex(ALLOCATED_PROJECT_TAB[0]);
+        this.managementTab.setSelectedIndex(ALLOCATED_PROJECT_TAB[1]);
     }
 
     public void setFocusToLastIssue(){
@@ -155,8 +155,8 @@ public class TabsManager implements ITab {
         return configurationTab;
     }
 
-    public AllocatedAnalysesTab getAllocatedProjectsTab() {
-        return allocatedAnalysesTab;
+    public AllocatedProjectsTab getAllocatedProjectsTab() {
+        return allocatedProjectsTab;
     }
 
     public PlaybookTab getPlaybookTab() {

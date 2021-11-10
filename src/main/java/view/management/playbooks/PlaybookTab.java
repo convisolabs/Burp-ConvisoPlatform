@@ -6,12 +6,11 @@ import com.google.gson.JsonSyntaxException;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import models.activity.Activity;
-import models.analysis.Analysis;
+import models.project.Project;
 import models.services_manager.ServicesManager;
 import org.apache.http.auth.AuthenticationException;
 import services.ActivityService;
 import view.FathersComponentTab;
-import view.issues_tab.NewIssueTab;
 import view.management.playbooks.actions.NotApplicable;
 import view.management.playbooks.actions.UploadEvidence;
 
@@ -52,7 +51,7 @@ public class PlaybookTab extends FathersComponentTab {
     private JProgressBar pgBarDone;
     private JProgressBar pgBarInProgress;
     private JProgressBar pgBarNotStarted;
-    private JLabel lblWorkingAnalysisTitle;
+    private JLabel lblWorkingProjectTitle;
     private JPanel progressBarsPanel;
     private JButton btnFinish;
     private JButton btnNotApplicable;
@@ -81,7 +80,7 @@ public class PlaybookTab extends FathersComponentTab {
 
         this.initializePlaybooksTables();
 
-        super.addLblBoldListener(lblWorkingAnalysisTitle);
+        super.addLblBoldListener(lblWorkingProjectTitle);
         super.addLblBoldListener(lblProgress);
 
 
@@ -266,7 +265,7 @@ public class PlaybookTab extends FathersComponentTab {
         TimeUnit timeUnit = TimeUnit.SECONDS;
         executor.scheduleAtFixedRate(() -> {
             util.sendStdout("Updating playbook table.");
-            servicesManager.getAnalysisService().updateWorkingProject();
+            servicesManager.getProjectService().updateWorkingProject();
             updatePlaybooksTables();
         }, delay, delay, timeUnit);
 
@@ -284,16 +283,16 @@ public class PlaybookTab extends FathersComponentTab {
         tblNotApplicableModel.setRowCount(0);
 
 
-        Analysis workingAnalysis = this.servicesManager.getAnalysisService().getWorkingAnalysis();
-        if (workingAnalysis == null) {
+        Project workingProject = this.servicesManager.getProjectService().getWorkingProject();
+        if (workingProject == null) {
             return;
         }
 
-        this.lblWorkingAnalysisTitle.setText(workingAnalysis.getPid() + " - " + workingAnalysis.getLabel());
+        this.lblWorkingProjectTitle.setText(workingProject.getPid() + " - " + workingProject.getLabel());
 
 
         for (Activity a :
-                workingAnalysis.getActivities()) {
+                workingProject.getActivities()) {
             switch (a.getStatus()) {
                 case Activity.NOT_STARTED -> {
                     this.tblNotStartedPlaybooksModel.addRow(new Object[]{a.getId(), a.getTitle(), a.getPrettyUpdateAt(), "", (a.getArchiveFilename() == null) ? a.getEvidenceText() : a.getArchiveFilename()});
@@ -507,11 +506,11 @@ public class PlaybookTab extends FathersComponentTab {
         progressBarsPanel.add(pgBarInProgress, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
         pgBarDone = new JProgressBar();
         progressBarsPanel.add(pgBarDone, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.CENTER));
-        lblWorkingAnalysisTitle = new JLabel();
-        Font lblWorkingAnalysisTitleFont = this.$$$getFont$$$(null, Font.BOLD, -1, lblWorkingAnalysisTitle.getFont());
-        if (lblWorkingAnalysisTitleFont != null) lblWorkingAnalysisTitle.setFont(lblWorkingAnalysisTitleFont);
-        lblWorkingAnalysisTitle.setText("");
-        panel5.add(lblWorkingAnalysisTitle, cc.xy(1, 3, CellConstraints.CENTER, CellConstraints.DEFAULT));
+        lblWorkingProjectTitle = new JLabel();
+        Font lblWorkingProjectTitleFont = this.$$$getFont$$$(null, Font.BOLD, -1, lblWorkingProjectTitle.getFont());
+        if (lblWorkingProjectTitleFont != null) lblWorkingProjectTitle.setFont(lblWorkingProjectTitleFont);
+        lblWorkingProjectTitle.setText("");
+        panel5.add(lblWorkingProjectTitle, cc.xy(1, 3, CellConstraints.CENTER, CellConstraints.DEFAULT));
     }
 
     /**
