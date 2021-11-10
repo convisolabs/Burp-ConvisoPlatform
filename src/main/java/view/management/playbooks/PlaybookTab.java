@@ -96,7 +96,7 @@ public class PlaybookTab extends FathersComponentTab {
                 Dimension defaultDimension = (Dimension) UIManager.get("OptionPane.minimumSize");
                 selectedIndex = 0;
                 try {
-                    UIManager.put("OptionPane.minimumSize", new Dimension(800, 320));
+                    UIManager.put("OptionPane.minimumSize", new Dimension(800, 370));
                     JOptionPane.showOptionDialog(rootPanel, new UploadEvidence(servicesManager, PlaybookTab.this, util).$$$getRootComponent$$$(), "Upload evidence", JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE, null, new Object[]{}, null);
                 } catch (ClassCastException | NullPointerException ignored) {
                     UIManager.put("OptionPane.minimumSize", defaultDimension);
