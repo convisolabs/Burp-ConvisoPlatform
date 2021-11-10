@@ -40,21 +40,21 @@ Here you can learn here: [How to add extesion to Burp](https://github.com/convis
 
 ### Demo
 
-![Image](https://raw.githubusercontent.com/convisoappsec/Burp-AppSecFlow/master/assets/readme/new-vuln-or-not.gif)
+![Image](https://github.com/convisoappsec/Burp-AppSecFlow/blob/master/assets/readme/as_new_issue.gif)
 
-![Image](https://raw.githubusercontent.com/convisoappsec/Burp-AppSecFlow/master/assets/readme/multi-vuln-or-not.gif)
+![Image](https://github.com/convisoappsec/Burp-AppSecFlow/blob/master/assets/readme/multi_requests_issue.gif)
 
 ---
 
 ### Documentation
 
-You can find the full documentation at: [wiki page.](/wiki)
+You can find the full documentation at: [wiki page.](https://github.com/convisoappsec/Burp-AppSecFlow/wiki)
 
 ---
 
 ### Contribution
 
-- Your contributions and suggestions are heartily ♥ welcome. [See here the contribution guidelines.](/.github/CONTRIBUTING.md) Please, report bugs via [issues page](https://github.com/convisoappsec/Burp-AppSecFlow/ssues) and for security issues, see here the [security policy.](/SECURITY.md)
+- Your contributions and suggestions are heartily ♥ welcome. [See here the contribution guidelines.](/.github/CONTRIBUTING.md) Please, report bugs via [issues page](https://github.com/convisoappsec/Burp-AppSecFlow/issues) and for security issues, see here the [security policy.](/SECURITY.md)
 
 ---
 
