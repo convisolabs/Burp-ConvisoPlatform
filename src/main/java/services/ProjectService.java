@@ -14,7 +14,7 @@ import java.util.*;
 
 public class ProjectService extends Service {
 
-    private Set<Project> allocatedAnalyses = new HashSet<>();
+    private Set<Project> allocatedProjects = new HashSet<>();
     private Project workingProject;
     final String FLOW_ALLOCATED_PROJECTS = "FLOW.ALLOCATED.PROJECTS";
     final String FLOW_WORKING_PROJECT = "FLOW.WORKING.PROJECT";
@@ -30,19 +30,19 @@ public class ProjectService extends Service {
             GraphQLService graphQLService = this.servicesManager.getGraphQLService();
             content = graphQLService.executeQuery(query);
             GraphQLResponse graphQLResponse = new GraphQLResponse(content);
-            AllocatedProjectQL allocatedProjectsQL = new Gson().fromJson(graphQLResponse.getContentOfData("allocatedAnalyses"), AllocatedProjectQL.class);
+            AllocatedProjectQL allocatedProjectsQL = new Gson().fromJson(graphQLResponse.getContentOfData("allocatedProjects"), AllocatedProjectQL.class);
             allocatedProjectsQL.sanitizeProjects();
-            this.allocatedAnalyses = new HashSet<>(Arrays.asList(allocatedProjectsQL.getCollection()));
+            this.allocatedProjects = new HashSet<>(Arrays.asList(allocatedProjectsQL.getCollection()));
             this.saveLocalProjects();
             this.setLastRequest();
-            util.sendStdout("[Re]Loaded analyses from API.");
+            util.sendStdout("[Re]Loaded projects from API.");
         } catch (AuthenticationException e) {
             util.sendStderr("Invalid API KEY.");
-            this.allocatedAnalyses = new HashSet<>();
+            this.allocatedProjects = new HashSet<>();
         } catch (Exception e) {
-            util.sendStderr("Error [re]loading analyses.");
+            util.sendStderr("Error [re]loading projects.");
             util.sendStderr(content);
-            this.allocatedAnalyses = new HashSet<>();
+            this.allocatedProjects = new HashSet<>();
         }
     }
 
@@ -52,7 +52,7 @@ public class ProjectService extends Service {
         }
         Set<Integer> scopeIds = new HashSet<>();
         for (Project p :
-                allocatedAnalyses) {
+                allocatedProjects) {
             scopeIds.add(p.getCompanyId());
         }
         return scopeIds;
@@ -64,7 +64,7 @@ public class ProjectService extends Service {
         } else if (!alreadyLoaded) {
             loadLocalProjects();
         }
-        return this.allocatedAnalyses;
+        return this.allocatedProjects;
     }
 
     public Project getWorkingProject() {
@@ -78,7 +78,7 @@ public class ProjectService extends Service {
 
             boolean stillWorkingOnProject = false;
             for (Project project :
-                    allocatedAnalyses) {
+                    allocatedProjects) {
                 if (this.workingProject.getId() == project.getId()) {
                     stillWorkingOnProject = true;
                     this.workingProject = project;
@@ -103,7 +103,7 @@ public class ProjectService extends Service {
         if(this.workingProject != null) {
             this.getAllocatedProjectsFromApi();
             for (Project p :
-                    allocatedAnalyses) {
+                    allocatedProjects) {
                 if (this.workingProject.getId() == p.getId()) {
                     this.workingProject = p;
                     this.saveLocalWorkingProject();
@@ -115,7 +115,7 @@ public class ProjectService extends Service {
 
     public void setWorkingProject(int projectID) {
         for (Project p :
-                this.allocatedAnalyses) {
+                this.allocatedProjects) {
             if (p.getId() == projectID) {
                 this.workingProject = p;
                 this.saveLocalWorkingProject();
@@ -127,7 +127,7 @@ public class ProjectService extends Service {
     private synchronized void loadLocalProjects() {
         util.sendStdout("Loaded allocated projects.");
         try {
-            this.allocatedAnalyses = new HashSet<>(Arrays.asList(new Gson().fromJson(callbacks.loadExtensionSetting(FLOW_ALLOCATED_PROJECTS), Project[].class)));
+            this.allocatedProjects = new HashSet<>(Arrays.asList(new Gson().fromJson(callbacks.loadExtensionSetting(FLOW_ALLOCATED_PROJECTS), Project[].class)));
         }catch (NullPointerException exception){
             util.sendStderr("No projects saved locally.");
             this.getAllocatedProjectsFromApi();
@@ -153,7 +153,7 @@ public class ProjectService extends Service {
     }
 
     private void saveLocalProjects() {
-        callbacks.saveExtensionSetting(FLOW_ALLOCATED_PROJECTS, new Gson().toJson(this.allocatedAnalyses));
+        callbacks.saveExtensionSetting(FLOW_ALLOCATED_PROJECTS, new Gson().toJson(this.allocatedProjects));
         util.sendStdout("Saved new allocated projects.");
     }
 

@@ -58,7 +58,6 @@ public class AllocatedProjectsTab extends FathersComponentTab {
             @Override
             public void mouseClicked(MouseEvent e) {
 
-
                 new Thread(() -> {
                     if (!btnLoadProjects.isEnabled()) {
                         return;
