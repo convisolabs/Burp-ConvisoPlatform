@@ -1184,10 +1184,16 @@ public class NewIssueTab extends FathersComponentTab {
     }
 
 
-    private void saveThisIssueIfExiting() {
+    private synchronized void saveThisIssueIfExiting() {
+        final Thread mainThread = Thread.currentThread();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (startedToFillIssue()) {
                 tabsManager.saveIssue(toJsonStringObject());
+                try {
+                    mainThread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }));
     }

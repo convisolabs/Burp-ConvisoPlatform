@@ -121,8 +121,6 @@ public class TabsManager implements ITab {
                 }
             });
         });
-
-
     }
 
     private void initializeManagementTab() {
