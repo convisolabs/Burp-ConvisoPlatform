@@ -217,17 +217,6 @@ public class Template {
         try {
             this.setTitle(new String(this.title.getBytes("ISO-8859-1"), "UTF-8").trim() + ((this.notification) ? " - (Notification)" : ""));
             this.setDescription(new String(this.description.getBytes("ISO-8859-1"), "UTF-8").trim());
-//            this.setReference(new String(this.reference.getBytes("ISO-8859-1"), "UTF-8").trim());
-
-//            for (Category c :
-//                    this.categories) {
-//                c.setName(new String(c.getName().getBytes("ISO-8859-1"), "UTF-8").trim());
-//            }
-//
-//            for (Pattern p :
-//                    this.patterns) {
-//                p.setName(new String(p.getName().getBytes("ISO-8859-1"), "UTF-8").trim());
-//            }
         } catch (UnsupportedEncodingException ignored) {
 
         }

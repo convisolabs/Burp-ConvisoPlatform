@@ -109,12 +109,10 @@ public class UploadEvidence extends DefaultView {
 
                         lblEvidence.setText("Evidence");
                         lblArchive.setText("Archive");
-//                        resetRequiredLabel(new JLabel[]{lblEvidence, lblArchive});
                         setLblDefault(new JLabel[]{lblEvidence, lblArchive}, rootPanel);
                     } else {
                         lblEvidence.setText("Evidence*");
                         lblArchive.setText("Archive*");
-//                        updateToRequiredLabels(new JLabel[]{lblEvidence, lblArchive});
                         setLblRequired(new JLabel[]{lblEvidence, lblArchive}, rootPanel);
                     }
 

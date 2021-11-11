@@ -49,7 +49,6 @@ public class TemplateService extends Service {
             content = graphQLService.executeQuery(String.format(GraphQLQueries.getVulnerabilitiesTemplatesByCompany, companyId));
             GraphQLResponse graphQLResponse = new GraphQLResponse(content);
             TemplateByCompanyIdQL templateByCompanyIdQL = new Gson().fromJson(graphQLResponse.getContentOfData("vulnerabilitiesTemplatesByCompanyId"), TemplateByCompanyIdQL.class);
-//                    gson.fromJson(((JsonObject) (gson.fromJson(content, JsonObject.class)).get("data")).get("vulnerabilitiesTemplatesByCompanyId"), TemplateByCompanyIdQL.class);
             templateByCompanyIdQL.sanitizeTemplates();
             this.allTemplates.addAll(Arrays.asList(templateByCompanyIdQL.getCollection()));
             this.saveTemplatesLocally();
