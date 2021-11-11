@@ -32,7 +32,6 @@ public class ConfigurationTab extends FathersComponentTab {
     private JTextField txtEndpoint;
     private JButton defineButton;
     private static final String FLOW_API_KEY = "FLOW.API.KEY";
-    //    private static final String FLOW_PROJECT_ID = "FLOW.PROJECT.ID";
     private static final String FLOW_ENDPOINT_URL = "FLOW.ENDPOINT.URL";
 
 

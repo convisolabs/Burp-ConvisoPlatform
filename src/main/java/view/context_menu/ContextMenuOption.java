@@ -50,12 +50,8 @@ public class ContextMenuOption implements IContextMenuFactory {
             }
         }
 
-//        asVulnerability.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.tabsManager, invocation));
         asVulnerability.addActionListener(new AsNewIssueContextMenuActionListener(this.callbacks, this.helpers, this.tabsManager, invocation));
-//        asVulnerabilityWithEvidence.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.tabsManager, invocation));
         asVulnerabilityWithEvidence.addActionListener(new AsNewIssueWithEvidenceContextMenuActionListener(this.callbacks, this.helpers, this.tabsManager, invocation));
-
-//        asEvidence.addActionListener(new ContextMenuActionListener(this.callbacks, this.helpers, this.tabsManager, invocation));
 
         itemDefault.add(asVulnerability);
         if(invocation.getSelectedMessages().length >= 2) asVulnerability.setEnabled(false);
