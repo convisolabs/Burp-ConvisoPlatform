@@ -1,44 +1,39 @@
 package services;
 
 import burp.*;
-import utilities.Util;
+import models.graphql.GraphQLResponse;
+import models.graphql.query.GraphQLQueries;
+import models.services_manager.ServicesManager;
 import com.google.gson.*;
-import http.HttpClient;
-import models.vulnerability.Template;
+import models.issue.template.Template;
+import models.issue.template.TemplateByCompanyIdQL;
+import org.apache.http.auth.AuthenticationException;
 
 import java.util.*;
 
 
-public class TemplateService {
-
-    private final IBurpExtenderCallbacks callbacks;
-    private final IExtensionHelpers helpers;
+public class TemplateService extends Service {
     private final ProjectService projectService;
     private Set<Template> allTemplates = new HashSet<>();
-    private final Util util;
+
     private static final String FLOW_ALL_TEMPLATES = "FLOW.ALL.TEMPLATES";
-    private Calendar lastRequestTime;
-    private static boolean loadedTemplates;
 
-
-    public TemplateService(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, final ProjectService projectService) {
-        this.callbacks = callbacks;
-        this.helpers = helpers;
-        this.util = new Util(this.callbacks, this.helpers);
-        loadedTemplates = false;
-        this.projectService = projectService;
+    public TemplateService(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
+        super(callbacks, helpers, servicesManager);
+        alreadyLoaded = false;
+        this.projectService = this.servicesManager.getProjectService();
     }
 
     public Set<Template> getAllTemplates() {
-        if (loadedTemplates && (lastRequestTime == null || (System.currentTimeMillis() - lastRequestTime.getTimeInMillis()) > 30000)) {
-            this.projectService.verifyAllocatedProjects();
+        if (this.alreadyLoaded && (this.lastRequestTime == null || (System.currentTimeMillis() - this.lastRequestTime.getTimeInMillis()) > 30000)) {
+            this.projectService.getAllocatedProjects();
             this.allTemplates = new HashSet<>();
             this.getAllTemplatesByScopeIds();
         } else {
             loadLocalTemplates();
-            if (!loadedTemplates) { // tried to load from local, but nothing was found.
+            if (!this.alreadyLoaded) { // tried to load from local, but nothing was found.
                 this.getAllTemplatesByScopeIds();
-                loadedTemplates = true;
+                this.alreadyLoaded = true;
             }
         }
         this.removeDeletedTemplates();
@@ -46,35 +41,28 @@ public class TemplateService {
     }
 
     /* Buscar os templates da API */
-    private void getAllVulnerabilitiesModelsFromApi(Integer scopeId) {
-        Template[] templatesArray;
-        HttpClient httpClient = new HttpClient(this.callbacks, this.helpers);
+    private void getAllVulnerabilitiesModelsFromApi(Integer companyId) {
 
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("per_page", "1000");
-        String httpResult = httpClient.get("v3/company/" + scopeId + "/vulnerability_templates", parameters);
-        IResponseInfo responseCleaned = helpers.analyzeResponse(helpers.stringToBytes(httpResult));
-        String jsonResponse = httpResult.substring(responseCleaned.getBodyOffset());
+        String content = null;
         try {
-            templatesArray = new Gson().fromJson(jsonResponse, Template[].class);
-            this.sanitizeTemplates(templatesArray);
-            util.sendStdout("[Re]Loaded templates from API. Scope Id: " + scopeId);
-            this.allTemplates.addAll(Arrays.asList(templatesArray));
+            GraphQLService graphQLService = this.servicesManager.getGraphQLService();
+            content = graphQLService.executeQuery(String.format(GraphQLQueries.getVulnerabilitiesTemplatesByCompany, companyId));
+            GraphQLResponse graphQLResponse = new GraphQLResponse(content);
+            TemplateByCompanyIdQL templateByCompanyIdQL = new Gson().fromJson(graphQLResponse.getContentOfData("vulnerabilitiesTemplatesByCompanyId"), TemplateByCompanyIdQL.class);
+//                    gson.fromJson(((JsonObject) (gson.fromJson(content, JsonObject.class)).get("data")).get("vulnerabilitiesTemplatesByCompanyId"), TemplateByCompanyIdQL.class);
+            templateByCompanyIdQL.sanitizeTemplates();
+            this.allTemplates.addAll(Arrays.asList(templateByCompanyIdQL.getCollection()));
             this.saveTemplatesLocally();
-            this.lastRequestTime = Calendar.getInstance();
-        } catch (com.google.gson.JsonSyntaxException e) {
-            util.sendStderr(jsonResponse);
+            util.sendStdout("[Re]Loaded templates from API. Scope Id: " + companyId);
+        } catch (AuthenticationException e) {
+            util.sendStderr("Invalid API KEY.");
         } catch (Exception e) {
-            util.sendStderr("Error loading templates.");
+            e.printStackTrace();
+            util.sendStderr(content);
+            util.sendStderr("Error loading projects.");
         }
     }
 
-
-    private synchronized void sanitizeTemplates(Template[] templatesToSanitize) {
-        for (Template t : templatesToSanitize) {
-            t.sanitizeTemplate();
-        }
-    }
 
     private synchronized void removeDeletedTemplates() {
         allTemplates.removeIf(t -> t.getDeleted_at() != null);
@@ -102,7 +90,7 @@ public class TemplateService {
         if (templatesPayload != null && !templatesPayload.equals(new Gson().toJson(allTemplates))) {
             allTemplates = new HashSet<>(Arrays.asList(new Gson().fromJson(templatesPayload, Template[].class)));
             util.sendStdout("Loaded templates from local.");
-            loadedTemplates = true;
+            this.alreadyLoaded = true;
         } else {
             util.sendStdout("Local templates are equal to memory templates.");
         }
@@ -111,6 +99,7 @@ public class TemplateService {
 
     private void getAllTemplatesByScopeIds() {
         ArrayList<Thread> threadArrayList = new ArrayList<>();
+        this.allTemplates = new HashSet<>();
         for (Integer i :
                 projectService.getScopeIdsOfProjects()) {
             Thread t = new Thread(() -> getAllVulnerabilitiesModelsFromApi(i));

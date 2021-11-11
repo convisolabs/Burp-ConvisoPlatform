@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="view.management.playbooks.PlaybookTab">
+  <grid id="27dc6" binding="rootPanel" layout-manager="FormLayout">
+    <rowspec value="center:9px:noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="center:131px:noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:11dlu:noGrow"/>
+    <rowspec value="center:250dlu:noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <colspec value="fill:30dlu:noGrow"/>
+    <colspec value="left:4dlu:noGrow"/>
+    <colspec value="fill:d:grow"/>
+    <colspec value="left:4dlu:noGrow"/>
+    <colspec value="fill:30dlu:noGrow"/>
+    <constraints>
+      <xy x="20" y="20" width="831" height="989"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <tabbedpane id="a390b" binding="tabbedPane">
+        <constraints>
+          <grid row="4" column="2" row-span="5" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="200" height="200"/>
+          </grid>
+          <forms/>
+        </constraints>
+        <properties>
+          <font style="1"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <grid id="21055" binding="pnlInProgress" layout-manager="FormLayout">
+            <rowspec value="fill:min(p;200dlu):grow"/>
+            <rowspec value="top:4dlu:noGrow"/>
+            <rowspec value="center:max(p;10dlu):grow"/>
+            <colspec value="fill:481px:grow"/>
+            <constraints>
+              <tabbedpane title="In progress"/>
+            </constraints>
+            <properties>
+              <font style="1"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <scrollpane id="18f96">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties>
+                  <horizontalScrollBarPolicy value="31"/>
+                  <verticalScrollBarPolicy value="20"/>
+                </properties>
+                <border type="none" title=""/>
+                <children>
+                  <component id="45e72" class="javax.swing.JTable" binding="tblInProgressPlaybooks">
+                    <constraints/>
+                    <properties>
+                      <autoCreateRowSorter value="true"/>
+                      <autoResizeMode value="4"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
+              <grid id="9adf1" layout-manager="FormLayout">
+                <rowspec value="center:max(p;10dlu):grow"/>
+                <colspec value="fill:d:noGrow"/>
+                <colspec value="left:4dlu:noGrow"/>
+                <colspec value="fill:max(d;4px):noGrow"/>
+                <colspec value="left:4dlu:noGrow"/>
+                <colspec value="fill:max(d;4px):noGrow"/>
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="637d1" class="javax.swing.JButton" binding="btnFinish">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <background color="-14115763"/>
+                      <foreground color="-1"/>
+                      <icon value="icons/playbooks/checkbox.png"/>
+                      <label value="Finish"/>
+                      <text value="Finish"/>
+                    </properties>
+                  </component>
+                  <component id="a997f" class="javax.swing.JButton" binding="btnNotApplicable">
+                    <constraints>
+                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <autoscrolls value="false"/>
+                      <background color="-14260834"/>
+                      <foreground color="-1"/>
+                      <icon value="icons/playbooks/thumb-down.png"/>
+                      <label value="Not applicable"/>
+                      <text value="Not applicable"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+            </children>
+          </grid>
+          <grid id="8fffb" binding="pnlNotStarted" layout-manager="FormLayout">
+            <rowspec value="fill:min(p;200dlu):grow"/>
+            <rowspec value="top:4dlu:noGrow"/>
+            <rowspec value="center:max(p;10dlu):grow"/>
+            <colspec value="fill:481px:grow"/>
+            <constraints>
+              <tabbedpane title="Not started"/>
+            </constraints>
+            <properties>
+              <font style="1"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <scrollpane id="8eeab">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+                <border type="none" title=""/>
+                <children>
+                  <component id="3f8a5" class="javax.swing.JTable" binding="tblNotStartedPlaybooks">
+                    <constraints/>
+                    <properties>
+                      <autoCreateRowSorter value="true"/>
+                      <autoResizeMode value="4"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
+              <grid id="ce829" layout-manager="FormLayout">
+                <rowspec value="center:max(p;10dlu):grow"/>
+                <colspec value="fill:d:noGrow"/>
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="77322" class="javax.swing.JButton" binding="btnStart">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <background color="-2643441"/>
+                      <foreground color="-1"/>
+                      <icon value="icons/playbooks/play.png"/>
+                      <label value="Start"/>
+                      <text value="Start"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+            </children>
+          </grid>
+          <grid id="67810" binding="pnlDone" layout-manager="FormLayout">
+            <rowspec value="fill:min(p;200dlu):grow"/>
+            <rowspec value="top:4dlu:noGrow"/>
+            <rowspec value="center:max(d;10dlu):grow"/>
+            <colspec value="fill:481px:grow"/>
+            <constraints>
+              <tabbedpane title="Done"/>
+            </constraints>
+            <properties>
+              <font style="1"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <scrollpane id="70ef7">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+                <border type="none" title=""/>
+                <children>
+                  <component id="7b0f7" class="javax.swing.JTable" binding="tblDonePlaybooks">
+                    <constraints/>
+                    <properties>
+                      <autoCreateRowSorter value="true"/>
+                      <autoResizeMode value="4"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
+              <grid id="af4f3" layout-manager="FormLayout">
+                <rowspec value="center:max(p;10dlu):grow"/>
+                <colspec value="fill:d:noGrow"/>
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="cb784" class="javax.swing.JButton" binding="btnRestart">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <background color="-7627876"/>
+                      <foreground color="-1"/>
+                      <icon value="icons/playbooks/refresh.png"/>
+                      <label value="Restart"/>
+                      <text value="Restart"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+            </children>
+          </grid>
+          <grid id="a25c8" binding="pnlNotApplicable" layout-manager="FormLayout">
+            <rowspec value="fill:min(p;200dlu):grow"/>
+            <rowspec value="top:4dlu:noGrow"/>
+            <rowspec value="center:max(d;10dlu):grow"/>
+            <colspec value="fill:481px:grow"/>
+            <constraints>
+              <tabbedpane title="Not applicable"/>
+            </constraints>
+            <properties>
+              <font style="1"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <scrollpane id="5d185">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+                <border type="none" title=""/>
+                <children>
+                  <component id="84e9c" class="javax.swing.JTable" binding="tblNotApplicable">
+                    <constraints/>
+                    <properties>
+                      <autoCreateRowSorter value="true"/>
+                      <autoResizeMode value="4"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
+              <grid id="e6a27" layout-manager="FormLayout">
+                <rowspec value="center:max(p;10dlu):grow"/>
+                <colspec value="fill:d:noGrow"/>
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="427ea" class="javax.swing.JButton" binding="btnRestartNotApplicable">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <forms/>
+                    </constraints>
+                    <properties>
+                      <background color="-7627876"/>
+                      <foreground color="-1"/>
+                      <icon value="icons/playbooks/refresh.png"/>
+                      <label value="Restart"/>
+                      <text value="Restart"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+            </children>
+          </grid>
+        </children>
+      </tabbedpane>
+      <grid id="5b45a" layout-manager="FormLayout">
+        <rowspec value="center:45px:noGrow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:max(d;4px):noGrow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:d:grow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:2dlu:noGrow"/>
+        <colspec value="fill:d:grow"/>
+        <constraints>
+          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <forms defaultalign-horz="false" defaultalign-vert="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="d9200" class="javax.swing.JLabel" binding="lblProgress">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="2" fill="0" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false" defaultalign-vert="false"/>
+            </constraints>
+            <properties>
+              <font style="1"/>
+              <text value="Progress:"/>
+            </properties>
+          </component>
+          <component id="7b546" class="javax.swing.JSeparator">
+            <constraints>
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false" defaultalign-vert="false"/>
+            </constraints>
+            <properties/>
+          </component>
+          <grid id="c4739" binding="progressBarsPanel" layout-manager="FormLayout">
+            <rowspec value="center:d:grow"/>
+            <colspec value="fill:d:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <constraints>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false" defaultalign-vert="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="8c0bb" class="javax.swing.JProgressBar" binding="pgBarNotStarted">
+                <constraints>
+                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="57ef3" class="javax.swing.JProgressBar" binding="pgBarInProgress">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="70b03" class="javax.swing.JProgressBar" binding="pgBarDone">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+              </component>
+            </children>
+          </grid>
+          <component id="f773" class="javax.swing.JLabel" binding="lblWorkingProjectTitle">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+            <properties>
+              <font style="1"/>
+              <text value=""/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

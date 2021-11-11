@@ -2,16 +2,17 @@ package utilities;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
-import burp.IHttpRequestResponse;
-import burp.IRequestInfo;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
@@ -45,11 +46,6 @@ public class Util {
         stderr.close();
     }
 
-    public String stringToOtherCharset(String toChange){
-        byte[] ptext = toChange.getBytes(ISO_8859_1);
-        return new String(ptext, UTF_8);
-    }
-
     public static String removeSpecialCharacters(String str) {
         return str.replace('Á', 'A').replace('À', 'A').replace('Â', 'A').replace('Ä', 'A').replace('Ã', 'A').replace('É', 'E')
                 .replace('È', 'E').replace('Ê', 'E').replace('Ë', 'A').replace('Í', 'I').replace('Ì', 'I').replace('Î', 'I')
@@ -61,13 +57,39 @@ public class Util {
                 .replace('ù', 'u').replace('û', 'u').replace('ü', 'u').replace('ç', 'c');
     }
 
-
-    public String difference(String str1, String str2) {
-        int index = str1.lastIndexOf(str2);
-        if (index > -1) {
-            return str1.substring(str2.length());
+    public void clearTerminal(){
+        for (int i = 0; i < 10; i++) {
+            System.out.println("################################################");
         }
-        return str1;
+    }
+
+    public String getDomainName(String url) throws URISyntaxException {
+        URI uri = new URI(url);
+        String domain = uri.getHost();
+        return domain.startsWith("www.") ? domain.substring(4) : domain;
+    }
+
+    public static boolean isColorDark(Color color){
+        double darkness = 1-((0.299* color.getRed()) + (0.587*color.getGreen())+ (0.114*color.getBlue()))/255;
+        return !(darkness < 0.5); // It's a light color
+    }
+
+    public static String prettifyDate(String dateToPrettify){
+        String fullDate = dateToPrettify.split("T")[0];
+        String[] splittedDate = fullDate.split("-");
+        return splittedDate[2] + "-" + splittedDate[1] + "-" + splittedDate[0];
+    }
+
+    public static String jsonSafeString(String raw) {
+        String escaped = raw;
+        escaped = escaped.replace("\\", "\\\\\\\\");
+        escaped = escaped.replace("\"", "\\\\\\\"");
+        escaped = escaped.replace("\b", "\\b");
+        escaped = escaped.replace("\f", "\\f");
+        escaped = escaped.replace("\n", "\\n");
+        escaped = escaped.replace("\r", "\\r");
+        escaped = escaped.replace("\t", "\\t");
+        return escaped;
     }
 
 

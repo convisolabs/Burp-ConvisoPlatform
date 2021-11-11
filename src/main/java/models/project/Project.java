@@ -1,5 +1,9 @@
 package models.project;
 
+import models.activity.Activity;
+import utilities.Util;
+
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -11,10 +15,10 @@ public class Project {
     private String description;
     private String project_type;
     private String start_date;
-    private String end_date;
+    private String dueDate;
     private int contracted_hours;
     private String scope;
-    private int scope_id;
+    private int companyId;
     private boolean is_public;
     private boolean is_open;
     private String language;
@@ -44,8 +48,9 @@ public class Project {
     private String plan;
     private String connectivity;
     private String[] tag_list;
-    private String[] tecnology_list;
+    private String[] technology_list;
     private String created_at;
+    private Activity[] activities;
 
 
     public int getId() {
@@ -96,12 +101,16 @@ public class Project {
         this.start_date = start_date;
     }
 
-    public String getEnd_date() {
-        return end_date;
+    public String getDueDate() {
+        return dueDate;
     }
 
-    public void setEnd_date(String end_date) {
-        this.end_date = end_date;
+    public String getPrettyDueDate() {
+        return (this.dueDate != null) ? Util.prettifyDate(this.dueDate) : "";
+    }
+
+    public void setDueDate(String dueDate) {
+        this.dueDate = dueDate;
     }
 
     public int getContracted_hours() {
@@ -352,12 +361,12 @@ public class Project {
         this.tag_list = tag_list;
     }
 
-    public String[] getTecnology_list() {
-        return tecnology_list;
+    public String[] getTechnology_list() {
+        return technology_list;
     }
 
-    public void setTecnology_list(String[] tecnology_list) {
-        this.tecnology_list = tecnology_list;
+    public void setTechnology_list(String[] technology_list) {
+        this.technology_list = technology_list;
     }
 
     public String getCreated_at() {
@@ -368,12 +377,20 @@ public class Project {
         this.created_at = created_at;
     }
 
-    public int getScope_id() {
-        return scope_id;
+    public int getCompanyId() {
+        return companyId;
     }
 
-    public void setScope_id(int scope_id) {
-        this.scope_id = scope_id;
+    public void setCompanyId(int companyId) {
+        this.companyId = companyId;
+    }
+
+    public Activity[] getActivities() {
+        return activities;
+    }
+
+    public void setActivities(Activity[] activities) {
+        this.activities = activities;
     }
 
     @Override
@@ -385,10 +402,10 @@ public class Project {
                 ", description='" + description + '\'' +
                 ", project_type='" + project_type + '\'' +
                 ", start_date='" + start_date + '\'' +
-                ", end_date='" + end_date + '\'' +
+                ", end_date='" + dueDate + '\'' +
                 ", contracted_hours=" + contracted_hours +
                 ", scope='" + scope + '\'' +
-                ", scope_id=" + scope_id +
+                ", scope_id=" + companyId +
                 ", is_public=" + is_public +
                 ", is_open=" + is_open +
                 ", language='" + language + '\'' +
@@ -418,7 +435,7 @@ public class Project {
                 ", plan='" + plan + '\'' +
                 ", connectivity='" + connectivity + '\'' +
                 ", tag_list=" + Arrays.toString(tag_list) +
-                ", tecnology_list=" + Arrays.toString(tecnology_list) +
+                ", tecnology_list=" + Arrays.toString(technology_list) +
                 ", created_at='" + created_at + '\'' +
                 '}';
     }
@@ -428,12 +445,43 @@ public class Project {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Project project = (Project) o;
-        return id == project.id && scope_id == project.scope_id && pid.equals(project.pid) && label.equals(project.label);
+        return id == project.id && companyId == project.companyId && pid.equals(project.pid) && label.equals(project.label);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, pid, label, scope_id);
+        return Objects.hash(id, pid, label, companyId);
+    }
+
+    public void sanitize() {
+        try {
+            this.setLabel(new String(this.label.getBytes("ISO-8859-1"), "UTF-8").trim());
+            this.sanitizeActivities();
+        } catch (UnsupportedEncodingException ignored) {
+
+        }
+    }
+
+    public void sanitizeActivities() {
+        for (Activity activity :
+                this.activities) {
+            try {
+                activity.setTitle(new String(activity.getTitle().getBytes("ISO-8859-1"), "UTF-8").trim());
+                activity.setEvidenceText(new String(activity.getEvidenceText().getBytes("ISO-8859-1"), "UTF-8").trim());
+                activity.setArchiveFilename(new String(activity.getArchiveFilename().getBytes("ISO-8859-1"), "UTF-8").trim());
+            } catch (UnsupportedEncodingException | NullPointerException ignored) {
+
+            }
+        }
+    }
+
+    public void updateActivity(Activity activity) {
+        for (int i = 0; i < this.activities.length; i++) {
+            if (this.activities[i].getId().equals(activity.getId())) {
+                this.activities[i] = activity;
+                break;
+            }
+        }
     }
 }
 

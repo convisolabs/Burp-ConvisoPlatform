@@ -1,19 +1,16 @@
 package view.context_menu.listeners;
 
 import burp.*;
-import models.vulnerability.Evidence;
-import services.TemplateService;
+import models.evidences.EvidenceArchive;
+import models.tabs_manager.TabsManager;
 import utilities.Util;
-import view.new_vulnerability.NewVulnerabilityTab;
+import view.issues_tab.NewIssueTab;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class ContextMenuActionListener implements ActionListener {
 
@@ -21,33 +18,29 @@ public class ContextMenuActionListener implements ActionListener {
     private IExtensionHelpers helpers;
     private IContextMenuInvocation invocation;
     private Util util;
-    private final NewVulnerabilityTab newVulnerabilityTab;
-    String requestHeader = "/* \n * REQUEST \n */\n\n";
-    String responseHeader = "/* \n * RESPONSE \n */\n\n";
+    private final TabsManager tabsManager;
 
 
-    public ContextMenuActionListener(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, NewVulnerabilityTab newVulnerabilityTab, IContextMenuInvocation invocation ) {
+    public ContextMenuActionListener(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, final TabsManager tabsManager, IContextMenuInvocation invocation) {
         this.callbacks = callbacks;
         this.helpers = helpers;
         this.util = new Util(this.callbacks);
         this.invocation = invocation;
-        this.newVulnerabilityTab = newVulnerabilityTab;
+        this.tabsManager = tabsManager;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        switch (e.getActionCommand()) {
-            case "as new vulnerability/notification" -> {
-                this.defineCampsNewVulnerabilityTab(invocation.getSelectedMessages()[0]);
-                this.selectAppSecFlowTab();
-            }
-            case "as evidence" -> this.createEvidencesInTempFiles(invocation.getSelectedMessages().length);
-            case "as new vulnerability w. evidence" -> {
-                this.createEvidencesInTempFiles(invocation.getSelectedMessages().length - 1);
-                this.defineCampsNewVulnerabilityTab(invocation.getSelectedMessages()[invocation.getSelectedMessages().length-1]);
-                this.selectAppSecFlowTab();
-            }
-        }
+//        switch (e.getActionCommand()) {
+//            case "as new vulnerability/notification" -> {
+//                this.defineCampsNewVulnerabilityTab(invocation.getSelectedMessages()[0]);
+//                this.selectAppSecFlowTab();
+//            }
+//            case "as evidence" -> ;
+//            case "as new vulnerability w. evidence" -> {
+
+//            }
+//        }
             /*for (IScanIssue issue :
                     this.callbacks.getScanIssues((request.getUrl()+"").replaceAll("\\:[0-9]{1,5}", ""))) {
                 System.out.println(issue.getIssueName());
@@ -59,51 +52,6 @@ public class ContextMenuActionListener implements ActionListener {
 
     }
 
-    private void defineCampsNewVulnerabilityTab(IHttpRequestResponse requestResponse){
-        IRequestInfo request = helpers.analyzeRequest(requestResponse.getHttpService(), requestResponse.getRequest());
-        IResponseInfo response = helpers.analyzeResponse(requestResponse.getResponse());
-
-        if(!request.toString().isEmpty() && !response.toString().isEmpty()){
-            this.newVulnerabilityTab.setRequest(helpers.bytesToString(requestResponse.getRequest()));
-            this.newVulnerabilityTab.setResponse(helpers.bytesToString(requestResponse.getResponse()));
-            this.newVulnerabilityTab.setTxtFieldProtocol(requestResponse.getHttpService().getProtocol().toUpperCase());
-            this.newVulnerabilityTab.setTxtFieldUrl(request.getUrl()+"");
-            this.newVulnerabilityTab.setTxtFieldMethod(request.getMethod());
-            this.newVulnerabilityTab.setListParameters(request.getParameters());
-            this.newVulnerabilityTab.setFromContextMenu(true);
-
-        }
-    }
-
-    private void selectAppSecFlowTab(){
-        Component current = this.newVulnerabilityTab.$$$getRootComponent$$$().getParent();
-        do {
-            current = current.getParent();
-        } while (!(current instanceof JTabbedPane));
-
-        JTabbedPane tabPane = (JTabbedPane) current;
-        for(int i=0; i < tabPane.getTabCount(); i++ ){
-            if(tabPane.getTitleAt(i).equals("AppSec Flow")) {
-                tabPane.setSelectedIndex(i);
-            }
-        }
-    }
-
-    private void createEvidencesInTempFiles(int maxLenghtFromInvoiceMessages){
-        for (int i = 0; i < maxLenghtFromInvoiceMessages; i++) {
-            String archiveName = "evidence-part-" + (i + 1) + "-uid-";
-            IHttpRequestResponse iHttpRequestResponse = invocation.getSelectedMessages()[i];
-
-            String content = requestHeader +
-                    helpers.bytesToString(iHttpRequestResponse.getRequest()) +
-                    "\n\n" +
-                    responseHeader +
-                    helpers.bytesToString(iHttpRequestResponse.getResponse());
-            File tempFile = util.createTempFile(archiveName, content);
-            if(tempFile != null){
-                this.newVulnerabilityTab.addEvidence(new Evidence(tempFile.getAbsolutePath(), tempFile.getName()));
-            }
-        }
-    }
+//
 
 }
