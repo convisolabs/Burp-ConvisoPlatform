@@ -8,7 +8,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     <groupId>com.convisoappsec</groupId>
-    <artifactId>Flow_BurpExtender</artifactId>
+    <artifactId>Burp-AppSecFlow</artifactId>
     <version>2.0.0</version>
     <build>
         <plugins>
@@ -17,7 +17,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>15</source>
-                    <target>16.0.2</target>
+                    <target>16</target>
                 </configuration>
             </plugin>
             <plugin>
