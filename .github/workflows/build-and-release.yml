@@ -6,7 +6,7 @@ on:
 #      - '*.*.*'
 #  pull_request:
 #    branches: [ develop-feature/workflow-to-build-automagically ]
-#    tags:
+#    tagss:
 #      - '*.*.*'
 
 jobs:
