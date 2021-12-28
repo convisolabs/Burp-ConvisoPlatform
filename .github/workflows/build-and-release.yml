@@ -2,12 +2,12 @@ name: Package and release asset
 on:
   push:
     branches: [ develop-feature/workflow-to-build-automagically ]
-    tags:
-      - '*.*.*'
-  pull_request:
-    branches: [ develop-feature/workflow-to-build-automagically ]
-    tags:
-      - '*.*.*'
+#    tags:
+#      - '*.*.*'
+#  pull_request:
+#    branches: [ develop-feature/workflow-to-build-automagically ]
+#    tags:
+#      - '*.*.*'
 
 jobs:
   build:
