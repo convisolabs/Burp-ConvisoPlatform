@@ -1,11 +1,11 @@
 name: Package and release asset
 on:
   push:
-    branches: [ master ]
+    branches: [ develop-feature/workflow-to-build-automagically ]
     tags:
       - '*.*.*'
   pull_request:
-    branches: [ master ]
+    branches: [ develop-feature/workflow-to-build-automagically ]
     tags:
       - '*.*.*'
 
@@ -34,7 +34,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
-          draft: false
+          draft: true
           prerelease: false
       - name: Upload Release Asset
         id: upload-release-asset
