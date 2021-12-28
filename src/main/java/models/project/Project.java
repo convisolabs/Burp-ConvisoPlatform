@@ -469,6 +469,7 @@ public class Project {
                 activity.setTitle(new String(activity.getTitle().getBytes("ISO-8859-1"), "UTF-8").trim());
                 activity.setEvidenceText(new String(activity.getEvidenceText().getBytes("ISO-8859-1"), "UTF-8").trim());
                 activity.setArchiveFilename(new String(activity.getArchiveFilename().getBytes("ISO-8859-1"), "UTF-8").trim());
+                activity.getPortalUser().sanitizePortalUser();
             } catch (UnsupportedEncodingException | NullPointerException ignored) {
 
             }

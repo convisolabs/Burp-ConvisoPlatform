@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Flow_BurpExtender.iml" filepath="$PROJECT_DIR$/Flow_BurpExtender.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Burp-AppSecFlow.iml" filepath="$PROJECT_DIR$/Burp-AppSecFlow.iml" />
     </modules>
   </component>
 </project>

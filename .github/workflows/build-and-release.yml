@@ -1,0 +1,44 @@
+name: Package and release asset
+on:
+  push:
+    branches: [ master ]
+    tags:
+      - '*.*.*'
+
+jobs:
+  build:
+    name: Package and upload released asset
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '16'
+          cache: 'maven'
+      - name: Build with Maven
+        run: mvn package
+      - name: Rename built package
+        run: mv ./target/Burp-AppSecFlow-*-jar-with-dependencies.jar ./target/AppSecFlow.jar
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: true
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./target/AppSecFlow.jar
+          asset_name: AppSecFlow_${{ github.ref }}.jar
+          asset_content_type: application/java-archive
