@@ -352,10 +352,12 @@ public class NewIssueTab extends FathersComponentTab {
                                     } else {
                                         createdIssueQL = issuesService.postVulnerability(issue);
                                     }
+
                                     if (createdIssueQL.getErrors().length == 0) {
                                         JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "Created!");
                                         clearForm();
                                     } else {
+                                        util.sendStderr(createdIssueQL.getJoinedErrors());
                                         JOptionPane.showMessageDialog(NewIssueTab.this.getRootPanel2(), "Error!\nCheck the errors in extender tab!");
                                     }
                                 } catch (FileNotFoundException fileNotFoundException) {

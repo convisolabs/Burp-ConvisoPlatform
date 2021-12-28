@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Flow_BurpExtender" target="15" />
+      <module name="Flow_BurpExtender" target="16.0.2" />
     </bytecodeTargetLevel>
   </component>
 </project>

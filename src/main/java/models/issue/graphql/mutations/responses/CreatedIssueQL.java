@@ -24,4 +24,8 @@ public class CreatedIssueQL {
                 ", vulnerabilityReturned=" + issue.toString() +
                 '}';
     }
+
+    public String getJoinedErrors(){
+        return String.join("\n", this.errors);
+    }
 }
