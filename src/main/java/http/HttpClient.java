@@ -24,7 +24,7 @@ public class HttpClient {
     private static final String FLOW_API_KEY = "FLOW.API.KEY";
     private static final String FLOW_ENDPOINT_URL = "FLOW.ENDPOINT.URL";
     private static String flowApiKey;
-    private static final String userAgent = "AppSecFlow-BurpExtender/2.0.0-develop";
+    private static final String userAgent = "AppSecFlow-BurpExtender/2.0.1";
 
     private final IBurpExtenderCallbacks callbacks;
     private final IExtensionHelpers helpers;
@@ -123,6 +123,7 @@ public class HttpClient {
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpPost httpPost = new HttpPost("https://"+CONVISO_API_HOST+CONVISO_API_PATH);
 
+//            TODO - Add option to add a proxy for the request's, but there is a issue that the JRE needs to agree with Burps certificate.
 //            HttpHost proxy = new HttpHost("127.0.0.1", 8080, "http");
 //            RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
 //            httpPost.setConfig(config);
