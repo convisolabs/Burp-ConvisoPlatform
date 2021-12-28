@@ -25,7 +25,7 @@ jobs:
       - name: Build with Maven
         run: mvn package
       - name: Rename built package
-        run: mv ./target/Burp-AppSecFlow-*-jar-with-dependencies.jar ./target/AppSecFlow_${{ github.ref }}.jar
+        run: mv ./target/Burp-AppSecFlow-*-jar-with-dependencies.jar ./target/AppSecFlow.jar
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
