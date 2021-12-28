@@ -4,10 +4,6 @@ on:
     branches: [ master ]
     tags:
       - '*.*.*'
-  pull_request:
-    branches: [ master ]
-    tags:
-      - '*.*.*'
 
 jobs:
   build:
