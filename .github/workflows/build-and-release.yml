@@ -21,7 +21,7 @@ jobs:
       - name: Build with Maven
         run: mvn package
       - name: Rename built package
-        run: mv ./target/Burp-AppSecFlow-*-jar-with-dependencies.jar ./target/AppSecFlow.jar
+        run: mv ./target/Burp-ConvisoPlatform-*-jar-with-dependencies.jar ./target/ConvisoPlatform.jar
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -39,6 +39,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./target/AppSecFlow.jar
-          asset_name: AppSecFlow_${{ github.ref }}.jar
+          asset_path: ./target/ConvisoPlatform.jar
+          asset_name: ConvisoPlatform_${{ github.ref }}.jar
           asset_content_type: application/java-archive

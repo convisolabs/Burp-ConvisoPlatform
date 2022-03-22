@@ -9,7 +9,7 @@
     </properties>
     <groupId>com.convisoappsec</groupId>
     <artifactId>Burp-ConvisoPlatform</artifactId>
-    <version>2.0.1-develop</version>
+    <version>2.0.2-develop</version>
     <build>
         <plugins>
             <plugin>

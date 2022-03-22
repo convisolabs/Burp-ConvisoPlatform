@@ -47,7 +47,7 @@ public class ConfigurationTab extends FathersComponentTab {
         // DO NOT EDIT OR ADD ANY CODE HERE!
         $$$setupUI$$$();
 
-        this.setTxtFlowApiKey();
+        this.setTxtConvisoPlatformApiKey();
         this.setTxtProjectId();
 
         this.setRootPanel(rootPanel);
@@ -118,7 +118,7 @@ public class ConfigurationTab extends FathersComponentTab {
         });
     }
 
-    private void setTxtFlowApiKey() { // Definir a key no txtField
+    private void setTxtConvisoPlatformApiKey() { // Definir a key no txtField
         String API_KEY = this.callbacks.loadExtensionSetting(FLOW_API_KEY);
         if (API_KEY != null) {
             txtFlowApiKey.setText(API_KEY);

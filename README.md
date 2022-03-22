@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/convisolabs/Burp-ConvisoPlatform/master/assets/readme/logo-conviso.png">
-  <p align="center">BurpSuite AppSecFlow Extension</p>
+  <p align="center">BurpSuite Conviso Platform Extension</p>
   <p align="center">
     <a href="/LICENSE.md">
       <img src="https://img.shields.io/badge/license-MIT-blue.svg">
@@ -29,7 +29,7 @@ You can find the last release: [here](https://github.com/convisolabs/Burp-Convis
 Building JAR locally:
 
 ```bash
- $ git clone https://github.com/convisoappsec/Burp-AppSecFlow.git 
+ $ git clone https://github.com/convisolabs/Burp-ConvisoPlatform.git 
  $ cd Burp-ConvisoPlatform && mvn package
 ```
 

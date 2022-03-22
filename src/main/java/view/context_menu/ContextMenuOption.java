@@ -33,7 +33,7 @@ public class ContextMenuOption implements IContextMenuFactory {
     @Override
     public List<JMenuItem> createMenuItems(IContextMenuInvocation invocation) {
         List<JMenuItem> items = new ArrayList<>();
-        JMenu itemDefault = new JMenu("Send to AppSecFlow");
+        JMenu itemDefault = new JMenu("Send to Conviso Platform");
         JMenuItem asVulnerability = new JMenuItem("as new issue");
         JMenuItem asVulnerabilityWithEvidence = new JMenuItem("as new issue w. evidence");
         JMenu asEvidence = new JMenu("as evidence");
