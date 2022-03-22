@@ -51,7 +51,7 @@ public abstract class FathersComponentTab extends DefaultView{
     }
 
     private void setDarkBackgroundChecker(Component component) {
-        this.isDarkBackground = this.util.isColorDark(component.getBackground());
+        this.isDarkBackground = Util.isColorDark(component.getBackground());
     }
 
     private void addChangeColorEventListener(Component component) {
@@ -60,7 +60,7 @@ public abstract class FathersComponentTab extends DefaultView{
                 this.defaultLblColor = (Color) evt.getNewValue();
                 this.defaultBackgroundBtn = component.getBackground();
                 this.defaultForegroundBtn = component.getForeground();
-                this.isDarkBackground = this.util.isColorDark(component.getBackground());
+                this.isDarkBackground = Util.isColorDark(component.getBackground());
             }
         });
     }

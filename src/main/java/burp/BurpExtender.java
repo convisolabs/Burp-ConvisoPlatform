@@ -26,7 +26,7 @@ public class BurpExtender implements IBurpExtender {
         this.helpers = callbacks.getHelpers();
         this.servicesManager = new ServicesManager(this.callbacks, this.helpers);
 
-        callbacks.setExtensionName("AppSec Flow");
+        callbacks.setExtensionName("Conviso Platform");
 
 
         tabsManager = new TabsManager(this.callbacks, this.helpers, this.servicesManager);
@@ -43,7 +43,7 @@ public class BurpExtender implements IBurpExtender {
 
 
         /*
-         * Cria a opção no menu do botão direito, tambem conhecido como contextmenu
+         * Creates the submenu in the right click, also known as context menu.
          */
 
         this.contextMenuOption = new ContextMenuOption(this.callbacks, this.helpers, tabsManager);

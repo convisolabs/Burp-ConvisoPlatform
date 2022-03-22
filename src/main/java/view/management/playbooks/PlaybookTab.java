@@ -214,7 +214,6 @@ public class PlaybookTab extends FathersComponentTab {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
-
             }
         };
 
@@ -357,14 +356,6 @@ public class PlaybookTab extends FathersComponentTab {
 
     public JTable getTblInProgressPlaybooks() {
         return tblInProgressPlaybooks;
-    }
-
-    public JTable getTblNotStartedPlaybooks() {
-        return tblNotStartedPlaybooks;
-    }
-
-    public JTable getTblDonePlaybooks() {
-        return tblDonePlaybooks;
     }
 
     {
