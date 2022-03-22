@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Burp-AppSecFlow" />
+        <module name="Burp-ConvisoPlatform" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Burp-AppSecFlow" target="16" />
+      <module name="Burp-ConvisoPlatform" target="16" />
     </bytecodeTargetLevel>
   </component>
 </project>
