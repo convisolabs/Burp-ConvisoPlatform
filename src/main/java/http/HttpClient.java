@@ -2,7 +2,6 @@ package http;
 
 import burp.*;
 import org.apache.http.*;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -23,8 +22,8 @@ public class HttpClient {
     private static final String CONVISO_API_PATH = "/graphql";
     private static final String FLOW_API_KEY = "FLOW.API.KEY";
     private static final String FLOW_ENDPOINT_URL = "FLOW.ENDPOINT.URL";
-    private static String flowApiKey;
-    private static final String userAgent = "AppSecFlow-BurpExtender/2.0.1";
+    private static String convisoPlatformApiKey;
+    private static final String userAgent = "ConvisoPlatform-BurpExtender/2.0.2";
 
     private final IBurpExtenderCallbacks callbacks;
     private final IExtensionHelpers helpers;
@@ -34,7 +33,7 @@ public class HttpClient {
         this.callbacks = callbacks;
         this.helpers = helpers;
         this.util = new Util(callbacks, helpers);
-        flowApiKey = callbacks.loadExtensionSetting(FLOW_API_KEY);
+        convisoPlatformApiKey = callbacks.loadExtensionSetting(FLOW_API_KEY);
         CONVISO_API_HOST = (callbacks.loadExtensionSetting(FLOW_ENDPOINT_URL) == null || callbacks.loadExtensionSetting(FLOW_ENDPOINT_URL).equals("")) ? "app.conviso.com.br" : callbacks.loadExtensionSetting(FLOW_ENDPOINT_URL);
     }
 
@@ -46,8 +45,8 @@ public class HttpClient {
         headers.add("Content-type: application/json");
 
 
-        if ( flowApiKey != null) {
-            headers.add("x-api-key: "+flowApiKey);
+        if ( convisoPlatformApiKey != null) {
+            headers.add("x-api-key: "+ convisoPlatformApiKey);
         }else{
             this.util.sendStderr("API Key NOT defined!");
         }
@@ -82,8 +81,8 @@ public class HttpClient {
         headers.add("Content-type: application/json");
 
 
-        if ( flowApiKey != null) {
-            headers.add("x-api-key: "+flowApiKey);
+        if ( convisoPlatformApiKey != null) {
+            headers.add("x-api-key: "+ convisoPlatformApiKey);
         }else{
             this.util.sendStderr("API Key NOT defined!");
         }
@@ -103,8 +102,8 @@ public class HttpClient {
         headers.add("User-Agent: "+userAgent);
         headers.add("Content-type: application/json");
 
-        if ( flowApiKey != null) {
-            headers.add("x-api-key: "+flowApiKey);
+        if ( convisoPlatformApiKey != null) {
+            headers.add("x-api-key: "+ convisoPlatformApiKey);
         }else{
             this.util.sendStderr("API Key NOT defined!");
         }
@@ -130,7 +129,7 @@ public class HttpClient {
 
 
             httpPost.setHeader("User-Agent", userAgent);
-            httpPost.setHeader("x-api-key", flowApiKey);
+            httpPost.setHeader("x-api-key", convisoPlatformApiKey);
             httpPost.setEntity(httpMultipartEntity);
             return httpClient.execute(httpPost);
         } catch (IOException e) {

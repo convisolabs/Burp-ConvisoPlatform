@@ -47,7 +47,7 @@ public class ConfigurationTab extends FathersComponentTab {
         // DO NOT EDIT OR ADD ANY CODE HERE!
         $$$setupUI$$$();
 
-        this.setTxtFlowApiKey();
+        this.setTxtConvisoPlatformApiKey();
         this.setTxtProjectId();
 
         this.setRootPanel(rootPanel);
@@ -118,7 +118,7 @@ public class ConfigurationTab extends FathersComponentTab {
         });
     }
 
-    private void setTxtFlowApiKey() { // Definir a key no txtField
+    private void setTxtConvisoPlatformApiKey() { // Definir a key no txtField
         String API_KEY = this.callbacks.loadExtensionSetting(FLOW_API_KEY);
         if (API_KEY != null) {
             txtFlowApiKey.setText(API_KEY);
@@ -150,7 +150,7 @@ public class ConfigurationTab extends FathersComponentTab {
      */
     private void $$$setupUI$$$() {
         rootPanel = new JPanel();
-        rootPanel.setLayout(new GridLayoutManager(9, 15, new Insets(0, 0, 0, 0), -1, -1));
+        rootPanel.setLayout(new GridLayoutManager(10, 15, new Insets(0, 0, 0, 0), -1, -1));
         rootPanel.setAlignmentX(0.5f);
         rootPanel.setAlignmentY(0.5f);
         rootPanel.putClientProperty("html.disable", Boolean.FALSE);
@@ -162,26 +162,26 @@ public class ConfigurationTab extends FathersComponentTab {
         final JLabel label1 = new JLabel();
         label1.setIcon(new ImageIcon(getClass().getResource("/conviso.png")));
         label1.setText("");
-        panel1.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(311, 119), null, 0, false));
         final Spacer spacer2 = new Spacer();
-        rootPanel.add(spacer2, new GridConstraints(8, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        rootPanel.add(spacer2, new GridConstraints(9, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
         rootPanel.add(spacer3, new GridConstraints(1, 0, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
-        rootPanel.add(spacer4, new GridConstraints(6, 0, 1, 15, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        rootPanel.add(spacer4, new GridConstraints(7, 0, 1, 15, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer5 = new Spacer();
-        rootPanel.add(spacer5, new GridConstraints(8, 10, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        rootPanel.add(spacer5, new GridConstraints(9, 10, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer6 = new Spacer();
-        rootPanel.add(spacer6, new GridConstraints(7, 14, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, new Dimension(14, 70), null, 0, false));
+        rootPanel.add(spacer6, new GridConstraints(8, 14, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, new Dimension(14, 70), null, 0, false));
         final Spacer spacer7 = new Spacer();
-        rootPanel.add(spacer7, new GridConstraints(8, 13, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        rootPanel.add(spacer7, new GridConstraints(9, 13, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer8 = new Spacer();
-        rootPanel.add(spacer8, new GridConstraints(8, 12, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        rootPanel.add(spacer8, new GridConstraints(9, 12, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer9 = new Spacer();
-        rootPanel.add(spacer9, new GridConstraints(8, 11, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        rootPanel.add(spacer9, new GridConstraints(9, 11, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new FormLayout("fill:222px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:d:grow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
-        rootPanel.add(panel2, new GridConstraints(7, 1, 1, 13, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(0, 70), null, 0, false));
+        rootPanel.add(panel2, new GridConstraints(8, 1, 1, 13, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(0, 70), null, 0, false));
         final JLabel label2 = new JLabel();
         Font label2Font = this.$$$getFont$$$(null, -1, 17, label2.getFont());
         if (label2Font != null) label2.setFont(label2Font);
@@ -195,7 +195,7 @@ public class ConfigurationTab extends FathersComponentTab {
         panel2.add(defineButton, cc.xy(3, 3));
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
-        rootPanel.add(panel3, new GridConstraints(4, 1, 2, 13, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        rootPanel.add(panel3, new GridConstraints(5, 1, 2, 13, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         btnApiKey = new JButton();
         btnApiKey.setActionCommand("Test Key");
         btnApiKey.setText("Test");

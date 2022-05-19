@@ -20,11 +20,9 @@ import static java.nio.charset.StandardCharsets.ISO_8859_1;
 public class Util {
 
     private IBurpExtenderCallbacks callbacks;
-    private IExtensionHelpers helpers;
 
     public Util(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers) {
         this.callbacks = callbacks;
-        this.helpers = helpers;
     }
 
     public Util(final IBurpExtenderCallbacks callbacks) {

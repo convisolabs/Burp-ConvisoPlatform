@@ -129,15 +129,15 @@ public class TabsManager implements ITab {
     }
 
     public void setFocusToLastIssue(){
-        this.setFocusToAppSecFlow();
+        this.setFocusToConvisoPlatformTab();
         this.rootTab.setSelectedIndex(ISSUES_INDEX);
         this.issuesTab.setSelectedIndex(this.issuesTab.getTabCount()-1);
     }
 
-    private void setFocusToAppSecFlow() {
+    private void setFocusToConvisoPlatformTab() {
         JTabbedPane tabPane = (JTabbedPane) this.rootTab.getParent();
         for (int i = 0; i < tabPane.getTabCount(); i++) {
-            if (tabPane.getTitleAt(i).equals("AppSec Flow")) {
+            if (tabPane.getTitleAt(i).equals("Conviso Platform")) {
                 tabPane.setSelectedIndex(i);
             }
         }
@@ -174,7 +174,7 @@ public class TabsManager implements ITab {
     /* IMPLEMENTAÇÃO DO ITAB */
     @Override
     public String getTabCaption() {
-        return "AppSec Flow";
+        return "Conviso Platform";
     }
 
     @Override
