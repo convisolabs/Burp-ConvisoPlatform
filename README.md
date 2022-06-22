@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/convisolabs/Burp-ConvisoPlatform/master/assets/readme/logo-conviso.png">
+  <img src="/assets/readme/logo.svg">
   <p align="center">BurpSuite Conviso Platform Extension</p>
   <p align="center">
     <a href="/LICENSE.md">
