@@ -5,34 +5,32 @@ import models.graphql.GraphQLResponse;
 import models.graphql.query.GraphQLQueries;
 import models.services_manager.ServicesManager;
 import com.google.gson.*;
-import models.issue.template.Template;
-import models.issue.template.TemplateByCompanyIdQL;
+import models.vulnerability.template.Template;
+import models.vulnerability.template.TemplateByCompanyIdQL;
 import org.apache.http.auth.AuthenticationException;
 
 import java.util.*;
 
 
 public class TemplateService extends Service {
-    private final ProjectService projectService;
     private Set<Template> allTemplates = new HashSet<>();
 
-    private static final String FLOW_ALL_TEMPLATES = "FLOW.ALL.TEMPLATES";
+    private static final String CONVISO_ALL_TEMPLATES = "CONVISO.ALL.TEMPLATES";
+    private static final String CONVISO_COMPANY_ID = "CONVISO.COMPANY.ID";
 
     public TemplateService(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
         super(callbacks, helpers, servicesManager);
         alreadyLoaded = false;
-        this.projectService = this.servicesManager.getProjectService();
     }
 
     public Set<Template> getAllTemplates() {
         if (this.alreadyLoaded && (this.lastRequestTime == null || (System.currentTimeMillis() - this.lastRequestTime.getTimeInMillis()) > 30000)) {
-            this.projectService.getAllocatedProjects();
             this.allTemplates = new HashSet<>();
-            this.getAllTemplatesByScopeIds();
+            this.getAllTemplatesByCompanyId();
         } else {
             loadLocalTemplates();
-            if (!this.alreadyLoaded) { // tried to load from local, but nothing was found.
-                this.getAllTemplatesByScopeIds();
+            if (!this.alreadyLoaded) {
+                this.getAllTemplatesByCompanyId();
                 this.alreadyLoaded = true;
             }
         }
@@ -40,7 +38,6 @@ public class TemplateService extends Service {
         return this.allTemplates;
     }
 
-    /* Buscar os templates da API */
     private void getAllVulnerabilitiesModelsFromApi(Integer companyId) {
 
         String content = null;
@@ -52,7 +49,7 @@ public class TemplateService extends Service {
             templateByCompanyIdQL.sanitizeTemplates();
             this.allTemplates.addAll(Arrays.asList(templateByCompanyIdQL.getCollection()));
             this.saveTemplatesLocally();
-            util.sendStdout("[Re]Loaded templates from API. Scope Id: " + companyId);
+            util.sendStdout("[Re]Loaded templates from API. Company ID: " + companyId);
         } catch (AuthenticationException e) {
             util.sendStderr("Invalid API KEY.");
         } catch (Exception e) {
@@ -76,8 +73,8 @@ public class TemplateService extends Service {
     private synchronized void saveTemplatesLocally() {
         this.orderAllTemplates();
         String templatesPayload = new Gson().toJson(allTemplates);
-        if (!templatesPayload.equals(callbacks.loadExtensionSetting(FLOW_ALL_TEMPLATES))) {
-            callbacks.saveExtensionSetting(FLOW_ALL_TEMPLATES, templatesPayload);
+        if (!templatesPayload.equals(callbacks.loadExtensionSetting(CONVISO_ALL_TEMPLATES))) {
+            callbacks.saveExtensionSetting(CONVISO_ALL_TEMPLATES, templatesPayload);
             util.sendStdout("Saved templates locally.");
         } else {
             util.sendStdout("Saved tempaltes are up to date.");
@@ -85,7 +82,7 @@ public class TemplateService extends Service {
     }
 
     private synchronized void loadLocalTemplates() {
-        String templatesPayload = callbacks.loadExtensionSetting(FLOW_ALL_TEMPLATES);
+        String templatesPayload = callbacks.loadExtensionSetting(CONVISO_ALL_TEMPLATES);
         if (templatesPayload != null && !templatesPayload.equals(new Gson().toJson(allTemplates))) {
             allTemplates = new HashSet<>(Arrays.asList(new Gson().fromJson(templatesPayload, Template[].class)));
             util.sendStdout("Loaded templates from local.");
@@ -96,24 +93,27 @@ public class TemplateService extends Service {
     }
 
 
-    private void getAllTemplatesByScopeIds() {
-        ArrayList<Thread> threadArrayList = new ArrayList<>();
+    private void getAllTemplatesByCompanyId() {
+        Integer companyId = getCompanyIdSetting();
+        if (companyId == null) {
+            util.sendStderr("Company ID not defined. Please fill it in Settings.");
+            return;
+        }
         this.allTemplates = new HashSet<>();
-        for (Integer i :
-                projectService.getScopeIdsOfProjects()) {
-            Thread t = new Thread(() -> getAllVulnerabilitiesModelsFromApi(i));
-            threadArrayList.add(t);
-            t.start();
-        }
-
-        for (Thread tt :
-                threadArrayList) {
-            try {
-                tt.join();
-            } catch (InterruptedException ignored) {
-            }
-        }
+        getAllVulnerabilitiesModelsFromApi(companyId);
         this.orderAllTemplates();
+    }
+
+    private Integer getCompanyIdSetting() {
+        String rawCompanyId = callbacks.loadExtensionSetting(CONVISO_COMPANY_ID);
+        if (rawCompanyId == null || rawCompanyId.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(rawCompanyId.trim());
+        } catch (NumberFormatException ex) {
+            return null;
+        }
     }
 
 

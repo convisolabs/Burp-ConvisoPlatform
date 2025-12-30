@@ -32,13 +32,14 @@ public class BurpExtender implements IBurpExtender {
         tabsManager = new TabsManager(this.callbacks, this.helpers, this.servicesManager);
 
         SwingUtilities.invokeLater(() -> {
-
-            tabsManager.initializeComponents();
-
-            callbacks.addSuiteTab(tabsManager);
-
-            tabsManager.verifyIfApiKeyIsSet();
-
+            try {
+                tabsManager.initializeComponents();
+                callbacks.addSuiteTab(tabsManager);
+                tabsManager.verifyIfApiKeyIsSet();
+            } catch (Throwable t) {
+                new Util(this.callbacks).sendStderr("Failed to initialize UI: " + t);
+                t.printStackTrace(new java.io.PrintWriter(this.callbacks.getStderr(), true));
+            }
         });
 
 

@@ -3,12 +3,11 @@ package view.context_menu;
 import burp.*;
 import models.tabs_manager.TabsManager;
 import utilities.Util;
-import view.context_menu.listeners.AsEvidenceContextMenuActionListener;
-import view.context_menu.listeners.AsNewIssueContextMenuActionListener;
-import view.context_menu.listeners.AsNewIssueWithEvidenceContextMenuActionListener;
+import view.context_menu.listeners.AsAttachmentContextMenuActionListener;
+import view.context_menu.listeners.AsNewVulnerabilityContextMenuActionListener;
+import view.context_menu.listeners.AsNewVulnerabilityWithAttachmentContextMenuActionListener;
 import view.context_menu.listeners.ContextMenuActionListener;
-import view.issues_tab.NewIssueTab;
-import view.issues_tab.closable_pane.ClosablePane;
+import view.vulnerabilities_tab.closable_pane.ClosablePane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,30 +33,30 @@ public class ContextMenuOption implements IContextMenuFactory {
     public List<JMenuItem> createMenuItems(IContextMenuInvocation invocation) {
         List<JMenuItem> items = new ArrayList<>();
         JMenu itemDefault = new JMenu("Send to Conviso Platform");
-        JMenuItem asVulnerability = new JMenuItem("as new issue");
-        JMenuItem asVulnerabilityWithEvidence = new JMenuItem("as new issue w. evidence");
-        JMenu asEvidence = new JMenu("as evidence");
+        JMenuItem asVulnerability = new JMenuItem("as new vulnerability");
+        JMenuItem asVulnerabilityWithAttachment = new JMenuItem("as new vulnerability w. attachment");
+        JMenu asAttachment = new JMenu("as attachment");
 
 
-        JTabbedPane issuesTab = this.tabsManager.getIssuesTab();
-        for (int i = 0; i < issuesTab.getTabCount(); i++) {
+        JTabbedPane vulnerabilitiesTab = this.tabsManager.getVulnerabilitiesTab();
+        for (int i = 0; i < vulnerabilitiesTab.getTabCount(); i++) {
             System.out.println();
-            Component componentAt = issuesTab.getTabComponentAt(i);
+            Component componentAt = vulnerabilitiesTab.getTabComponentAt(i);
             if( componentAt != null){
                 JMenuItem jMenuItem = new JMenuItem(((ClosablePane) componentAt).getTabTitle());
-                jMenuItem.addActionListener(new AsEvidenceContextMenuActionListener(this.callbacks, this.helpers, this.tabsManager, invocation));
-                asEvidence.add(jMenuItem);
+                jMenuItem.addActionListener(new AsAttachmentContextMenuActionListener(this.callbacks, this.helpers, this.tabsManager, invocation));
+                asAttachment.add(jMenuItem);
             }
         }
 
-        asVulnerability.addActionListener(new AsNewIssueContextMenuActionListener(this.callbacks, this.helpers, this.tabsManager, invocation));
-        asVulnerabilityWithEvidence.addActionListener(new AsNewIssueWithEvidenceContextMenuActionListener(this.callbacks, this.helpers, this.tabsManager, invocation));
+        asVulnerability.addActionListener(new AsNewVulnerabilityContextMenuActionListener(this.callbacks, this.helpers, this.tabsManager, invocation));
+        asVulnerabilityWithAttachment.addActionListener(new AsNewVulnerabilityWithAttachmentContextMenuActionListener(this.callbacks, this.helpers, this.tabsManager, invocation));
 
         itemDefault.add(asVulnerability);
         if(invocation.getSelectedMessages().length >= 2) asVulnerability.setEnabled(false);
-        if(invocation.getSelectedMessages().length < 2) asVulnerabilityWithEvidence.setEnabled(false);
-        itemDefault.add(asVulnerabilityWithEvidence);
-        itemDefault.add(asEvidence);
+        if(invocation.getSelectedMessages().length < 2) asVulnerabilityWithAttachment.setEnabled(false);
+        itemDefault.add(asVulnerabilityWithAttachment);
+        itemDefault.add(asAttachment);
         items.add(itemDefault);
 
         return items;

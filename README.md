@@ -6,7 +6,7 @@
       <img src="https://img.shields.io/badge/license-MIT-blue.svg">
     </a>
     <a href="https://github.com/convisolabs/Burp-ConvisoPlatform/releases">
-      <img src="https://img.shields.io/badge/version-1.3.0-blue.svg">
+      <img src="https://img.shields.io/badge/version-3.0.0-blue.svg">
     </a>
   </p>
 </p>
@@ -15,10 +15,7 @@
 
 ### Summary
 
-[Conviso Platform](https://blog.convisoappsec.com/en/appsec-flow-a-complete-devsecops-platform/) is a Software as a Service (SaaS) platform created by [Conviso](https://www.convisoappsec.com/) that supports the entire security cycle in the software development life cycle. It was created based on the Software Assurance Maturity Model (SAMM) - a project in the portfolio of the Open Web Application Security Project (OWASP) that defines a series of practices with the objective of improving software security. The extension of Burp Suite for the platform aims to serve as an integration between them, making the life of an analyst easier, because he can now send vulnerabilities directly from Burp to Conviso's Platform.
-
-
-If you want to read more about this extension, we have a blog post: [https://blog.convisoappsec.com/en/appsec-flow-extension-for-burp-suite/](https://blog.convisoappsec.com/en/appsec-flow-extension-for-burp-suite/)
+[Conviso Platform](https://www.convisoappsec.com/conviso-platform) is Conviso’s application security platform that centralizes risk, testing, and remediation workflows. This Burp Suite extension connects your findings directly to Conviso Platform, so analysts can register vulnerabilities, track requirements, and keep projects aligned in one place. See the docs at [https://docs.convisoappsec.com/](https://docs.convisoappsec.com/).
 
 ---
 
@@ -26,35 +23,71 @@ If you want to read more about this extension, we have a blog post: [https://blo
 
 You can find the last release: [here](https://github.com/convisolabs/Burp-ConvisoPlatform/releases)
 
-Building JAR locally:
+### Install in Burp
 
-```bash
- $ git clone https://github.com/convisolabs/Burp-ConvisoPlatform.git 
- $ cd Burp-ConvisoPlatform && mvn package
-```
+1) Open the **Extensions** tab and click **Add**.
 
+![Step 1](assets/readme/install-step-1.png)
 
-Here you can learn here: [How to add extesion to Burp](https://github.com/convisolabs/Burp-ConvisoPlatform/wiki/Add-extension-to-Burp)
+2) Choose **Java**, select the jar with dependencies, and keep output set to **Show in UI**.
+
+![Step 2](assets/readme/install-step-2.png)
+
+3) Click **Next** to load the extension.
+
+![Step 3](assets/readme/install-step-3.png)
+
+4) Confirm the extension loaded successfully.
+
+![Step 4](assets/readme/install-step-4.png)
 
 ---
 
-### Demo
+### Screenshots
 
-![Image](https://raw.githubusercontent.com/convisolabs/Burp-ConvisoPlatform/master/assets/readme/as_new_issue.gif)
+**Settings**
 
-![Image](https://raw.githubusercontent.com/convisolabs/Burp-ConvisoPlatform/master/assets/readme/multi_requests_issue.gif)
+![Settings](assets/readme/settings.png)
+
+**Vulnerabilities**
+
+![Vulnerabilities](assets/readme/vulnerabilities.png)
+
+**Requirements**
+
+![Requirements](assets/readme/requirements.png)
 
 ---
 
 ### Documentation
 
-You can find the full documentation at: [wiki page.](https://github.com/convisolabs/Burp-ConvisoPlatform/wiki)
+You can find the full documentation at: [https://docs.convisoappsec.com/](https://docs.convisoappsec.com/)
 
 ---
 
-### Contribution
+### Build from source
 
-- Your contributions and suggestions are heartily ♥ welcome. [See here the contribution guidelines.](/.github/CONTRIBUTING.md) Please, report bugs via [issues page](https://github.com/convisolabs/Burp-ConvisoPlatform/issues) and for security issues, see here the [security policy.](/SECURITY.md)
+```bash
+$ git clone https://github.com/convisolabs/Burp-ConvisoPlatform.git
+$ cd Burp-ConvisoPlatform
+$ mvn -DskipTests package
+```
+
+The bundled jar is generated at:
+
+```
+target/Burp-ConvisoPlatform-<version>-jar-with-dependencies.jar
+```
+
+### Contributing
+
+1. Fork the repository and create a feature branch.
+2. Keep changes focused and update documentation when behavior changes.
+3. Build locally with `mvn -DskipTests package` before opening a PR.
+4. Open a pull request with a clear description of the change.
+
+See the contribution guidelines: [CONTRIBUTING.md](/.github/CONTRIBUTING.md).  
+Report bugs via the [issues page](https://github.com/convisolabs/Burp-ConvisoPlatform/issues) and see the [security policy](/SECURITY.md) for security issues.
 
 ---
 

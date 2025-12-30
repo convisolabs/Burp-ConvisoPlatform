@@ -1,7 +1,7 @@
 package models.activity.graphql.mutations;
 
 
-import models.evidences.EvidenceArchive;
+import models.attachments.AttachmentArchive;
 import models.graphql.mutation.GraphQLMutations;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -16,20 +16,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class UpdateActivityStatusToFinish extends UpdateActivityStatus{
-    EvidenceArchive evidenceArchive;
+    AttachmentArchive attachmentArchive;
 
     public UpdateActivityStatusToFinish(int activityId, String textEvidence) {
-        this.setQuery(String.format(GraphQLMutations.mutationUpdateActivityStatusToFinishWithTextEvidence, activityId, textEvidence));
+        this.setQuery(String.format(GraphQLMutations.mutationUpdateActivityStatusWithReason, activityId, "DONE", Util.jsonSafeString(textEvidence)));
     }
 
-    public UpdateActivityStatusToFinish(int activityId, EvidenceArchive archiveEvidence) {
-        this.setQuery(String.format(GraphQLMutations.mutationUpdateActivityStatusToFinishWithArchiveEvidence, activityId));
-        this.evidenceArchive = archiveEvidence;
+    public UpdateActivityStatusToFinish(int activityId, AttachmentArchive archiveAttachment) {
+        this.setQuery(String.format(GraphQLMutations.mutationUpdateActivityStatusWithArchive, activityId, "DONE"));
+        this.attachmentArchive = archiveAttachment;
     }
 
-    public UpdateActivityStatusToFinish(int activityId, EvidenceArchive archiveEvidence, String textEvidence) {
-        this.setQuery(String.format(GraphQLMutations.mutationUpdateActivityStatusToFinishWithArchiveEvidenceAndTextEvidence, activityId, textEvidence));
-        this.evidenceArchive = archiveEvidence;
+    public UpdateActivityStatusToFinish(int activityId, AttachmentArchive archiveAttachment, String textEvidence) {
+        this.setQuery(String.format(GraphQLMutations.mutationUpdateActivityStatusWithArchiveAndReason, activityId, "DONE", Util.jsonSafeString(textEvidence)));
+        this.attachmentArchive = archiveAttachment;
     }
 
 
@@ -37,14 +37,14 @@ public class UpdateActivityStatusToFinish extends UpdateActivityStatus{
 
         MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
         multipartEntityBuilder.addTextBody("operations", this.getQuery());
-        multipartEntityBuilder.addTextBody("map", "{\"0\":[\"variables.evidenceArchive\"]}");
+        multipartEntityBuilder.addTextBody("map", "{\"0\":[\"variables.archives.0\"]}");
 
-        File file = new File(this.evidenceArchive.getPath());
+        File file = new File(this.attachmentArchive.getPath());
 
         try {
-            multipartEntityBuilder.addBinaryBody("0", new FileInputStream(file), ContentType.parse(Files.probeContentType(Path.of(file.getPath()))), Util.removeSpecialCharacters(this.evidenceArchive.getName()));
+            multipartEntityBuilder.addBinaryBody("0", new FileInputStream(file), ContentType.parse(Files.probeContentType(Path.of(file.getPath()))), Util.removeSpecialCharacters(this.attachmentArchive.getName()));
         } catch (IOException ioException) {
-            multipartEntityBuilder.addBinaryBody("0", new FileInputStream(file), ContentType.APPLICATION_OCTET_STREAM, Util.removeSpecialCharacters(this.evidenceArchive.getName()));
+            multipartEntityBuilder.addBinaryBody("0", new FileInputStream(file), ContentType.APPLICATION_OCTET_STREAM, Util.removeSpecialCharacters(this.attachmentArchive.getName()));
         }
 
         return multipartEntityBuilder.build();

@@ -15,13 +15,9 @@ import java.util.Map;
 
 public class HttpClient {
 
-    //https://api.convisoappsec.com/
-
-//    private static final String CONVISO_API_HOST = "app.conviso.com.br";
-    private static String CONVISO_API_HOST;
+    private static final String CONVISO_API_HOST = "api.convisoappsec.com";
     private static final String CONVISO_API_PATH = "/graphql";
-    private static final String FLOW_API_KEY = "FLOW.API.KEY";
-    private static final String FLOW_ENDPOINT_URL = "FLOW.ENDPOINT.URL";
+    private static final String CONVISO_API_KEY = "CONVISO.API.KEY";
     private static String convisoPlatformApiKey;
     private static final String userAgent = "ConvisoPlatform-BurpExtender/2.0.2";
 
@@ -33,8 +29,7 @@ public class HttpClient {
         this.callbacks = callbacks;
         this.helpers = helpers;
         this.util = new Util(callbacks, helpers);
-        convisoPlatformApiKey = callbacks.loadExtensionSetting(FLOW_API_KEY);
-        CONVISO_API_HOST = (callbacks.loadExtensionSetting(FLOW_ENDPOINT_URL) == null || callbacks.loadExtensionSetting(FLOW_ENDPOINT_URL).equals("")) ? "app.conviso.com.br" : callbacks.loadExtensionSetting(FLOW_ENDPOINT_URL);
+        convisoPlatformApiKey = callbacks.loadExtensionSetting(CONVISO_API_KEY);
     }
 
     public String get(String sufixPath) {
@@ -121,12 +116,6 @@ public class HttpClient {
 
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpPost httpPost = new HttpPost("https://"+CONVISO_API_HOST+CONVISO_API_PATH);
-
-//            TODO - Add option to add a proxy for the request's, but there is a issue that the JRE needs to agree with Burps certificate.
-//            HttpHost proxy = new HttpHost("127.0.0.1", 8080, "http");
-//            RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
-//            httpPost.setConfig(config);
-
 
             httpPost.setHeader("User-Agent", userAgent);
             httpPost.setHeader("x-api-key", convisoPlatformApiKey);

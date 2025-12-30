@@ -6,10 +6,9 @@ import burp.ITab;
 import models.services_manager.ServicesManager;
 import utilities.Util;
 import view.settings.config.ConfigurationTab;
-import view.issues_tab.closable_pane.ClosablePane;
-import view.management.allocated_project.AllocatedProjectsTab;
-import view.management.playbooks.PlaybookTab;
-import view.issues_tab.NewIssueTab;
+import view.vulnerabilities_tab.closable_pane.ClosablePane;
+import view.requirements.requirements.RequirementsTab;
+import view.vulnerabilities_tab.NewVulnerabilityTab;
 
 
 import javax.swing.*;
@@ -23,24 +22,19 @@ public class TabsManager implements ITab {
     protected ServicesManager servicesManager;
     protected Util util;
 
-    private final String FLOW_API_KEY = "FLOW.API.KEY";
-    private final int ISSUES_INDEX = 0;
-    private final int MANAGETMENT_INDEX = 1;
+    private final String CONVISO_API_KEY = "CONVISO.API.KEY";
+    private final int VULNERABILITIES_INDEX = 0;
+    private final int REQUIREMENTS_INDEX = 1;
     private final int CONFIG_INDEX = 2;
 
-    private final int[] ALLOCATED_PROJECT_TAB = {1, 1};
-
-    /* Tabs */
     private ConfigurationTab configurationTab;
-    ArrayList<NewIssueTab> issuesArray = new ArrayList<>();
-    private AllocatedProjectsTab allocatedProjectsTab;
-    private PlaybookTab playbookTab;
+    ArrayList<NewVulnerabilityTab> vulnerabilities = new ArrayList<>();
+    private RequirementsTab requirementsTab;
 
 
-    /* JTabbeds */
     private JTabbedPane rootTab;
-    private JTabbedPane issuesTab;
-    private JTabbedPane managementTab;
+    private JTabbedPane vulnerabilitiesTab;
+    private JTabbedPane requirementsTabPane;
     private JTabbedPane settingsTab;
 
 
@@ -49,65 +43,63 @@ public class TabsManager implements ITab {
         this.helpers = helpers;
         this.util = new Util(this.callbacks, this.helpers);
         this.servicesManager = servicesManager;
-        this.issuesTab = new JTabbedPane();//new JideTabbedPane();
-        this.managementTab = new JTabbedPane();
+        this.vulnerabilitiesTab = new JTabbedPane();
+        this.requirementsTabPane = new JTabbedPane();
         this.settingsTab = new JTabbedPane();
         this.rootTab = new JTabbedPane();
     }
 
     public void initializeComponents() {
-        /* Initialization of components tabs */
-        initializeIssuesTab();
-        initializeManagementTab();
+        initializeVulnerabilitiesTab();
+        initializeRequirementsTab();
         initializeConfigTab();
 
 
-        this.rootTab.add("Issues", this.issuesTab);
-        this.rootTab.add("Management", this.managementTab);
+        this.rootTab.add("Vulnerabilities", this.vulnerabilitiesTab);
+        this.rootTab.add("Requirements", this.requirementsTabPane);
         this.rootTab.add("Settings", this.settingsTab);
+
+        this.rootTab.addChangeListener(e -> {
+            if (this.rootTab.getSelectedIndex() == REQUIREMENTS_INDEX && this.requirementsTab != null) {
+                SwingUtilities.invokeLater(() -> this.requirementsTab.refreshRequirementsAsync());
+            }
+        });
     }
 
 
-    private void initializeIssuesTab() {
-        /* Occurrences tab */
-        NewIssueTab newIssueTab = new NewIssueTab(this.callbacks, this.helpers, this.servicesManager, this);
-        newIssueTab.initializeComponent();
-        this.issuesArray.add(newIssueTab);
-        this.issuesTab.addTab(null, newIssueTab.$$$getRootComponent$$$());//
-        this.issuesTab.addTab("+", new JPanel());
-        this.issuesTab.setTabComponentAt(0, new ClosablePane("#1"));
+    private void initializeVulnerabilitiesTab() {
+        NewVulnerabilityTab newVulnerabilityTab = new NewVulnerabilityTab(this.callbacks, this.helpers, this.servicesManager, this);
+        newVulnerabilityTab.initializeComponent();
+        this.vulnerabilities.add(newVulnerabilityTab);
+        this.vulnerabilitiesTab.addTab(null, newVulnerabilityTab.$$$getRootComponent$$$());
+        this.vulnerabilitiesTab.addTab("+", new JPanel());
+        this.vulnerabilitiesTab.setTabComponentAt(0, new ClosablePane("#1"));
 
         SwingUtilities.invokeLater(() -> {
-            this.issuesTab.addChangeListener(e -> {
-                int selectedIndex = issuesTab.getSelectedIndex();
-                if (issuesTab.getTitleAt(selectedIndex).equals("+")) {
-                    NewIssueTab issue = new NewIssueTab(this.callbacks, this.helpers, this.servicesManager, this);
-                    issue.initializeComponent();
-                    this.issuesArray.add(issue);
-                    this.issuesTab.setSelectedIndex(0);
-                    this.issuesTab.insertTab(null, null, issue.$$$getRootComponent$$$(), null, selectedIndex);
-                    this.issuesTab.setTabComponentAt(selectedIndex, new ClosablePane("#" + issuesArray.size()));
-                    this.issuesTab.setSelectedIndex(selectedIndex);
+            this.vulnerabilitiesTab.addChangeListener(e -> {
+                int selectedIndex = vulnerabilitiesTab.getSelectedIndex();
+                if (vulnerabilitiesTab.getTitleAt(selectedIndex).equals("+")) {
+                    NewVulnerabilityTab vulnerabilityTab = new NewVulnerabilityTab(this.callbacks, this.helpers, this.servicesManager, this);
+                    vulnerabilityTab.initializeComponent();
+                    this.vulnerabilities.add(vulnerabilityTab);
+                    this.vulnerabilitiesTab.setSelectedIndex(0);
+                    this.vulnerabilitiesTab.insertTab(null, null, vulnerabilityTab.$$$getRootComponent$$$(), null, selectedIndex);
+                    this.vulnerabilitiesTab.setTabComponentAt(selectedIndex, new ClosablePane("#" + vulnerabilities.size()));
+                    this.vulnerabilitiesTab.setSelectedIndex(selectedIndex);
                 }
             });
         });
     }
 
-    private void initializeManagementTab() {
-        /* Management tab */
-        this.allocatedProjectsTab = new AllocatedProjectsTab(this.callbacks, this.helpers, this.servicesManager, this);
-        this.playbookTab = new PlaybookTab(this.callbacks, this.helpers, this.servicesManager);
+    private void initializeRequirementsTab() {
+        this.requirementsTab = new RequirementsTab(this.callbacks, this.helpers, this.servicesManager);
 
-        this.allocatedProjectsTab.initializeComponent();
-        this.playbookTab.initializeComponent();
+        this.requirementsTab.initializeComponent();
 
-        this.managementTab.addTab("Playbooks", this.playbookTab.$$$getRootComponent$$$());
-        this.managementTab.addTab("Allocated Projects", this.allocatedProjectsTab.$$$getRootComponent$$$());
-
+        this.requirementsTabPane.addTab("Requirements", this.requirementsTab.$$$getRootComponent$$$());
     }
 
     private void initializeConfigTab() {
-        /* Configuration tab */
         this.configurationTab = new ConfigurationTab(this.callbacks, this.helpers, this.servicesManager);
 
         this.configurationTab.initializeComponent();
@@ -118,20 +110,15 @@ public class TabsManager implements ITab {
     }
 
     public void verifyIfApiKeyIsSet() {
-        if (callbacks.loadExtensionSetting(FLOW_API_KEY) == null || callbacks.loadExtensionSetting(FLOW_API_KEY).isEmpty()) {
+        if (callbacks.loadExtensionSetting(CONVISO_API_KEY) == null || callbacks.loadExtensionSetting(CONVISO_API_KEY).isEmpty()) {
             this.rootTab.setSelectedIndex(CONFIG_INDEX);
         }
     }
 
-    public void setFocusToAllocatedProjectsTab() {
-        this.rootTab.setSelectedIndex(ALLOCATED_PROJECT_TAB[0]);
-        this.managementTab.setSelectedIndex(ALLOCATED_PROJECT_TAB[1]);
-    }
-
-    public void setFocusToLastIssue(){
+    public void setFocusToLastVulnerability(){
         this.setFocusToConvisoPlatformTab();
-        this.rootTab.setSelectedIndex(ISSUES_INDEX);
-        this.issuesTab.setSelectedIndex(this.issuesTab.getTabCount()-1);
+        this.rootTab.setSelectedIndex(VULNERABILITIES_INDEX);
+        this.vulnerabilitiesTab.setSelectedIndex(this.vulnerabilitiesTab.getTabCount()-1);
     }
 
     private void setFocusToConvisoPlatformTab() {
@@ -143,8 +130,8 @@ public class TabsManager implements ITab {
         }
     }
 
-    public NewIssueTab returnLastIssue(){
-        return this.getIssuesArray().get(this.getIssuesArray().size()-1);
+    public NewVulnerabilityTab returnLastVulnerability(){
+        return this.getVulnerabilities().get(this.getVulnerabilities().size()-1);
     }
 
     public JTabbedPane getRootTab() {
@@ -155,23 +142,18 @@ public class TabsManager implements ITab {
         return configurationTab;
     }
 
-    public AllocatedProjectsTab getAllocatedProjectsTab() {
-        return allocatedProjectsTab;
+    public RequirementsTab getRequirementsTab() {
+        return requirementsTab;
     }
 
-    public PlaybookTab getPlaybookTab() {
-        return playbookTab;
+    public ArrayList<NewVulnerabilityTab> getVulnerabilities() {
+        return vulnerabilities;
     }
 
-    public ArrayList<NewIssueTab> getIssuesArray() {
-        return issuesArray;
+    public JTabbedPane getVulnerabilitiesTab() {
+        return vulnerabilitiesTab;
     }
 
-    public JTabbedPane getIssuesTab() {
-        return issuesTab;
-    }
-
-    /* IMPLEMENTAÇÃO DO ITAB */
     @Override
     public String getTabCaption() {
         return "Conviso Platform";

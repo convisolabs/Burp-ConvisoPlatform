@@ -3,12 +3,14 @@ package services;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import com.google.gson.Gson;
+import models.graphql.GraphQLQuery;
 import models.graphql.GraphQLResponse;
 import models.project.Project;
 import models.project.graphql.requests.AllocatedProjectQL;
 import models.graphql.query.GraphQLQueries;
 import models.services_manager.ServicesManager;
 import org.apache.http.auth.AuthenticationException;
+import models.activity.Activity;
 
 import java.util.*;
 
@@ -16,8 +18,8 @@ public class ProjectService extends Service {
 
     private Set<Project> allocatedProjects = new HashSet<>();
     private Project workingProject;
-    final String FLOW_ALLOCATED_PROJECTS = "FLOW.ALLOCATED.PROJECTS";
-    final String FLOW_WORKING_PROJECT = "FLOW.WORKING.PROJECT";
+    final String CONVISO_ALLOCATED_PROJECTS = "CONVISO.ALLOCATED.PROJECTS";
+    final String CONVISO_WORKING_PROJECT = "CONVISO.WORKING.PROJECT";
 
     public ProjectService(final IBurpExtenderCallbacks callbacks, final IExtensionHelpers helpers, ServicesManager servicesManager) {
         super(callbacks, helpers, servicesManager);
@@ -65,6 +67,79 @@ public class ProjectService extends Service {
             loadLocalProjects();
         }
         return this.allocatedProjects;
+    }
+
+    public Set<Project> getProjectsByCompanyId(int companyId) throws AuthenticationException {
+        String content = null;
+        try {
+            GraphQLService graphQLService = this.servicesManager.getGraphQLService();
+            HashMap<String, Object> params = new HashMap<>();
+            params.put("scopeIdEq", companyId);
+            params.put("showHidden", true);
+
+            HashMap<String, Object> variables = new HashMap<>();
+            variables.put("page", 1);
+            variables.put("limit", 1000);
+            variables.put("params", params);
+            variables.put("sortBy", "label");
+            variables.put("descending", false);
+
+            GraphQLQuery graphQLQuery = new GraphQLQuery(GraphQLQueries.getProjectsByCompanyQuery, variables, "projects");
+            content = graphQLService.executeQuery(graphQLQuery);
+            GraphQLResponse graphQLResponse = new GraphQLResponse(content);
+            AllocatedProjectQL projectsQL = new Gson().fromJson(graphQLResponse.getContentOfData("projects"), AllocatedProjectQL.class);
+            projectsQL.sanitizeProjects();
+            Set<Project> projects = new HashSet<>(Arrays.asList(projectsQL.getCollection()));
+            util.sendStdout("Loaded projects by company ID: " + companyId + ". Count: " + projects.size());
+            return projects;
+        } catch (AuthenticationException e) {
+            throw e;
+        } catch (Error e) {
+            util.sendStderr("GraphQL error loading projects by company.");
+            util.sendStderr(e.toString());
+            util.sendStderr(content);
+            return new HashSet<>();
+        } catch (Exception e) {
+            util.sendStderr("Error loading projects by company.");
+            util.sendStderr(content);
+            return new HashSet<>();
+        }
+    }
+
+    public Project getProjectById(int projectId) throws AuthenticationException {
+        String content = null;
+        try {
+            GraphQLService graphQLService = this.servicesManager.getGraphQLService();
+            String query = String.format(GraphQLQueries.getProjectById, projectId);
+            util.sendStdout("Loading project requirements for project ID: " + projectId);
+            content = graphQLService.executeQuery(query);
+            GraphQLResponse graphQLResponse = new GraphQLResponse(content);
+            Project project = new Gson().fromJson(graphQLResponse.getContentOfData("project"), Project.class);
+            if (project == null) {
+                util.sendStderr("Project query returned null for project ID: " + projectId);
+                util.sendStderr(content);
+                return null;
+            }
+            project.sanitize();
+            if (project.getActivities() == null) {
+                util.sendStderr("Project query returned no activities for project ID: " + projectId);
+                util.sendStderr(content);
+                project.setActivities(new Activity[0]);
+            }
+            this.workingProject = project;
+            return project;
+        } catch (AuthenticationException e) {
+            throw e;
+        } catch (Error e) {
+            util.sendStderr("GraphQL error loading project by id.");
+            util.sendStderr(e.toString());
+            util.sendStderr(content);
+            return null;
+        } catch (Exception e) {
+            util.sendStderr("Error loading project by id.");
+            util.sendStderr(content);
+            return null;
+        }
     }
 
     public Project getWorkingProject() {
@@ -127,7 +202,7 @@ public class ProjectService extends Service {
     private synchronized void loadLocalProjects() {
         util.sendStdout("Loaded allocated projects.");
         try {
-            this.allocatedProjects = new HashSet<>(Arrays.asList(new Gson().fromJson(callbacks.loadExtensionSetting(FLOW_ALLOCATED_PROJECTS), Project[].class)));
+            this.allocatedProjects = new HashSet<>(Arrays.asList(new Gson().fromJson(callbacks.loadExtensionSetting(CONVISO_ALLOCATED_PROJECTS), Project[].class)));
         }catch (NullPointerException exception){
             util.sendStderr("No projects saved locally.");
             this.getAllocatedProjectsFromApi();
@@ -137,7 +212,7 @@ public class ProjectService extends Service {
 
 
     private void loadLocalWorkingProject() {
-        this.workingProject = new Gson().fromJson(callbacks.loadExtensionSetting(FLOW_WORKING_PROJECT), Project.class);
+        this.workingProject = new Gson().fromJson(callbacks.loadExtensionSetting(CONVISO_WORKING_PROJECT), Project.class);
         if(this.workingProject != null){
             util.sendStdout("Loaded working project, ID:"+this.workingProject.getId());
         }
@@ -149,11 +224,11 @@ public class ProjectService extends Service {
         }else{
             util.sendStdout("Resetting the working project.");
         }
-        callbacks.saveExtensionSetting(FLOW_WORKING_PROJECT, new Gson().toJson(this.workingProject));
+        callbacks.saveExtensionSetting(CONVISO_WORKING_PROJECT, new Gson().toJson(this.workingProject));
     }
 
     private void saveLocalProjects() {
-        callbacks.saveExtensionSetting(FLOW_ALLOCATED_PROJECTS, new Gson().toJson(this.allocatedProjects));
+        callbacks.saveExtensionSetting(CONVISO_ALLOCATED_PROJECTS, new Gson().toJson(this.allocatedProjects));
         util.sendStdout("Saved new allocated projects.");
     }
 

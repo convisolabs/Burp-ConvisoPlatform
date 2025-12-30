@@ -49,6 +49,17 @@ public class GraphQLService extends Service {
         return response.substring(bodyOffset);
     }
 
+    public String executeQuery(GraphQLQuery graphQL) throws AuthenticationException {
+        HttpClient httpClient = new HttpClient(this.callbacks, this.helpers);
+        String response = httpClient.post(new Gson().toJson(graphQL));
+        IResponseInfo responseInfo = this.helpers.analyzeResponse(response.getBytes(StandardCharsets.UTF_8));
+        int bodyOffset = responseInfo.getBodyOffset();
+        if (responseInfo.getStatusCode() == 401) {
+            throw new AuthenticationException(response.substring(bodyOffset));
+        }
+        return response.substring(bodyOffset);
+    }
+
     public String executeQueryMultipart(HttpEntity httpEntity) throws AuthenticationException, HttpResponseException, NullPointerException {
         HttpClient httpClient = new HttpClient(this.callbacks, this.helpers);
         HttpResponse response = httpClient.postMultiForm(httpEntity);

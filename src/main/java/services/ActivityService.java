@@ -11,7 +11,7 @@ import models.activity.graphql.mutations.responses.UpdatedActivityToFinish;
 import models.activity.graphql.mutations.responses.UpdatedActivityToNotApply;
 import models.activity.graphql.mutations.responses.UpdatedActivityToRestart;
 import models.activity.graphql.mutations.responses.UpdatedActivityToStart;
-import models.evidences.EvidenceArchive;
+import models.attachments.AttachmentArchive;
 import models.graphql.GraphQLResponse;
 import models.services_manager.ServicesManager;
 import org.apache.http.auth.AuthenticationException;
@@ -27,29 +27,25 @@ public class ActivityService extends Service {
         this.projectService = servicesManager.getProjectService();
     }
 
-    public void updateActivityToFinish(int activityId, EvidenceArchive evidenceArchive, String evidenceText) throws AuthenticationException, FileNotFoundException, HttpResponseException {
+    public void updateActivityToFinish(int activityId, AttachmentArchive attachmentArchive, String evidenceText) throws AuthenticationException, FileNotFoundException, HttpResponseException {
         GraphQLService graphQLService = this.servicesManager.getGraphQLService();
         UpdatedActivityToFinish updatedActivityToFinish = null;
 
-        if (evidenceArchive != null && !evidenceText.isEmpty()){
-             // has some archives as evidence, also text.
-            String response = graphQLService.executeQueryMultipart(new UpdateActivityStatusToFinish(activityId, evidenceArchive, evidenceText).getHttpEntity());
+        if (attachmentArchive != null && !evidenceText.isEmpty()){
+            String response = graphQLService.executeQueryMultipart(new UpdateActivityStatusToFinish(activityId, attachmentArchive, evidenceText).getHttpEntity());
             GraphQLResponse graphQLResponse = new GraphQLResponse(response);
-            updatedActivityToFinish = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatusToFinish"), UpdatedActivityToFinish.class);
+            updatedActivityToFinish = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatus"), UpdatedActivityToFinish.class);
 
-        } else if (evidenceArchive != null) {
-            // the evidence is only archive.
-            String response = graphQLService.executeQueryMultipart(new UpdateActivityStatusToFinish(activityId, evidenceArchive).getHttpEntity());
+        } else if (attachmentArchive != null) {
+            String response = graphQLService.executeQueryMultipart(new UpdateActivityStatusToFinish(activityId, attachmentArchive).getHttpEntity());
             GraphQLResponse graphQLResponse = new GraphQLResponse(response);
-            updatedActivityToFinish = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatusToFinish"), UpdatedActivityToFinish.class);
+            updatedActivityToFinish = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatus"), UpdatedActivityToFinish.class);
         } else {
-            //the evidence is text.
             String response = graphQLService.executeQuery(new UpdateActivityStatusToFinish(activityId, evidenceText).getQuery());
             GraphQLResponse graphQLResponse = new GraphQLResponse(response);
-            updatedActivityToFinish = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatusToFinish"), UpdatedActivityToFinish.class);
+            updatedActivityToFinish = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatus"), UpdatedActivityToFinish.class);
         }
 
-        //only if the action has succes.
         if (updatedActivityToFinish != null) {
             projectService.getWorkingProject().updateActivity(updatedActivityToFinish.getActivity());
             projectService.saveLocalWorkingProject();
@@ -63,7 +59,7 @@ public class ActivityService extends Service {
 
         String response = graphQLService.executeQuery(new UpdateActivityStatusToNotApply(activityId, justification).getQuery());
         GraphQLResponse graphQLResponse = new GraphQLResponse(response);
-        updatedActivityToNotApply = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatusToNotApply"), UpdatedActivityToNotApply.class);
+        updatedActivityToNotApply = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatus"), UpdatedActivityToNotApply.class);
 
         if(updatedActivityToNotApply != null){
             projectService.getWorkingProject().updateActivity(updatedActivityToNotApply.getActivity());
@@ -77,7 +73,7 @@ public class ActivityService extends Service {
 
         String response = graphQLService.executeQuery(new UpdateActivityStatusToStart(activityId).getQuery());
         GraphQLResponse graphQLResponse = new GraphQLResponse(response);
-        updatedActivityToStart = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatusToStart"), UpdatedActivityToStart.class);
+        updatedActivityToStart = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatus"), UpdatedActivityToStart.class);
 
         if(updatedActivityToStart != null){
             projectService.getWorkingProject().updateActivity(updatedActivityToStart.getActivity());
@@ -91,7 +87,7 @@ public class ActivityService extends Service {
 
         String response = graphQLService.executeQuery(new UpdateActivityStatusToRestart(activityId).getQuery());
         GraphQLResponse graphQLResponse = new GraphQLResponse(response);
-        updatedActivityToRestart = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatusToRestart"), UpdatedActivityToRestart.class);
+        updatedActivityToRestart = new Gson().fromJson(graphQLResponse.getContentOfData("updateActivityStatus"), UpdatedActivityToRestart.class);
 
         if(updatedActivityToRestart != null){
             projectService.getWorkingProject().updateActivity(updatedActivityToRestart.getActivity());
