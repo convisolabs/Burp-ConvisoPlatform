@@ -21,7 +21,7 @@
 
 ### Download and install
 
-You can find the last release: [here](https://github.com/convisolabs/B  urp-ConvisoPlatform/releases)
+You can find the last release: [here](https://github.com/convisolabs/Burp-ConvisoPlatform/releases)
 
 ### Install in Burp
 
