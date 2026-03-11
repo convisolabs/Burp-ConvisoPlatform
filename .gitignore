@@ -109,6 +109,9 @@ dist
 .vscode-test
 .vscode/
 
+# DSStore
+.DS_Store
+
 # yarn v2
 .yarn/cache
 .yarn/unplugged
