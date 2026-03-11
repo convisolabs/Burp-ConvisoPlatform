@@ -6,7 +6,6 @@ import utilities.Util;
 import view.context_menu.listeners.AsAttachmentContextMenuActionListener;
 import view.context_menu.listeners.AsNewVulnerabilityContextMenuActionListener;
 import view.context_menu.listeners.AsNewVulnerabilityWithAttachmentContextMenuActionListener;
-import view.context_menu.listeners.ContextMenuActionListener;
 import view.vulnerabilities_tab.closable_pane.ClosablePane;
 
 import javax.swing.*;
@@ -32,7 +31,6 @@ public class ContextMenuOption implements IContextMenuFactory {
     @Override
     public List<JMenuItem> createMenuItems(IContextMenuInvocation invocation) {
         List<JMenuItem> items = new ArrayList<>();
-        JMenu itemDefault = new JMenu("Send to Conviso Platform");
         JMenuItem asVulnerability = new JMenuItem("as new vulnerability");
         JMenuItem asVulnerabilityWithAttachment = new JMenuItem("as new vulnerability w. attachment");
         JMenu asAttachment = new JMenu("as attachment");
@@ -52,12 +50,11 @@ public class ContextMenuOption implements IContextMenuFactory {
         asVulnerability.addActionListener(new AsNewVulnerabilityContextMenuActionListener(this.callbacks, this.helpers, this.tabsManager, invocation));
         asVulnerabilityWithAttachment.addActionListener(new AsNewVulnerabilityWithAttachmentContextMenuActionListener(this.callbacks, this.helpers, this.tabsManager, invocation));
 
-        itemDefault.add(asVulnerability);
         if(invocation.getSelectedMessages().length >= 2) asVulnerability.setEnabled(false);
         if(invocation.getSelectedMessages().length < 2) asVulnerabilityWithAttachment.setEnabled(false);
-        itemDefault.add(asVulnerabilityWithAttachment);
-        itemDefault.add(asAttachment);
-        items.add(itemDefault);
+        items.add(asVulnerability);
+        items.add(asVulnerabilityWithAttachment);
+        items.add(asAttachment);
 
         return items;
     }
